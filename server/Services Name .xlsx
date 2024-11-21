@@ -1,0 +1,17 @@
+MONGO_URL=mongodb+srv://anishjha:6ptBCCJ9HPDDGqqH@cluster0.sgfwvrg.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0
+PORT=7485
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_EMAIL=happycoding41@gmail.com
+SMTP_PASSWORD=xcwi jsnw faiu sqtb
+JWT_SECRET=qwsdcvbnmjioplkiuytrewazxcvbjkoiuytrdsxcvbhjk
+JWT_EXPIRES_TIME=2d
+RAZORPAY_APT_SECRET=nOcR6CCRiRYyDc87EXPzansH
+CLOUDINARY_API_KEY=939345957566958
+PARTNER_ID=6698adeb76077a48d454e5eb
+CLOUDINARY_SECRET_KEY=q-Pg0dyWquxjatuRb62-PtFzkM0
+CLOUD_NAME=dglihfwse
+RAZORPAY_APT_KEY=rzp_test_gwvXwuaK4gKsY3
+BACKEND_URL=https://offer-website.onrender.com
+FRONTEND_URL=https://naideal.vercel.app
+ 
