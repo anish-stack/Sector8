@@ -59,7 +59,7 @@ const Footer = () => {
             <div className="bg-gray-800 py-4">
                 <div className="max-w-screen-xl mx-auto px-4 text-center text-sm">
                     <p>&copy; {new Date().getFullYear()} Naideal. All Rights Reserved.</p>
-                    <p>Designed with <span role="img" aria-label="heart">❤️</span> by Digi India Solution</p>
+                    <p>Designed with <span role="img" aria-label="heart">❤️</span> by Digi India Solution(A Unit of Inde Global)</p>
                 </div>
             </div>
         </footer>
