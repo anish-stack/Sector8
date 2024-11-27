@@ -32,6 +32,7 @@ import PasswordChangeOtp from './pages/Auth/PasswordChangeOtp';
 import ErrorPage from './pages/404/ErrorPage';
 import PrivacyPolicy from './pages/PrivacyPolicy/PrivacyPolicy';
 import TermsAndConditions from './pages/TermsAndConditions/TermsAndConditions';
+import ReturnAndRefundPolicy from './pages/ReturnAndRefundPolicy/ReturnAndRefundPolicy';
 function App() {
   const [locationDetails, setLocationDetails] = useState(null);
   const [locationPopup, setLocationPopup] = useState(false);
@@ -113,6 +114,7 @@ function App() {
         <Route path='/Advertise-With-us' element={<Advertise />} />
         <Route path='/privacy-policy' element={<PrivacyPolicy />} />
         <Route path='/terms-and-conditions' element={<TermsAndConditions />} />
+        <Route path='/return-refund' element={<ReturnAndRefundPolicy />} />
 
         {/* ---- Partner ----  */}
         <Route path='/Partner-Login' element={<Login />} />
