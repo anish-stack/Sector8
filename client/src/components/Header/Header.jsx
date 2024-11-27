@@ -81,7 +81,7 @@ const Header = ({ locationDetails }) => {
                     <ul className='hidden md:flex items-center justify-center gap-3'>
                         <li><Link className='text-slate-900 font-bold text-lg' to={'/Advertise-With-us'}>Advertise</Link></li>
                         <li><Link className='text-slate-900 font-bold text-lg' to={'/Free-Listing'}>Free Listing</Link></li>
-                        <li><a className='text-green-400 font-bold text-lg' href="tel:+919953825382">+91 99538 25382</a></li>
+                        <li><a className='text-green-400 font-bold text-lg' href="tel:+919953825382">+91 99-5382-5382</a></li>
                         {ShopToken ? (
                             <li className='space-x-2'><a className='text-slate-900 font-bold text-lg' href="/Shop-Dashboard">Shop Dashboard</a></li>
                         ) : null}

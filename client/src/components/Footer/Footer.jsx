@@ -44,9 +44,9 @@ const Footer = () => {
                     {/* Column 4: Contact Information */}
                     <div className="mb-4">
                         <h3 className="text-lg font-bold mb-2">Contact</h3>
-                        <p className="text-sm">D-14/106, 2nd Floor, Sector-8, Rohini, Delhi-110085</p>
+                        <p className="text-sm">D-14/106, 2nd Floor, Sector-8, <br /> Rohini, Delhi-110085</p>
                         <p className="text-sm">
-                            Phone: <a href="tel:+919953825382" className="text-blue-500 hover:underline">+91 99538 25382</a>
+                            Phone: <a href="tel:+919953825382" className="text-blue-500 hover:underline">+91 99-5382-5382</a>
                         </p>
                         <p className="text-sm">
                             Email: <a href="mailto:care@naideal.com" className="text-blue-500 hover:underline">care@naideal.com</a>
