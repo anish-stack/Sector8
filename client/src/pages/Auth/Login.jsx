@@ -1,8 +1,14 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-hot-toast';
 
 const Login = () => {
+  useEffect(() => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth"
+    })
+  }, [])
   const [formData, setFormData] = useState({
     PartnerEmail: "",
     Password: ""
@@ -26,12 +32,12 @@ const Login = () => {
       console.log('Login Successful:', response.data);
       const data = response.data.token
       toast.success('Login Successful');
-      localStorage.setItem('B2bToken',data)
+      localStorage.setItem('B2bToken', data)
       setFormData({
-        PartnerEmail:'',
-        Password:''
+        PartnerEmail: '',
+        Password: ''
       })
-      window.location.href="/Partner-Dashboard"
+      window.location.href = "/Partner-Dashboard"
 
       // You can redirect or perform any other action upon successful login
     } catch (error) {
