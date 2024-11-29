@@ -31,7 +31,7 @@ router.delete('/delete-listing/:id', deletePostById);
 router.delete('/delete-all-listings', deleteAllPost);
 router.post('/register-list-user', ListUser);
 router.get('/all-shops', getAllShops);
-router.delete('/delete-shops/:id', DeleteListUser);
+router.delete('/delete-shop/:id', DeleteListUser);
 router.post('/login-shop-user', LoginListUser);
 router.get('/list-of-shop-user', protect, GetAllShopListByPartner);
 router.get('/My-Shop-Details', protect, MyShopDetails);
