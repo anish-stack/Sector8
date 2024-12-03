@@ -14,7 +14,7 @@ const AllListing = () => {
         filterVerified,
         setFilterVerified
       } = useListings();
-
+      console.log(listings)
       if (loading) {
         return <LoadingSkeleton />;
       }
@@ -40,9 +40,16 @@ const AllListing = () => {
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {listings.map((item, index) => (
-          <ListingCard key={item.listing._id} item={item} index={index} />
-        ))}
+        {listings && listings.length > 0 ? (
+          listings.map((item, index) => (
+            <ListingCard key={item._id} item={item} index={index} />
+          ))
+        ):(
+          <div className="text-center">
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">No listings found</h2>
+            <p className="text-gray-600">Please try a different search or filter</p>
+          </div>
+        )}
       </div>
     </div>
     </div>

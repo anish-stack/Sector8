@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import axios from 'axios';
 
 export function useListings() {
@@ -10,6 +10,7 @@ export function useListings() {
 
   const BackendUrl = import.meta.env.VITE_REACT_APP_BACKEND_URL;
 
+  // Fetch Data
   const fetchData = useCallback(async () => {
     try {
       const response = await axios.get(`${BackendUrl}/get-Listing`);
@@ -26,32 +27,43 @@ export function useListings() {
     fetchData();
   }, [fetchData]);
 
+  // Sorting logic
   const sortedListings = useCallback(() => {
+    if (!listings || listings.length === 0) {
+      return [];
+    }
+
     return [...listings].sort((a, b) => {
       if (sortBy === 'title') {
-        return a.listing.Title.localeCompare(b.listing.Title);
+        const aTitle = a?.listing?.Title || '';
+        const bTitle = b?.listing?.Title || '';
+        return aTitle.localeCompare(bTitle);
       }
-      const aDiscount = a.listing.Items[0]?.Discount || 0;
-      const bDiscount = b.listing.Items[0]?.Discount || 0;
+
+      const aDiscount = a?.listing?.Items?.[0]?.Discount || 0;
+      const bDiscount = b?.listing?.Items?.[0]?.Discount || 0;
       return bDiscount - aDiscount;
     });
   }, [listings, sortBy]);
 
-  const filteredListings = useCallback(() => {
-    const sorted = sortedListings();
+  // Filtering logic
+  const filteredListings = useMemo(() => {
+    const sorted = sortedListings(); 
+    console.log(sorted)
     if (filterVerified) {
-      return sorted.filter(item => item.shopDetails.ListingPlan !== 'Free');
+      return sorted.filter(item => item?.ListingPlan !== 'Free'); // Adjusted based on the data structure
     }
-    return sorted;
+
+    return sorted; // If no filter is applied, return the sorted listings
   }, [sortedListings, filterVerified]);
 
   return {
-    listings: filteredListings(),
+    listings: filteredListings,
     loading,
     error,
     sortBy,
     setSortBy,
     filterVerified,
-    setFilterVerified
+    setFilterVerified,
   };
 }

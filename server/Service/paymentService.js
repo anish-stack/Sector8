@@ -10,19 +10,33 @@ class PaymentService {
   }
 
   async createOrder(listingPlan, userName) {
-    const plansRates = await Plans.find();
-    const plan = plansRates.find(plan => plan.packageName === listingPlan);
-    
-    // if (!plan) {
-    //   throw new Error('Invalid Listing Plan');
-    // }
+    console.log("Received Listing Plan:", listingPlan);
+    console.log("Received User Name:", userName);
 
+    // Extract package name from the listing plan string
+    const extractedPlanName = listingPlan.split('-')[0].trim();
+    console.log("Extracted Plan Name:", extractedPlanName);
+
+    const plansRates = await Plans.find();
+    console.log("Plans from Database:", plansRates);
+
+    // Find the matching plan in the database
+    const planDb = plansRates.find(plan => plan.packageName === extractedPlanName);
+
+    if (!planDb) {
+      throw new Error('Invalid Listing Plan');
+    }
+
+    // Prepare Razorpay order options
     const options = {
-      amount: 50000,
+      amount: parseInt(planDb.packagePrice) * 100, // Convert to paise
       currency: 'INR',
       receipt: `user_${userName}_${Date.now()}`,
     };
 
+    console.log("Creating Razorpay Order with Options:", options);
+
+    // Create and return the Razorpay order
     return this.razorpay.orders.create(options);
   }
 }

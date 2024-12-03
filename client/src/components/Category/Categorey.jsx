@@ -15,7 +15,7 @@ const Category = () => {
     const itemsPerPage = {
         sm: 6,
         md: 8,
-        lg: 12
+        lg: 16
     };
 
     const getItemsPerPage = () => {
@@ -52,13 +52,13 @@ const Category = () => {
     }, []);
 
     const nextPage = () => {
-        setCurrentPage(prev => 
+        setCurrentPage(prev =>
             prev + 1 >= Math.ceil(data.length / displayCount) ? 0 : prev + 1
         );
     };
 
     const prevPage = () => {
-        setCurrentPage(prev => 
+        setCurrentPage(prev =>
             prev - 1 < 0 ? Math.ceil(data.length / displayCount) - 1 : prev - 1
         );
     };
@@ -83,7 +83,7 @@ const Category = () => {
                         <img
                             src={category.CategoriesImage.imageUrl}
                             alt={category.CategoriesName}
-                            className="h-16 w-16 object-contain transition-transform duration-300 group-hover:scale-110"
+                            className="h-8 w-8 object-contain transition-transform duration-300 group-hover:scale-110"
                             loading="lazy"
                         />
                     </div>
@@ -106,21 +106,21 @@ const Category = () => {
 
     return (
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-            <div className="mb-10 text-center">
+            {/* <div className="mb-10 text-center">
                 <h2 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
                     Browse Categories
                 </h2>
                 <p className="text-gray-600 max-w-2xl mx-auto">
                     Explore our wide range of categories
                 </p>
-            </div>
+            </div> */}
 
             <div className="relative">
                 {!loading && data.length > displayCount && (
                     <>
                         <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
+                            // whileHover={{ scale: 1.1 }}
+                            // whileTap={{ scale: 0.9 }}
                             className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 p-2 rounded-full bg-white shadow-lg text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors duration-300 hidden sm:block"
                             onClick={prevPage}
                             aria-label="Previous page"
@@ -129,8 +129,8 @@ const Category = () => {
                         </motion.button>
 
                         <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
+                            // whileHover={{ scale: 1.1 }}
+                            // whileTap={{ scale: 0.9 }}
                             className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 p-2 rounded-full bg-white shadow-lg text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors duration-300 hidden sm:block"
                             onClick={nextPage}
                             aria-label="Next page"
@@ -140,7 +140,7 @@ const Category = () => {
                     </>
                 )}
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4 sm:gap-6">
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-8 gap-4 sm:gap-6">
                     <AnimatePresence mode="wait">
                         {loading ? (
                             Array(displayCount)

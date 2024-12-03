@@ -56,7 +56,7 @@ const ListingData = new mongoose.Schema({
     },
     ShopId: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "ListingUser",
+        ref: "ShopUser",
         required: true
     }
 }, { timestamps: true });

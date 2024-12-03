@@ -34,10 +34,10 @@ exports.ListUser = async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(StatusCodes.BAD_REQUEST)
-                     .json({ success: false, errors: errors.array() });
+                .json({ success: false, errors: errors.array() });
         }
 
-        console.log(req.body)
+        console.log(req.body);
         const {
             UserName, Email, ContactNumber, ShopName,
             ShopAddress, ShopCategory, ListingPlan,
@@ -48,11 +48,28 @@ exports.ListUser = async (req, res) => {
         const token = authService.extractToken(req);
         if (!token) {
             return res.status(StatusCodes.UNAUTHORIZED)
-                     .json({ success: false, message: 'Please Login to Access this' });
+                .json({ success: false, message: 'Please Login to Access this' });
         }
 
         // Get PartnerId
         const { id: PartnerId } = await authService.verifyToken(token);
+
+        // Check if the user already exists by email or contact number
+        const existingUser = await ListingUser.findOne({
+            $or: [{ Email }, { ContactNumber }]
+        });
+
+        // If user exists and they don't have a free listing, create a payment order
+        if (existingUser) {
+            if (existingUser.FreeListing && ListingPlan !== 'Free - Rs:0') {
+                const order = await paymentService.createOrder(ListingPlan, UserName);
+                return res.status(StatusCodes.OK)
+                    .json({ success: true, order });
+            } else {
+                return res.status(StatusCodes.CONFLICT)
+                    .json({ success: false, message: 'User already exists with this Email or Contact Number and has a Free Listing Memeber' });
+            }
+        }
 
         // Prepare shop address
         const formattedShopAddress = {
@@ -87,33 +104,30 @@ exports.ListUser = async (req, res) => {
         if (ListingPlan === 'Free - Rs:0') {
             await newUser.save();
             await Partner.findByIdAndUpdate(PartnerId, { $inc: { PartnerDoneListing: 1 } });
-            
+
             return res.status(StatusCodes.CREATED)
-                     .json({ success: true, message: 'User created successfully', user: newUser });
+                .json({ success: true, message: 'User created successfully', user: newUser });
         }
 
-        if (ListingPlan) {
-            const order = await paymentService.createOrder(ListingPlan, UserName);
-            newUser.OrderId = order.id;
-            await newUser.save();
-            
-            return res.status(StatusCodes.OK)
-                     .json({ success: true, order });
-        }
+        // If the plan is not Free, create a payment order
+        const order = await paymentService.createOrder(ListingPlan, UserName);
+        newUser.OrderId = order.id;
+        await newUser.save();
 
-        return res.status(StatusCodes.BAD_REQUEST)
-                 .json({ success: false, message: 'Invalid listing plan' });
+        return res.status(StatusCodes.OK)
+            .json({ success: true, order });
 
     } catch (error) {
         console.error('Error in ListUser:', error);
         return res.status(StatusCodes.INTERNAL_SERVER_ERROR)
-                 .json({ 
-                     success: false, 
-                     message: 'Internal Server Error',
-                     error: process.env.NODE_ENV === 'development' ? error.message : undefined
-                 });
+            .json({
+                success: false,
+                message: 'Internal Server Error',
+                error: process.env.NODE_ENV === 'development' ? error.message : undefined
+            });
     }
 };
+
 
 
 exports.getAllShops = async (req, res) => {
@@ -178,7 +192,7 @@ exports.paymentVerification = async (req, res) => {
 // Login a ListingUser
 exports.LoginListUser = async (req, res) => {
     try {
-        // console.log(req.body);
+        console.log(req.body);
         const { Email, UserName, Password } = req.body;
 
         // Find user by Email or UserName
@@ -704,10 +718,11 @@ exports.getAllPost = async (req, res) => {
 };
 exports.getAllPostApprovedPost = async (req, res) => {
     try {
-        // Fetch all listings from the database
-        const listings = await Listing.find({ isApprovedByAdmin: true });
+        console.log("i am hit");
 
-        // If no listings found, return an error response
+        // Fetch all listings that are approved
+        const listings = await Listing.find({ isApprovedByAdmin: true }).populate('ShopId');
+
         if (listings.length === 0) {
             return res.status(404).json({
                 success: false,
@@ -715,112 +730,29 @@ exports.getAllPostApprovedPost = async (req, res) => {
             });
         }
 
-        // Fetch all ShopDetails to categorize by plan type
-        const shopDetails = await ListingUser.find();
-
-        // If no shopDetails found, handle accordingly
-        if (shopDetails.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'No shop details found.',
-            });
-        }
-
-        // Categorize listings by plan type
-        let goldListings = [];
-        let silverListings = [];
-        let freeListings = [];
-
-        listings.forEach(listing => {
-            const foundShopDetails = shopDetails.find(sd => sd._id.toString() === listing.ShopId.toString());
-            if (!foundShopDetails) return; // Skip if shop details not found
-
-            if (foundShopDetails.ListingPlan === 'Gold') {
-                goldListings.push({
-                    listing,
-                    shopDetails: foundShopDetails
-                });
-            } else if (foundShopDetails.ListingPlan === 'Silver') {
-                silverListings.push({
-                    listing,
-                    shopDetails: foundShopDetails
-                });
-            } else if (foundShopDetails.ListingPlan === 'Free') {
-                freeListings.push({
-                    listing,
-                    shopDetails: foundShopDetails
-                });
-            }
-        });
-
-        // Shuffle the arrays to introduce randomness
-        shuffleArray(goldListings);
-        shuffleArray(silverListings);
-        shuffleArray(freeListings);
-
-        // Initialize counters for each type of listing
-        let shuffledListings = []
-        let goldCount = 0;
-        let silverCount = 0;
-        let freeCount = 0;
-
-        for (let i = 0; i < listings.length; i++) {
-            // Check if there are gold listings left to show and less than 2 gold posts have been added
-            if (goldCount < goldListings.length && goldCount < 2) {
-                // Push the next gold listing into shuffledListings
-                shuffledListings.push(goldListings[goldCount]);
-                goldCount++;
-            } else if (silverCount < silverListings.length && silverCount < 2) {
-                // Push the next silver listing into shuffledListings
-                shuffledListings.push(silverListings[silverCount]);
-                silverCount++;
-            } else {
-                // Push the next free listing into shuffledListings
-                shuffledListings.push(freeListings[freeCount]);
-                freeCount++;
-            }
-        }
-
-        // Handle remaining gold and silver listings if any
-        while (goldCount < goldListings.length) {
-            shuffledListings.push(goldListings[goldCount]);
-            goldCount++;
-        }
-
-        while (silverCount < silverListings.length) {
-            shuffledListings.push(silverListings[silverCount]);
-            silverCount++;
-        }
-
-        // Handle remaining free listings if any
-        while (freeCount < freeListings.length) {
-            shuffledListings.push(freeListings[freeCount]);
-            freeCount++;
-        }
-
-        // console.log(shuffledListings)
-        // Return successful response with shuffled listings
+        // Return shuffled listings
         return res.status(200).json({
             success: true,
-            count: shuffledListings.length,
-            data: shuffledListings,
+            count: listings.length,
+            data: listings,
         });
     } catch (error) {
         console.error('Error fetching listings:', error);
-        // Return error response if there's a server error
         return res.status(500).json({
             success: false,
             error: 'Server error. Could not fetch listings.',
         });
     }
 };
-// Function to shuffle an array
+
+
 function shuffleArray(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [array[i], array[j]] = [array[j], array[i]];
     }
 }
+
 
 
 

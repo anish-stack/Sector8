@@ -36,6 +36,7 @@ import { ContactForm } from './pages/Contact/Contact';
 import { Header } from './pages/Hero/Header';
 import Services from './pages/services/Services';
 import UserRegister from './UserDashboard/UserRegister';
+import AllListing from './pages/Listings/AllListing';
 function App() {
   const [locationDetails, setLocationDetails] = useState(null);
   const [locationPopup, setLocationPopup] = useState(false);
@@ -120,7 +121,7 @@ function App() {
         <Route path='/' element={<Home />} />
         <Route path='/About' element={<About />} />
         <Route path='/Single-Listing/:id/:name' element={<SingleListing />} />
-        <Route path='/listings' element={<AllListings />} />
+        <Route path='/listings' element={<AllListing />} />
         <Route path='/Free-Listing' element={<FreeListing />} />
         <Route path='/Advertise-With-us' element={<Advertise />} />
         <Route path='/privacy-policy' element={<PrivacyPolicy />} />

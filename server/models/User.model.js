@@ -60,7 +60,10 @@ const ListingUserSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please provide a Password"]
     },
-    
+    ListingPlan:{
+        type: String,
+        required: [true, "Please provide Listing Plan"]
+    },
     PasswordChangeOtp: {
         type: String
     },

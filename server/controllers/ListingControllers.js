@@ -326,10 +326,10 @@ exports.UpdateListing = async (req, res) => {
 exports.getPostByCategory = async (req, res) => {
     try {
         const { Name } = req.params;
-
+        // console.log(Name)
         // Fetch all listings by category
         const listings = await ListingUser.find({ ShopCategory: Name });
-
+        console.log(listings.length)
         if (!listings || listings.length === 0) {
             return res.status(404).json({ message: 'No listings found for this category' });
         }
@@ -337,12 +337,13 @@ exports.getPostByCategory = async (req, res) => {
         // Fetch and process posts for each listing
         const postsPromises = listings.map(async (listing) => {
             // Fetch posts for the current listing
+            console.log(listing)
             const posts = await Listing.find({ ShopId: listing._id }).sort({ createdAt: -1 });
 
             // Attach plan information to each post
             const postsWithPlan = posts.map(post => ({
-                ...post.toObject(), // Convert Mongoose document to plain JS object
-                Plan: listing.ListingPlan // Attach listing plan to each post
+                ...post.toObject(), 
+                Plan: listing?.ListingPlan 
             }));
 
             return postsWithPlan;
@@ -350,10 +351,10 @@ exports.getPostByCategory = async (req, res) => {
 
         // Wait for all post fetching operations to complete
         let postsArrays = await Promise.all(postsPromises);
-
+        console.log(postsArrays)
         // Flatten the array of arrays into a single array of posts
         let posts = postsArrays.flat();
-
+        console.log(posts.length)
         // Separate posts by listing plan
         const goldPosts = posts.filter(post => post.Plan === 'Gold');
         const silverPosts = posts.filter(post => post.Plan === 'Silver');
@@ -376,7 +377,7 @@ exports.getPostByCategory = async (req, res) => {
         // Combine posts with priority: Gold, Silver, Free
         const combinedPosts = [...goldPosts, ...silverPosts, ...freePosts];
 
-        res.status(200).json(combinedPosts);
+        res.status(200).json(posts);
     } catch (error) {
         console.error('Error fetching posts by category:', error);
         res.status(500).json({ message: 'Internal server error' });

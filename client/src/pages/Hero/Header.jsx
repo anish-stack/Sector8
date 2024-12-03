@@ -6,7 +6,7 @@ export function Header() {
   const [settings,setSettings] = useState({})
 
 
-    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isMenuOpen, setIsMenuOpen] = useState(true);
     const ShopToken = localStorage.getItem('ShopToken');
     const PartnerToken = localStorage.getItem('B2bToken');
 
@@ -31,17 +31,17 @@ export function Header() {
 
 
     return (
-        <header className="bg-white border-b border-b-black shadow-md">
+        <header className="bg-white shadow-md">
         <div className="container mx-auto px-4">
           <div className="flex items-center justify-between h-20">
             {/* Logo */}
             <a href="/" className="flex items-center space-x-2">
-              <img src={settings?.logo || "https://placehold.co/60x40"} alt="Logo" className="h-10" />
+              <img src={settings?.logo || "https://placehold.co/60x40"} alt="Logo" className=" h-8 md:h-10" />
             </a>
   
             {/* Desktop Navigation */}
-            <nav className="hidden md:flex items-center space-x-8">
-              <a href="#" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+            <nav className=" md:flex items-center space-x-8">
+              {/* <a href="#" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
                 Home
               </a>
               <a href="/Advertise-With-us" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
@@ -50,10 +50,10 @@ export function Header() {
               <a href="/Free-Listing" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
                 Free Listing
               </a>
-              <a href={`tel:${settings?.contactNumber ||'919953825382' }`} className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+              */}
+               <a href={`tel:${settings?.contactNumber ||'919953825382' }`} className="text-gray-700 hover:text-blue-600 font-bold transition-colors">
                {settings?.contactNumber || "919953825382"}
               </a>
-              
               <div className="flex items-center space-x-4">
                 {ShopToken && (
                   <a
@@ -83,17 +83,17 @@ export function Header() {
             </nav>
   
             {/* Mobile Menu Button */}
-            <button
+            {/* <button
               className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
               aria-label="Toggle menu"
             >
               {isMenuOpen ? <X className="w-6 h-6 text-gray-700" /> : <Menu className="w-6 h-6 text-gray-700" />}
-            </button>
+            </button> */}
           </div>
   
           {/* Mobile Navigation */}
-          {isMenuOpen && (
+          {/* {isMenuOpen && (
             <nav className="md:hidden py-4 space-y-3 border-t">
               <a href="#" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
                 Home
@@ -123,7 +123,7 @@ export function Header() {
                 </a>
               )}
             </nav>
-          )}
+          )} */}
         </div>
       </header>
     );

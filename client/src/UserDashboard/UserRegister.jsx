@@ -141,32 +141,46 @@ const UserRegister = () => {
     };
 
     return (
-      
+
         <>
-               <h2 className="text-4xl mt-5 font-extrabold text-center text-gray-800 ">
-                        Register Your Shop
-                    </h2>
-            <div className="w-full max-w-7xl mx-auto grid lg:grid-cols-2 grid-cols-1 bg-white mt-4 overflow-hidden">
+
+            <div className="w-full max-w-7xl mx-auto grid lg:grid-cols-2 grid-cols-1 bg-white mt-2 overflow-hidden">
                 {/* Left Section (Image Area) */}
-                
-                <div className="relative  flex items-center justify-center p-6">
+
+                <div className="relative w-[90%]">
                     <img
-                        src="https://img.freepik.com/free-vector/shop-with-sign-we-are-open_23-2148562563.jpg?t=st=1733121386~exp=1733124986~hmac=b6a8e1440a9bd46879579a0a7387c3b2904a79b3867201bf8a8e00fad0a5ae8a&w=740"
-                        alt="Shop Illustration"
-                        className="rounded-md shadow-md w-full  object-cover"
+                        src="https://img.freepik.com/free-photo/sign-up-form-button-graphic-concept_53876-123684.jpg?t=st=1733212070~exp=1733215670~hmac=21a57814be47023867b3796844d342f4dc2c574100bdcfdfb88d4128e25c38b2&w=740"
+                        alt="Sign Up"
+                        className="w-full h-full object-cover rounded-lg"
                     />
-                  
+                    <div className="absolute inset-0 bg-black opacity-50"></div>
+                    <div className="absolute inset-0 flex justify-center items-center text-white">
+                        <div className="text-center">
+                            <h2 className="text-3xl font-bold">Welcome Back!</h2>
+                            <p className="mt-2 text-lg">If you already have an account, please sign in to access your account and explore our latest offers.</p>
+                            <div className="mt-6">
+                                <a
+                                    href="/Shop-login"
+                                    className="inline-block mx-2 px-6 py-3 text-white bg-indigo-600 hover:bg-indigo-700 rounded-lg text-lg font-medium transition-colors duration-200"
+                                >
+                                    Sign In
+                                </a>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 {/* Right Section */}
                 <div className="flex flex-col items-center justify-center ">
-             
+                    <h2 className="text-4xl  font-extrabold text-center text-gray-800 ">
+                        Register Your Shop
+                    </h2>
 
                     <form onSubmit={handleSubmit} className="space-y-6 p-5 w-full ">
                         {/* Basic Information */}
                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                             <div>
-                                <label className="block text-sm font-semibold text-gray-700">Username</label>
+                                <label className="block text-sm font-semibold mb-2 text-gray-700">Username</label>
                                 <input
                                     type="text"
                                     required
@@ -177,7 +191,7 @@ const UserRegister = () => {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-semibold text-gray-700">Shop Name</label>
+                                <label className="block text-sm font-semibold mb-2 text-gray-700">Shop Name</label>
                                 <input
                                     type="text"
                                     required
@@ -188,7 +202,7 @@ const UserRegister = () => {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-semibold text-gray-700">Email</label>
+                                <label className="block text-sm font-semibold mb-2 text-gray-700">Email</label>
                                 <input
                                     type="email"
                                     value={formData.Email}
@@ -198,7 +212,7 @@ const UserRegister = () => {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-semibold text-gray-700">Contact Number</label>
+                                <label className="block text-sm font-semibold mb-2 text-gray-700">Contact Number</label>
                                 <input
                                     type="tel"
                                     value={formData.ContactNumber}
@@ -233,7 +247,7 @@ const UserRegister = () => {
 
                         {/* Password */}
                         <div>
-                            <label className="block text-sm font-semibold text-gray-700">Password</label>
+                            <label className="block text-sm font-semibold mb-2 text-gray-700">Password</label>
                             <input
                                 type="password"
                                 required
@@ -254,7 +268,7 @@ const UserRegister = () => {
                 </div>
             </div>
         </>
-     
+
 
     );
 }

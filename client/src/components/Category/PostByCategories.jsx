@@ -12,7 +12,7 @@ const PostByCategories = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [sortBy, setSortBy] = useState('newest');
     const [postsPerPage] = useState(8);
-    
+
     const query = new URLSearchParams(window.location.search);
     const categoryName = query.get('Name');
     const BackendUrl = import.meta.env.VITE_REACT_APP_BACKEND_URL;
@@ -26,8 +26,13 @@ const PostByCategories = () => {
             setLoading(true);
             setError(null);
             const { data } = await axios.get(`${BackendUrl}/Post-by-categories/${categoryName}`);
+            console.log(data)
             setPosts(data);
         } catch (error) {
+            if (error?.response?.status === 404) {
+                setError('No posts found in this category.');
+                return;
+            }
             console.error('Error fetching posts:', error);
             setError('Failed to load posts. Please try again later.');
         } finally {
@@ -60,23 +65,31 @@ const PostByCategories = () => {
 
     if (error) {
         return (
-            <div className="min-h-screen flex items-center justify-center p-4">
-                <div className="text-center">
-                    <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
-                    <h2 className="text-2xl font-bold text-gray-900 mb-2">{error}</h2>
-                    <button 
-                        onClick={fetchPosts}
-                        className="inline-flex items-center px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
-                    >
-                        Try Again
-                    </button>
-                </div>
+            <div className="min-h-screen flex items-center justify-center p-6 bg-gray-100">
+            <div className="text-center bg-white p-8 rounded-xl max-w-md w-full">
+              <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-6" />
+              <h2 className="text-3xl font-semibold text-gray-900 mb-4">{error}</h2>
+              <div className="space-y-4">
+                <button
+                  onClick={fetchPosts}
+                  className="w-full px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
+                >
+                  Try Again
+                </button>
+                <button
+                  onClick={() => window.location.href = "/listings"}
+                  className="w-full px-6 py-3 bg-gray-300 text-gray-900 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 transition duration-200"
+                >
+                  Explore Other Offers
+                </button>
+              </div>
             </div>
+          </div>
         );
     }
 
     return (
-        <motion.div 
+        <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="min-h-screen bg-gray-50"
@@ -84,7 +97,7 @@ const PostByCategories = () => {
             {/* Hero Section */}
             <div className="bg-gradient-to-r mt-[60px] from-purple-600 to-blue-600 text-white py-16">
                 <div className="max-w-7xl mx-auto px-4">
-                    <motion.div 
+                    <motion.div
                         initial={{ y: 20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
                         className="text-center"
@@ -181,21 +194,20 @@ const PostByCategories = () => {
                         >
                             <ChevronLeft className="w-5 h-5" />
                         </button>
-                        
+
                         {Array.from({ length: totalPages }, (_, i) => i + 1).map(page => (
                             <button
                                 key={page}
                                 onClick={() => setCurrentPage(page)}
-                                className={`w-10 h-10 rounded-lg ${
-                                    currentPage === page
-                                        ? 'bg-purple-600 text-white'
-                                        : 'bg-white border border-gray-200 hover:bg-gray-50'
-                                }`}
+                                className={`w-10 h-10 rounded-lg ${currentPage === page
+                                    ? 'bg-purple-600 text-white'
+                                    : 'bg-white border border-gray-200 hover:bg-gray-50'
+                                    }`}
                             >
                                 {page}
                             </button>
                         ))}
-                        
+
                         <button
                             onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                             disabled={currentPage === totalPages}
