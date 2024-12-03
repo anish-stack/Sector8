@@ -36,23 +36,23 @@ const ListingUserSchema = new mongoose.Schema({
             type: String,
             required: [true, "Please provide a Nearby Landmark"]
         },
-        ShopLongitude: {
-            type: Number,
-            // required: [true, "Please provide Shop Longitude"]
-        },
-        ShopLatitude: {
-            type: Number,
-            // required: [true, "Please provide Shop Latitude"]
-        },
+        Location: {
+            type: {
+                type: String, // Must be "Point"
+                enum: ['Point'], // Restrict to "Point" only
+                required: true
+            },
+            coordinates: {
+                type: [Number], // Array of numbers for [longitude, latitude]
+                required: true
+            }
+        }
     },
     ShopCategory: {
         type: String,
         required: [true, "Please provide Shop Category"]
     },
-    ListingPlan: {
-        type: String,
-        required: [true, "Please provide a Listing Plan"]
-    },
+
     HowMuchOfferPost: {
         type: Number,
     },
@@ -60,26 +60,19 @@ const ListingUserSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please provide a Password"]
     },
-    Followers: [
-        {
-            FollowCount: {
-                type: Number,
-                default: 0
-            },
-            FollowerId: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: "ListingUser"
-            }
-        }
-    ],
+    
     PasswordChangeOtp: {
         type: String
     },
-    OtpExipredTme:{
-        type:Date
+    OtpExipredTme: {
+        type: Date
     },
-    newPassword:{
+    newPassword: {
         type: String
+    },
+    PackageId:{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Package",
     },
     Post: {
         type: mongoose.Schema.Types.ObjectId,
@@ -87,7 +80,6 @@ const ListingUserSchema = new mongoose.Schema({
     },
     FreeListing: {
         type: String,
-
     },
     OrderId: {
         type: String,
@@ -101,6 +93,9 @@ const ListingUserSchema = new mongoose.Schema({
         ref: "Partner"
     }
 }, { timestamps: true });
+
+// Add 2dsphere index to the Location field
+ListingUserSchema.index({ 'ShopAddress.Location': '2dsphere' });
 
 ListingUserSchema.pre('save', async function (next) {
     const user = this;

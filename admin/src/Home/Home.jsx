@@ -13,6 +13,10 @@ import CreatePackage from '../pages/Packages/CraetePackages';
 import DashboardScreen from '../pages/dashboard/DashboardScree';
 import AllCategories from '../pages/categories/AllCategories';
 import AllCity from '../pages/City/AllCity';
+import CreateBanner from '../pages/Banner/CreateBanner';
+import AllBanner from '../pages/Banner/AllBanner';
+import Settings from '../pages/Settings/Settings';
+import MarqueeActions from '../pages/MarqueeActions/MarqueeActions';
 
 
 const Home = () => {
@@ -27,6 +31,14 @@ const Home = () => {
         <div className="w-[83%]  p-4">
           <Routes>
             <Route path="/" element={<DashboardScreen />} />
+            <Route path="/Create-Banner" element={<CreateBanner />} />
+            <Route path="/Home-Banner" element={<AllBanner />} />
+            <Route path="/Settings" element={<Settings />} />
+            <Route path="/Marquees" element={<MarqueeActions />} />
+
+
+
+
 
             <Route path="/card" element={<Card />} />
             <Route path="/All-shops" element={<AllShop />} />

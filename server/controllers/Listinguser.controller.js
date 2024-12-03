@@ -16,124 +16,106 @@ const instance = new Razorpay({
     key_id: process.env.RAZORPAY_APT_KEY,
     key_secret: process.env.RAZORPAY_APT_SECRET,
 });
+const { StatusCodes } = require('http-status-codes');
+const Settings = require('../models/Settings.model')
 const Partner = require('../models/Partner.model')
 const { validationResult } = require('express-validator');
+const authService = require('../Service/authService');
+const paymentService = require('../Service/paymentService');
 Cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
     api_key: process.envCLOUDINARY_API_KEY,
     api_secret: process.env.CLOUDINARY_SECRET_KEY
 });
 // Create a new ListingUser
+
 exports.ListUser = async (req, res) => {
     try {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(StatusCodes.BAD_REQUEST)
+                     .json({ success: false, errors: errors.array() });
+        }
+
+        console.log(req.body)
         const {
-            UserName,
-            Email,
-            ContactNumber,
-            ShopName,
-            ShopAddress,
-            ShopCategory,
-            ListingPlan,
-            HowMuchOfferPost,
-            Password
+            UserName, Email, ContactNumber, ShopName,
+            ShopAddress, ShopCategory, ListingPlan,
+            HowMuchOfferPost, Password
         } = req.body;
 
-        let token = req.cookies.token || req.body.token || (req.headers.authorization ? req.headers.authorization.replace('Bearer ', '') : '');
-
+        // Auth check
+        const token = authService.extractToken(req);
         if (!token) {
-            return res.status(401).json({
-                success: false,
-                message: 'Please Login to Access this',
-            });
+            return res.status(StatusCodes.UNAUTHORIZED)
+                     .json({ success: false, message: 'Please Login to Access this' });
         }
 
-        let PartnerId;
-        try {
-            // Verify the token
-            const decoded = jwt.verify(token, process.env.JWT_SECRET);
-            PartnerId = decoded.id;
-        } catch (error) {
-            console.error('Error verifying token:', error);
-            // 6698adeb76077a48d454e5eb
-            PartnerId = process.env.PARTNER_ID; // Use default PartnerId if token verification fails
-        }
+        // Get PartnerId
+        const { id: PartnerId } = await authService.verifyToken(token);
 
-        // Check if PartnerId is valid
-        const partner = await Partner.findById(PartnerId);
-        if (!partner) {
-            return res.status(404).json({ message: 'Partner not found' });
-        }
-
-        // Define plan rates for payment
-        const plansRates = await Plans.find();
-
-        // Define initial user data
-        const userData = {
-            UserName,
-            ShopName,
-            ShopAddress,
-            ShopCategory,
-            ListingPlan,
-            HowMuchOfferPost,
-            Password,
-            Email,
-            ContactNumber,
-            PartnerId
+        // Prepare shop address
+        const formattedShopAddress = {
+            City: ShopAddress?.City,
+            PinCode: ShopAddress?.PinCode,
+            ShopAddressStreet: ShopAddress?.ShopAddressStreet,
+            ShopNo: ShopAddress?.ShopNo,
+            NearByLandMark: ShopAddress?.NearByLandMark,
+            Location: {
+                type: 'Point',
+                coordinates: [
+                    ShopAddress?.ShopLongitude,
+                    ShopAddress?.ShopLatitude
+                ],
+            }
         };
 
-        // Conditionally add FreeListing for 'Free' ListingPlan
-        if (ListingPlan === 'Free') {
-            userData.FreeListing = "Free Listing";
-        }
+        // Create user data
+        const userData = {
+            UserName, Email, ContactNumber, ShopName,
+            ShopAddress: formattedShopAddress,
+            ShopCategory, ListingPlan,
+            HowMuchOfferPost, Password,
+            PartnerId,
+            FreeListing: ListingPlan === 'Free - Rs:0' ? 'Free Listing' : undefined
+        };
 
-        // Create new user instance
+        // Create new user
         const newUser = new ListingUser(userData);
 
-        // Save user to database
-        await newUser.save();
-
-        // Update PartnerDoneListing count for 'Free' plan
-        if (ListingPlan === 'Free') {
-            await Partner.findByIdAndUpdate(PartnerId, { $inc: { PartnerDoneListing: 1 } });
-        }
-
-        // Handle payment for 'Silver' or 'Gold' plans
-        if (ListingPlan === 'Silver' || ListingPlan === 'Gold') {
-            // Payment amount in paisa
-            await Partner.findByIdAndUpdate(PartnerId, { $inc: { PartnerDoneListing: 1 } });
-            const paymentAmount = plansRates.find(plan => plan.packageName === ListingPlan)?.packagePrice * 100;
-            if (!paymentAmount) {
-                return res.status(400).json({ success: false, message: 'Invalid Listing Plan' });
-            }
-
-            // Create Razorpay order
-            const options = {
-                amount: paymentAmount,
-                currency: 'INR',
-                receipt: `user_${UserName}_${Date.now()}`
-            };
-
-            const order = await instance.orders.create(options);
-            newUser.OrderId = order.id; // Save order ID to user data
+        // Handle different listing plans
+        if (ListingPlan === 'Free - Rs:0') {
             await newUser.save();
-
-            // Return order details to client to initiate payment
-            return res.status(200).json({
-                success: true,
-                order,
-            });
-
-            // Note: After successful payment confirmation on client side, continue with user creation process
+            await Partner.findByIdAndUpdate(PartnerId, { $inc: { PartnerDoneListing: 1 } });
+            
+            return res.status(StatusCodes.CREATED)
+                     .json({ success: true, message: 'User created successfully', user: newUser });
         }
 
-        // Return success message for 'Free' plan or already handled payments
-        return res.status(201).json({ message: 'User created successfully', user: newUser });
+        if (ListingPlan) {
+            const order = await paymentService.createOrder(ListingPlan, UserName);
+            newUser.OrderId = order.id;
+            await newUser.save();
+            
+            return res.status(StatusCodes.OK)
+                     .json({ success: true, order });
+        }
+
+        return res.status(StatusCodes.BAD_REQUEST)
+                 .json({ success: false, message: 'Invalid listing plan' });
 
     } catch (error) {
-        console.error('Error creating user:', error);
-        return res.status(500).json({ message: 'Internal Server Error' });
+        console.error('Error in ListUser:', error);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR)
+                 .json({ 
+                     success: false, 
+                     message: 'Internal Server Error',
+                     error: process.env.NODE_ENV === 'development' ? error.message : undefined
+                 });
     }
 };
+
+
 exports.getAllShops = async (req, res) => {
     try {
         const shops = await ListingUser.find();
@@ -149,12 +131,13 @@ exports.getAllShops = async (req, res) => {
 
 exports.paymentVerification = async (req, res) => {
     try {
+        console.log(req.body)
         const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
 
         const body = razorpay_order_id + "|" + razorpay_payment_id;
 
         const expectedSignature = crypto
-            .createHmac("sha256", process.env.RAZORPAY_APT_SECRET)
+            .createHmac("sha256", process.env.RAZORPAY_APT_SECRET || "seWgj8epMRq7Oeb7bvC3IZCe")
             .update(body.toString())
             .digest("hex");
 

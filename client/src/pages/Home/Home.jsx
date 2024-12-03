@@ -1,9 +1,41 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Award, Building, MapPin, Star, Users } from 'lucide-react';
+
 import Categorey from '../../components/Category/Categorey';
 import MCategorey from '../../components/Category/Mobile';
 import AllListings from '../../components/Listings/AllListings';
-
+import { Newsletter } from '../Hero/Newsletter';
+import Hero from '../Hero/Hero';
+import { ServiceCard } from '../About/ServiceCard';
+import { StatsSection } from '../About/StatsSection';
+import AllListing from '../Listings/AllListing';
+const services = [
+  {
+    icon: Building,
+    title: "Business Listing Services",
+    description: "Create detailed business profiles with comprehensive information, photos, and customer reviews.",
+    iconColor: "bg-blue-600",
+  },
+  {
+    icon: Star,
+    title: "Promotions and Deals",
+    description: "Post exclusive offers and promotions to attract new customers and grow your business.",
+    iconColor: "bg-yellow-500",
+  },
+  {
+    icon: Users,
+    title: "Event Management",
+    description: "Participate in networking events, workshops, and promotional campaigns to expand your reach.",
+    iconColor: "bg-green-600",
+  },
+  {
+    icon: MapPin,
+    title: "Premium Membership",
+    description: "Get premium features including top placement in search results and targeted marketing campaigns.",
+    iconColor: "bg-red-500",
+  },
+];
 const Home = () => {
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState('');
@@ -71,14 +103,30 @@ const Home = () => {
 
   return (
     <div>
-
+      <Hero />
       <div className='hidden lg:block'>
         <Categorey />
       </div>
       <div className='block lg:hidden'>
         <MCategorey />
       </div>
-      <AllListings />
+      <AllListing/>
+      {/* <AllListings /> */}
+      <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Services</h2>
+            <p className="text-gray-600 max-w-2xl mx-auto">
+              Comprehensive solutions designed to help your business thrive in the digital age
+            </p>
+          </div>
+          
+      <div className="grid max-w-screen-xl mx-auto grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {services.map((service, index) => (
+              <ServiceCard key={index} {...service} />
+            ))}
+          </div>
+          <StatsSection />
+
+      <Newsletter />
     </div>
   );
 };

@@ -1,103 +1,205 @@
-import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
-import './Shop.css';
+import { motion, AnimatePresence } from 'framer-motion';
+import { MapPin, Phone, Mail, Star, Building2, Tag, AlertCircle, ChevronRight } from 'lucide-react';
 
 const ShopProfile = () => {
     const { id } = useParams();
     const [shopDetails, setShopDetails] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
     const BackendUrl = import.meta.env.VITE_REACT_APP_BACKEND_URL;
 
     useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get(`${BackendUrl}/get-Listing`);
-                const data = response.data.data;
-                const filteredShop = data?.find(item => item.shopDetails._id === id);
-                if (filteredShop) {
-                    setShopDetails(filteredShop);
-                } else {
-                    console.log(`Shop with ID ${id} not found.`);
-                }
-            } catch (error) {
-                console.log(error);
-            } finally {
-                setLoading(false);
-            }
-        };
+        window.scrollTo({ top: 0, behavior: 'smooth' });
         fetchData();
     }, [id]);
 
+    const fetchData = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const response = await axios.get(`${BackendUrl}/get-Listing`);
+            const data = response.data.data;
+            const filteredShop = data?.find(item => item.shopDetails._id === id);
+            
+            if (filteredShop) {
+                setShopDetails(filteredShop);
+            } else {
+                throw new Error('Shop not found');
+            }
+        } catch (error) {
+            console.error('Error fetching shop details:', error);
+            setError(error.message === 'Shop not found' ? 'Shop not found' : 'Failed to load shop details');
+        } finally {
+            setLoading(false);
+        }
+    };
+
     if (loading) {
-        return <div className='w-full min-h-screen flex items-center justify-center loading'>
-            <svg viewBox="25 25 50 50">
-                <circle r="20" cy="50" cx="50"></circle>
-            </svg>
-        </div>;
+        return (
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="w-16 h-16 border-4 border-purple-200 border-t-purple-600 rounded-full animate-spin"></div>
+            </div>
+        );
     }
 
-    if (!shopDetails) {
-        return <div className='w-full min-h-screen flex items-center justify-center'>
-            <p>Shop details not found.</p>
-        </div>;
+    if (error) {
+        return (
+            <div className="min-h-screen flex items-center justify-center p-4">
+                <div className="text-center">
+                    <AlertCircle className="w-12 h-12 text-red-500 mx-auto mb-4" />
+                    <h2 className="text-2xl font-bold text-gray-900 mb-2">{error}</h2>
+                    <p className="text-gray-600 mb-4">Please try again or contact support if the problem persists.</p>
+                    <Link 
+                        to="/"
+                        className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-md text-white bg-purple-600 hover:bg-purple-700 transition-colors"
+                    >
+                        Return Home
+                    </Link>
+                </div>
+            </div>
+        );
     }
 
     const { listing, shopDetails: shopInfo } = shopDetails;
 
     return (
-        <div className='w-full'>
-      <div className='shop-profile bg-gradient-to-r from-green-200 via-pink-200 to-purple-200 py-16 relative'>
-    <div className='relative'>
-        <div className='absolute inset-0 flex items-center justify-center text-4xl lg:text-[12rem] font-extrabold text-gray-700 opacity-30 z-20'>
-            {shopInfo.ShopName}
-        </div>
-        <div className='shop-details flex items-center justify-center flex-col h-full text-gray-800 relative z-30 py-10'>
-            <h2 className='text-xl lg:text-4xl font-extrabold md:text-3xl bg-gradient-to-r from-green-400 to-blue-500 text-transparent bg-clip-text'>{shopInfo.ShopName || 'N/A'}</h2>
-            <h3 className='text-md lg:text-2xl font-extrabold md:text-xl bg-gradient-to-r from-yellow-400 to-orange-500 text-transparent bg-clip-text'>{shopInfo.ShopCategory || 'N/A'}</h3>
-            <h3 className='text-md lg:text-xl font-extrabold md:text-lg bg-gradient-to-r from-black to-gray-900 text-transparent bg-clip-text'>{shopInfo.Email || 'N/A'}</h3>
-        </div>
-    </div>
-</div>
-
-
-  
-            <div className="grid grid-cols-1 mt-6 sm:grid-cols-2 lg:grid-cols-4 gap-6 rounded-lg p-6 mb-8">
-                {listing.Items.length > 0 && listing.Items.map((item, index) => (
-                    <div key={index} className="relative bg-white border cursor-pointer rounded overflow-hidden shadow-lg">
-                        <span className="absolute top-2 left-2 bg-green-500 text-white py-1 px-2 rounded-full text-sm font-semibold">
-                            {item.Discount}% Off
-                        </span>
-                        <a href={`/Single-Listing/${listing._id}/${listing.Title.replace(/\s+/g, '-')}`}>
-                            <img
-                                className="w-full h-48 object-cover object-center"
-                                src={listing.Pictures[0].ImageUrl}
-                                alt={listing.Title}
-                            />
-                            <div className="px-6 py-4">
-                                <div className="font-bold text-xl mb-2">{listing.Title}</div>
-                                <p className="text-sm truncate text-gray-700 mb-2">
-                                    {shopInfo ? (
-                                        <>
-                                            {shopInfo.ShopAddress.NearByLandMark || "N/A"}
-                                            , <address>
-                                                {shopInfo.ShopAddress.PinCode || "N/A"}
-                                                , {shopInfo.ShopAddress.ShopAddressStreet || "N/A"}
-                                            </address>
-                                        </>
-                                    ) : (
-                                        "N/A"
-                                    )}
-                                </p>
-                                <div className="flex items-center">
-                                    <span className="text-gray-700">{item.itemName}</span>
-                                </div>
+        <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="min-h-screen bg-gray-50"
+        >
+            {/* Hero Section */}
+            <div className="relative bg-gradient-to-r from-purple-600 to-blue-600 text-white py-20">
+                <div className="max-w-7xl mx-auto px-4">
+                    <motion.div 
+                        initial={{ y: 20, opacity: 0 }}
+                        animate={{ y: 0, opacity: 1 }}
+                        transition={{ delay: 0.2 }}
+                        className="text-center"
+                    >
+                        <h1 className="text-4xl md:text-5xl font-bold mb-4">{shopInfo.ShopName}</h1>
+                        <p className="text-xl text-purple-100">{shopInfo.ShopCategory}</p>
+                        
+                        <div className="flex items-center justify-center gap-6 mt-8">
+                            <div className="flex items-center gap-2">
+                                <MapPin className="w-5 h-5" />
+                                <span>{shopInfo.ShopAddress.PinCode}</span>
                             </div>
-                        </a>
-                    </div>
-                ))}
+                            <div className="flex items-center gap-2">
+                                <Building2 className="w-5 h-5" />
+                                <span>{shopInfo.ListingPlan} Member</span>
+                            </div>
+                            <div className="flex items-center gap-2">
+                                <Star className="w-5 h-5 fill-current" />
+                                <span>4.8/5.0</span>
+                            </div>
+                        </div>
+                    </motion.div>
+                </div>
+                
+                <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-gray-50"></div>
             </div>
-        </div>
+
+            {/* Contact Information */}
+            <div className="max-w-7xl mx-auto px-4 -mt-8 relative z-10">
+                <motion.div 
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.4 }}
+                    className="bg-white rounded-xl shadow-lg p-6 mb-8"
+                >
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
+                                <MapPin className="w-6 h-6 text-purple-600" />
+                            </div>
+                            <div>
+                                <h3 className="font-medium text-gray-900">Location</h3>
+                                <p className="text-gray-600">{shopInfo.ShopAddress.NearByLandMark}</p>
+                            </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                                <Phone className="w-6 h-6 text-blue-600" />
+                            </div>
+                            <div>
+                                <h3 className="font-medium text-gray-900">Phone</h3>
+                                <p className="text-gray-600">{shopInfo.ContactNumber}</p>
+                            </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
+                                <Mail className="w-6 h-6 text-green-600" />
+                            </div>
+                            <div>
+                                <h3 className="font-medium text-gray-900">Email</h3>
+                                <p className="text-gray-600">{shopInfo.Email}</p>
+                            </div>
+                        </div>
+                    </div>
+                </motion.div>
+            </div>
+
+            {/* Listings Grid */}
+            <div className="max-w-7xl mx-auto px-4 py-8">
+                <motion.div
+                    initial={{ y: 20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    transition={{ delay: 0.6 }}
+                >
+                    <h2 className="text-2xl font-bold text-gray-900 mb-8">Available Offers</h2>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <AnimatePresence>
+                            {listing.Items.map((item, index) => (
+                                <motion.div
+                                    key={index}
+                                    initial={{ opacity: 0, scale: 0.9 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    transition={{ delay: index * 0.1 }}
+                                    className="bg-white rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-shadow"
+                                >
+                                    <div className="relative aspect-[4/3]">
+                                        <img
+                                            src={listing.Pictures[0]?.ImageUrl}
+                                            alt={item.itemName}
+                                            className="w-full h-full object-cover"
+                                        />
+                                        <div className="absolute top-4 right-4">
+                                            <span className="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                                                {item.Discount}% OFF
+                                            </span>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="p-4">
+                                        <h3 className="font-semibold text-gray-900 mb-2">{item.itemName}</h3>
+                                        <div className="flex items-center justify-between">
+                                            <div className="flex items-center gap-2">
+                                                <Tag className="w-4 h-4 text-gray-400" />
+                                                <span className="text-gray-900 font-medium">₹{item.MrpPrice}</span>
+                                            </div>
+                                            <Link
+                                                to={`/Single-Listing/${listing._id}/${listing.Title.replace(/\s+/g, '-')}`}
+                                                className="text-purple-600 hover:text-purple-700 font-medium flex items-center gap-1"
+                                            >
+                                                View Details
+                                                <ChevronRight className="w-4 h-4" />
+                                            </Link>
+                                        </div>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
+                    </div>
+                </motion.div>
+            </div>
+        </motion.div>
     );
 };
 

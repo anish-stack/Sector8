@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Mail, Lock, ArrowLeft, KeyRound } from 'lucide-react';
 import axios from 'axios';
 
 const ForgetPassword = () => {
@@ -6,11 +8,9 @@ const ForgetPassword = () => {
         Email: '',
         newPassword: ''
     });
-
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState('');
-
     const BackendUrl = import.meta.env.VITE_REACT_APP_BACKEND_URL;
 
     const handleChange = (e) => {
@@ -29,7 +29,7 @@ const ForgetPassword = () => {
             setSuccessMessage('Password change request successful. Check your email for further instructions.');
         } catch (error) {
             setLoading(false);
-            if (error.response && error.response.data && error.response.data.msg) {
+            if (error.response?.data?.msg) {
                 setError(error.response.data.msg);
             } else {
                 setError('Something went wrong. Please try again later.');
@@ -37,87 +37,146 @@ const ForgetPassword = () => {
         }
     };
 
+    const containerVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: {
+            opacity: 1,
+            y: 0,
+            transition: {
+                duration: 0.6,
+                when: "beforeChildren",
+                staggerChildren: 0.2
+            }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0 }
+    };
+
+    const buttonVariants = {
+        hover: { scale: 1.02 },
+        tap: { scale: 0.98 },
+        disabled: { opacity: 0.6 }
+    };
+
     return (
-        <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-            <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-                <img
-                    className="mx-auto h-10 w-auto"
-                    src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-                    alt="Your Company"
-                />
-                <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-                    Change Your Password
-                </h2>
-            </div>
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center p-4">
+            <motion.div
+                className="max-w-md w-full bg-white rounded-2xl shadow-xl overflow-hidden"
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+            >
+                <div className="p-8">
+                    <motion.div
+                        className="text-center mb-8"
+                        variants={itemVariants}
+                    >
+                        <motion.div
+                            className="mx-auto w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mb-4"
+                            whileHover={{ rotate: 360 }}
+                            transition={{ duration: 0.5 }}
+                        >
+                            <KeyRound className="w-8 h-8 text-indigo-600" />
+                        </motion.div>
+                        <h2 className="text-2xl font-bold text-gray-900">Reset Password</h2>
+                        <p className="text-gray-600 mt-2">Enter your email and new password below</p>
+                    </motion.div>
 
-            <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    <div>
-                        <label htmlFor="Email" className="block text-sm font-medium leading-6 text-gray-900">
-                            Email address
-                        </label>
-                        <div className="mt-2">
-                            <input
-                                id="Email"
-                                name="Email"
-                                type="email"
-                                autoComplete="email"
-                                required
-                                value={formData.Email}
-                                onChange={handleChange}
-                                className="block px-2 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                            />
-                        </div>
-                    </div>
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        <motion.div variants={itemVariants}>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
+                                Email Address
+                            </label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <Mail className="h-5 w-5 text-gray-400" />
+                                </div>
+                                <input
+                                    type="email"
+                                    name="Email"
+                                    value={formData.Email}
+                                    onChange={handleChange}
+                                    className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                                    placeholder="Enter your email"
+                                    required
+                                />
+                            </div>
+                        </motion.div>
 
-                    <div>
-                        <div className="flex items-center justify-between">
-                            <label htmlFor="newPassword" className="block text-sm font-medium leading-6 text-gray-900">
+                        <motion.div variants={itemVariants}>
+                            <label className="block text-sm font-medium text-gray-700 mb-2">
                                 New Password
                             </label>
-                        </div>
-                        <div className="mt-2">
-                            <input
-                                id="newPassword"
-                                name="newPassword"
-                                type="password"
-                                autoComplete="new-password"
-                                required
-                                value={formData.newPassword}
-                                onChange={handleChange}
-                                className="block px-2 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                            />
-                        </div>
-                    </div>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <Lock className="h-5 w-5 text-gray-400" />
+                                </div>
+                                <input
+                                    type="password"
+                                    name="newPassword"
+                                    value={formData.newPassword}
+                                    onChange={handleChange}
+                                    className="block w-full pl-10 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors"
+                                    placeholder="Enter new password"
+                                    required
+                                />
+                            </div>
+                        </motion.div>
 
-                    <div>
-                        <button
+                        <motion.button
+                            variants={buttonVariants}
+                            whileHover="hover"
+                            whileTap="tap"
+                            animate={loading ? "disabled" : "visible"}
                             type="submit"
-                            className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                             disabled={loading}
+                            className="w-full bg-indigo-600 text-white py-2.5 rounded-lg font-semibold shadow-md hover:bg-indigo-700 transition-colors flex items-center justify-center space-x-2"
                         >
-                            {loading ? 'Loading...' : 'Change Password'}
-                        </button>
-                    </div>
+                            {loading ? (
+                                <motion.div
+                                    animate={{ rotate: 360 }}
+                                    transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                                    className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
+                                />
+                            ) : (
+                                "Reset Password"
+                            )}
+                        </motion.button>
 
-                    {error && (
-                        <div className="text-red-600 text-sm text-center mt-4">{error}</div>
-                    )}
+                        <AnimatePresence mode="wait">
+                            {(error || successMessage) && (
+                                <motion.div
+                                    initial={{ opacity: 0, y: -10 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -10 }}
+                                    className={`text-sm text-center p-3 rounded-lg ${error ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'
+                                        }`}
+                                >
+                                    {error || successMessage}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
 
-                    {successMessage && (
-                        <div className="text-green-600 text-sm text-center mt-4">{successMessage}</div>
-                    )}
-                </form>
-
-                <p className="mt-10 text-center text-sm text-gray-500">
-
-                    <a href="/Shop-Login" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
-                        Login
-                    </a>{' '}
-                    I Remember My Password
-                </p>
-
-            </div>
+                        <motion.div
+                            variants={itemVariants}
+                            className="text-center"
+                        >
+                            <motion.a
+                                href="/Shop-Login"
+                                className="inline-flex items-center text-sm text-indigo-600 hover:text-indigo-500"
+                                whileHover={{ x: -3 }}
+                                transition={{ type: "spring", stiffness: 300 }}
+                            >
+                                <ArrowLeft className="w-4 h-4 mr-1" />
+                                Back to Login
+                            </motion.a>
+                        </motion.div>
+                    </form>
+                </div>
+            </motion.div>
         </div>
     );
 };

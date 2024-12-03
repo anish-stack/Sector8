@@ -1,7 +1,7 @@
 import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Home from './pages/Home/Home';
-import Header from './components/Header/Header';
+
 import Footer from './components/Footer/Footer';
 import About from './pages/About/About';
 import SingleListing from './components/Listings/SingleListing';
@@ -14,7 +14,6 @@ import { Toaster } from 'react-hot-toast';
 import OtpPage from './pages/Auth/OtpPage';
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import UserRegister from './UserDashboard/UserRegister';
 import ShopLogin from './pages/Auth/ShopLogin';
 import PartnerDashboard from './pages/Partner/PartnerDashboard';
 import ShopDashboard from './UserDashboard/ShopDashboard';
@@ -33,6 +32,10 @@ import ErrorPage from './pages/404/ErrorPage';
 import PrivacyPolicy from './pages/PrivacyPolicy/PrivacyPolicy';
 import TermsAndConditions from './pages/TermsAndConditions/TermsAndConditions';
 import ReturnAndRefundPolicy from './pages/ReturnAndRefundPolicy/ReturnAndRefundPolicy';
+import { ContactForm } from './pages/Contact/Contact';
+import { Header } from './pages/Hero/Header';
+import Services from './pages/services/Services';
+import UserRegister from './UserDashboard/UserRegister';
 function App() {
   const [locationDetails, setLocationDetails] = useState(null);
   const [locationPopup, setLocationPopup] = useState(false);
@@ -54,7 +57,7 @@ function App() {
           );
 
           const results = response.data.results;
-          console.log("Results From ",results)
+          console.log("Results From ", results)
           if (results && results.length > 0) {
             const addressComponents = results[0].address_components;
             const formattedAddress = results[0].formatted_address;
@@ -62,11 +65,11 @@ function App() {
             const cityComponent = addressComponents.find(component =>
               component.types.includes('locality')
             );
-            
+
             const PinCodeComponent = addressComponents.find(component =>
               component.types.includes('postal_code')
             );
-            
+
             const stateComponent = addressComponents.find(component =>
               component.types.includes('administrative_area_level_1')
             );
@@ -81,7 +84,7 @@ function App() {
               state: stateComponent ? stateComponent.long_name : 'N/A',
               country: countryComponent ? countryComponent.long_name : 'N/A',
               formattedAddress,
-              PinCode:PinCodeComponent ? PinCodeComponent.long_name :'N/A'
+              PinCode: PinCodeComponent ? PinCodeComponent.long_name : 'N/A'
             });
           } else {
             console.error("No results found for the provided coordinates.");
@@ -100,11 +103,19 @@ function App() {
   };
 
   useEffect(() => {
+
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    })
+
     checkLocationAccess();
-  }, []);
+  }, [window.location.pathname]);
   return (
     <BrowserRouter>
-    <Header locationDetails={locationDetails}  />
+    <Header/>
+      {/* <Header locationDetails={locationDetails}  /> */}
+      {/* <Hero /> */}
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/About' element={<About />} />
@@ -115,12 +126,13 @@ function App() {
         <Route path='/privacy-policy' element={<PrivacyPolicy />} />
         <Route path='/terms-and-conditions' element={<TermsAndConditions />} />
         <Route path='/return-refund' element={<ReturnAndRefundPolicy />} />
+        <Route path='/services' element={<Services />} />
 
         {/* ---- Partner ----  */}
         <Route path='/Partner-Login' element={<Login />} />
         <Route path='/Register-Partner' element={<PartnerRegister />} />
         <Route path='/Otp' element={<OtpPage />} />
-        <Route path='/User-register-by-Partner/:PartnerId' locationDetails={locationDetails}  element={<UserRegister />} />
+        <Route path='/User-register-by-Partner/:PartnerId' locationDetails={locationDetails} element={<UserRegister />} />
         <Route path='/Shop-Login' element={<ShopLogin />} />
         <Route path='/Shop-Dashboard' element={<ShopDashboard />} />
         <Route path='/Shop-Dashboard/Create-Post' element={<CreateListing />} />
@@ -131,10 +143,11 @@ function App() {
 
         <Route path='/upgrade-package/:id' element={<ParentComponent />} />
         <Route path='/edit-post' element={<EditPost />} />
-        <Route path='/Post-by-categories' element={<PostByCategories  />} />
-        <Route path='/Forget-Password' element={<ForgetPassword  />} />
-        <Route path='/VerifyOtp' element={<PasswordChangeOtp  />} />
+        <Route path='/Post-by-categories' element={<PostByCategories />} />
+        <Route path='/Forget-Password' element={<ForgetPassword />} />
+        <Route path='/VerifyOtp' element={<PasswordChangeOtp />} />
 
+        <Route path='/contact' element={<ContactForm />} />
 
 
 
@@ -143,10 +156,10 @@ function App() {
 
 
 
-        
+
       </Routes>
-      <Footer/>
-      <Toaster/>
+      <Footer />
+      <Toaster />
     </BrowserRouter>
   );
 }

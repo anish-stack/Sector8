@@ -1,187 +1,117 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useGeolocated } from 'react-geolocated';
 import axios from 'axios';
-import { toast } from 'react-hot-toast';
+import toast from 'react-hot-toast';
+import LocationInput from './LocationInput';
+import PackageSelector from './PackageSelector';
+import CategorySelector from './CategorySelector';
 
-const UserRegister = ({ locationDetails }) => {
-    const [data, setData] = useState([])
-    const [city, setCity] = useState([])
+const initialFormData = {
+    UserName: '',
+    Email: '',
+    ContactNumber: '',
+    ShopName: '',
+    ShopAddress: {
+        City: '',
+        PinCode: '',
+        ShopAddressStreet: '',
+        ShopLatitude: '',
+        ShopLongitude: '',
+        ShopNo: '',
+        NearByLandMark: ''
+    },
+    ShopCategory: '',
+    ListingPlan: 'Free',
+    HowMuchOfferPost: '',
+    Password: ''
+};
+const BackendUrl = import.meta.env.VITE_REACT_APP_BACKEND_URL;
+console.log(BackendUrl)
+const UserRegister = () => {
+    const [formData, setFormData] = useState(initialFormData);
+    const [categories, setCategories] = useState([]);
     const [packages, setPackages] = useState([]);
-    const BackendUrl = import.meta.env.VITE_REACT_APP_BACKEND_URL
-    const [formData, setFormData] = useState({
-        UserName: "",
-        ShopName: "",
-        ContactNumber: "",
-        Email: "",
-        ShopAddress: {
-            City: "",
-            PinCode: "",
-            ShopNo: "",
-            ShopAddressStreet: "",
-            NearByLandMark: "",
-            ShopLongitude: "",
-            ShopLatitude: ""
-        },
-        ListingPlan: '', // Default to empty string
-        price: 0,
-        ShopCategory: "",
-        CustomCategory: "",  // New field for custom category
-        HowMuchOfferPost: "",
-        Password: "",
+    const navigate = useNavigate();
+
+    const { coords, isGeolocationAvailable, isGeolocationEnabled } = useGeolocated({
+        positionOptions: { enableHighAccuracy: false },
+        userDecisionTimeout: 5000,
     });
 
-    const [step, setStep] = useState(1);
-    const navigate = useNavigate();
-    const location = useLocation();
+    useEffect(() => {
+        fetchCategories();
+        fetchPackages();
+    }, []);
 
     useEffect(() => {
-        const query = new URLSearchParams(location.search);
-        const currentStep = query.get('step');
-        if (currentStep) {
-            setStep(parseInt(currentStep));
+        if (coords) {
+            fetchCurrentLocation();
         }
+    }, [coords]);
 
-        const savedData = localStorage.getItem('formData');
-        if (savedData) {
-            setFormData(JSON.parse(savedData));
-        }
-    }, [location]);
-
-    useEffect(() => {
-        localStorage.setItem('formData', JSON.stringify(formData));
-    }, [formData]);
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-
-        // Validate contact number field for mobile devices
-        if (name === 'ContactNumber') {
-            // Allow only numeric input and restrict to 10 digits
-            const regex = /^[0-9]{0,10}$/;
-            if (!regex.test(value)) {
-                // Display a toast or error message for invalid input
-                toast.error('Please enter a valid contact number (10 digits)');
-                return;
-            }
-        }
-        if (name === 'Email') {
-            // Automatically append @gmail.com if not present
-            let email = value.trim();
-            if (!email.includes('@')) {
-                email += '@gmail.com';
-            }
-            setFormData(prevState => ({
-                ...prevState,
-                [name]: email
-            }));
-        } else {
-            setFormData(prevState => ({
-                ...prevState,
-                [name]: value
-            }));
-        }
-
-        if (name === 'ListingPlan') {
-            updatePrice(value);
+    const fetchCategories = async () => {
+        try {
+            const response = await axios.get(`${BackendUrl}/admin-get-categories`);
+            setCategories(response.data.data);
+        } catch (error) {
+            toast.error('Error fetching categories');
         }
     };
 
-    const fetchData = async () => {
-        try {
-            const response = await axios.get(`${BackendUrl}/admin-get-categories`)
-            const data = response.data.data
-            console.log(data)
-            setData(data)
-        } catch (error) {
-            console.log(error)
-        }
-    }
     const fetchPackages = async () => {
         try {
             const response = await axios.get(`${BackendUrl}/admin-packages`);
             setPackages(response.data.packages);
-
-            console.log(response.data.packages)
         } catch (error) {
-            console.log('Error fetching packages:', error);
+            toast.error('Error fetching packages');
         }
     };
 
-    const fetchCity = async () => {
+    const fetchCurrentLocation = async () => {
+        if (!coords) return;
+
         try {
-            const response = await axios.get(`${BackendUrl}/admin-get-city`);
-            const data = response.data
-            setCity(data)
+            const response = await axios.post(`http://localhost:7485/Fetch-Current-Location`, {
+                lat: coords.latitude,
+                lng: coords.longitude
+            });
+
+            const locationData = response.data.data;
+            setFormData(prev => ({
+                ...prev,
+                ShopAddress: {
+                    ...prev.ShopAddress,
+                    City: locationData.address?.city || '',
+                    PinCode: locationData.address?.postalCode || '',
+                    ShopAddressStreet: locationData.address?.completeAddress || '',
+                    ShopLatitude: locationData.address?.lat || '',
+                    ShopLongitude: locationData.address?.lng || ''
+                }
+            }));
         } catch (error) {
-            console.log(error)
+            toast.error('Error fetching location');
         }
-    }
-    useEffect(() => {
-        fetchData()
-        fetchCity()
-        fetchPackages()
-    }, [])
-    const handleAddressChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prevState => ({
-            ...prevState,
-            ShopAddress: {
-                ...prevState.ShopAddress,
-                [name]: value
-            }
-        }));
-    };
-
-    const nextStep = () => {
-        // Check if required fields in Step 1 are filled
-        const { UserName, ShopName, ContactNumber, Email, ShopAddress: { PinCode } } = formData;
-        if (!UserName || !ShopName || !ContactNumber || !Email || !PinCode) {
-            toast.error('Please fill in all required fields before proceeding.');
-            return;
-        }
-
-        // Proceed to the next step if all fields are filled
-        setStep(prevStep => {
-            const newStep = prevStep + 1;
-            navigate(`?step=${newStep}`);
-            return newStep;
-        });
-    };
-
-
-    const prevStep = () => {
-        setStep(prevStep => {
-            const newStep = prevStep - 1;
-            navigate(`?step=${newStep}`);
-            return newStep;
-        });
     };
 
     const handleSubmit = async (e) => {
+        console.log(formData)
+        e.preventDefault();
         try {
-            e.preventDefault()
-            // Validate required fields before submission
-            if (!validateForm()) {
-                return;
-            }
-
             const response = await axios.post(`${BackendUrl}/register-list-user`, formData, {
                 headers: {
                     Authorization: `Bearer ${localStorage.getItem('B2bToken')}`
                 }
             });
 
-            // Handle response based on ListingPlan
             if (formData.ListingPlan === 'Free') {
-                toast.success('Shop listed successfully.');
-                localStorage.removeItem('formData');  // Clear form data after successful submission
+                toast.success('Shop listed successfully');
+                navigate('/Shop-login');
             } else {
-                // Handle payment process for Silver or Gold plan
                 const order = response.data.order;
-
                 const options = {
-                    key: "rzp_test_gwvXwuaK4gKsY3",
-                    amount: order?.amount || null,
+                    key: "rzp_test_gQGRDFaoEskOdr",
+                    amount: order?.amount,
                     currency: "INR",
                     name: "Nai Deal",
                     description: `Payment For Plans Name ${formData.ListingPlan}`,
@@ -193,268 +123,140 @@ const UserRegister = ({ locationDetails }) => {
                         email: formData.Email,
                         contact: formData.ContactNumber
                     },
-                    notes: {
-                        "address": "Razorpay Corporate Office"
-                    },
-                    theme: {
-                        "color": "#121212"
-                    }
+                    theme: { color: "#121212" }
                 };
 
                 const razorpay = new window.Razorpay(options);
-                razorpay.on('payment.failed', function (response) {
+                razorpay.on('payment.failed', () => {
                     toast.error('Payment failed. Please try again.');
                 });
                 razorpay.open();
             }
 
-            toast.success('Shop listed successfully. Make your first post!');
-            localStorage.removeItem('formData');  // Clear form data after successful submission
+            localStorage.removeItem('formData');
         } catch (error) {
-            toast.error('There was an error registering: ' + error.response?.data?.message || 'Unknown error');
-            console.error('There was an error:', error);
+            console.log(error)
+            toast.error(error.response?.data?.message || 'Registration failed');
         }
-    };
-
-    const validateForm = () => {
-        const { UserName, ShopName, ContactNumber, Email, ShopAddress: { PinCode } } = formData;
-        if (!UserName || !ShopName || !ContactNumber || !Email || !PinCode) {
-            toast.error('Please fill in all required fields.');
-            return false;
-        }
-
-        // Additional validations can be added here as needed
-
-        return true;
-    };
-
-    const updatePrice = (plan) => {
-        // Example function to update price based on selected plan
-        let price = 0;
-        switch (plan) {
-            case 'Silver':
-                price = 100; // Example price for Silver plan
-                break;
-            case 'Gold':
-                price = 200; // Example price for Gold plan
-                break;
-            default:
-                price = 0; // Default to free plan
-                break;
-        }
-        setFormData(prevState => ({
-            ...prevState,
-            price: price
-        }));
     };
 
     return (
-        <div className="min-h-screen bg-gray-100 flex items-center justify-center">
-            <div className="bg-white shadow-lg rounded-lg p-8 max-w-2xl m-4 w-full">
-                <div className="mb-4 text-center">
-                    <h1 className="text-2xl font-bold">List Your Shop in a Simple Two-Step Process</h1>
+      
+        <>
+               <h2 className="text-4xl mt-5 font-extrabold text-center text-gray-800 ">
+                        Register Your Shop
+                    </h2>
+            <div className="w-full max-w-7xl mx-auto grid lg:grid-cols-2 grid-cols-1 bg-white mt-4 overflow-hidden">
+                {/* Left Section (Image Area) */}
+                
+                <div className="relative  flex items-center justify-center p-6">
+                    <img
+                        src="https://img.freepik.com/free-vector/shop-with-sign-we-are-open_23-2148562563.jpg?t=st=1733121386~exp=1733124986~hmac=b6a8e1440a9bd46879579a0a7387c3b2904a79b3867201bf8a8e00fad0a5ae8a&w=740"
+                        alt="Shop Illustration"
+                        className="rounded-md shadow-md w-full  object-cover"
+                    />
+                  
                 </div>
-                <div className="flex justify-center mb-8">
-                    <div className="flex items-center">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${step === 1 ? 'bg-orange-500 text-white' : 'bg-gray-300'}`}>
-                            1
-                        </div>
-                        <div className="w-32 h-1 bg-gray-300"></div>
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${step === 2 ? 'bg-orange-500 text-white' : 'bg-gray-300'}`}>
-                            2
-                        </div>
-                    </div>
-                </div>
-                <div>
-                    <h2 className="text-lg font-semibold mb-4">User Registration Form</h2>
-                    <form onSubmit={handleSubmit}>
-                        {/* Step 1: Basic Information */}
-                        {step === 1 && (
-                            <div className="space-y-4">
-                                <label className="block">
-                                    <span className="text-gray-700">Username:</span>
-                                    <input
-                                        type="text"
-                                        name="UserName"
-                                        value={formData.UserName}
-                                        onChange={handleInputChange}
-                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                        required
-                                    />
-                                </label>
-                                <label className="block">
-                                    <span className="text-gray-700">Shop Name:</span>
-                                    <input
-                                        type="text"
-                                        name="ShopName"
-                                        value={formData.ShopName}
-                                        onChange={handleInputChange}
-                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                        required
-                                    />
-                                </label>
-                                <label className="block">
-                                    <span className="text-gray-700">Contact Number:</span>
-                                    <input
-                                        type="text"
-                                        name="ContactNumber"
-                                        value={formData.ContactNumber}
-                                        onChange={handleInputChange}
-                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                        required
-                                    />
-                                </label>
-                                <label className="block">
-                                    <span className="text-gray-700">Email:</span>
-                                    <input
-                                        type="email"
-                                        name="Email"
-                                        value={formData.Email}
-                                        onChange={handleInputChange}
-                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                        required
-                                    />
-                                </label>
-                                <label className="block">
-                                    <span className="text-gray-700">Password:</span>
-                                    <input
-                                        type="Password"
-                                        name="Password"
-                                        value={formData.Password}
-                                        onChange={handleInputChange}
-                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                        required
-                                    />
-                                </label>
-                                <label className="block">
-                                    <span className="text-gray-700">City:</span>
-                                    <select
-                                        name="City"
-                                        value={formData.ShopAddress.City}
-                                        onChange={handleAddressChange}
-                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                        required
-                                    >
-                                        <option value="">Select City</option>
-                                        {city.map((city) => (
-                                            <option key={city._id} value={city.cityName}>
-                                                {city.cityName}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </label>
-                                <label className="block">
-                                    <span className="text-gray-700">Pin Code:</span>
-                                    <input
-                                        type="text"
-                                        name="PinCode"
-                                        value={formData.ShopAddress.PinCode}
-                                        onChange={handleAddressChange}
-                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                        required
-                                    />
-                                </label>
-                                <button
-                                    type="button"
-                                    onClick={nextStep}
-                                    className="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
-                                >
-                                    Next
-                                </button>
-                            </div>
-                        )}
 
-                        {/* Step 2: Additional Information */}
-                        {step === 2 && (
-                            <div className="space-y-4">
-                                <label className="block">
-                                    <span className="text-gray-700">House No / Shop No / Apartment No</span>
-                                    <input
-                                        type="text"
-                                        name="ShopNo"
-                                        value={formData.ShopAddress.ShopNo}
-                                        onChange={handleAddressChange}
-                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                        required
-                                    />
-                                </label>
-                                <label className="block">
-                                    <span className="text-gray-700">Street Address</span>
-                                    <input
-                                        type="text"
-                                        name="ShopAddressStreet"
-                                        value={formData.ShopAddress.ShopAddressStreet}
-                                        onChange={handleAddressChange}
-                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                        required
-                                    />
-                                </label>
-                                <label className="block">
-                                    <span className="text-gray-700">Any Near landmark</span>
-                                    <input
-                                        type="text"
-                                        name="NearByLandMark"
-                                        value={formData.ShopAddress.NearByLandMark}
-                                        onChange={handleAddressChange}
-                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                        required
-                                    />
-                                </label>
-                                <label className="block">
-                                    <span className="text-gray-700">Shop Category:</span>
-                                    <select
-                                        name="ShopCategory"
-                                        value={formData.ShopCategory}
-                                        onChange={handleInputChange}
-                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                        required
-                                    >
-                                        <option value="">Select Category</option>
-                                        {data.map((packages) => (
-                                            <option key={packages._id} value={packages.CategoriesName}>
-                                                {packages.CategoriesName}
-                                            </option>
-                                        ))}
-                                    </select>
-                                </label>
-                                <label className="block">
-                                    <span className="text-gray-700">Listing Plan:</span>
-                                    <select
-                                        name="ListingPlan"
-                                        value={formData.ListingPlan}
-                                        onChange={handleInputChange}
-                                        className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                        required
-                                    >
-                                        <option value="">Select Plan</option>
-                                        {packages.map((packages) => (
-                                            <option value={packages.packageName} key={packages._id}>{packages.packageName}</option>
-                                        ))}
-                                    </select>
-                                </label>
-                                <div className="flex justify-between">
-                                    <button
-                                        type="button"
-                                        onClick={prevStep}
-                                        className="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
-                                    >
-                                        Previous
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        className="bg-gray-500 text-white py-2 px-4 rounded-md hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-opacity-50"
-                                    >
-                                        Register
-                                    </button>
-                                </div>
+                {/* Right Section */}
+                <div className="flex flex-col items-center justify-center ">
+             
+
+                    <form onSubmit={handleSubmit} className="space-y-6 p-5 w-full ">
+                        {/* Basic Information */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700">Username</label>
+                                <input
+                                    type="text"
+                                    required
+                                    value={formData.UserName}
+                                    onChange={(e) => setFormData({ ...formData, UserName: e.target.value })}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                />
                             </div>
-                        )}
+
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700">Shop Name</label>
+                                <input
+                                    type="text"
+                                    required
+                                    value={formData.ShopName}
+                                    onChange={(e) => setFormData({ ...formData, ShopName: e.target.value })}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700">Email</label>
+                                <input
+                                    type="email"
+                                    value={formData.Email}
+                                    onChange={(e) => setFormData({ ...formData, Email: e.target.value })}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="block text-sm font-semibold text-gray-700">Contact Number</label>
+                                <input
+                                    type="tel"
+                                    value={formData.ContactNumber}
+                                    onChange={(e) => setFormData({ ...formData, ContactNumber: e.target.value })}
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Location Information */}
+                        <LocationInput
+                            formData={formData}
+                            setFormData={setFormData}
+                            isGeolocationAvailable={isGeolocationAvailable}
+                            isGeolocationEnabled={isGeolocationEnabled}
+                        />
+
+                        {/* Category and Package Selection */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                            <CategorySelector
+                                categories={categories}
+                                value={formData.ShopCategory}
+                                onChange={(category) => setFormData({ ...formData, ShopCategory: category })}
+                            />
+
+                            <PackageSelector
+                                packages={packages}
+                                value={formData.ListingPlan}
+                                onChange={(plan) => setFormData({ ...formData, ListingPlan: plan })}
+                            />
+                        </div>
+
+                        {/* Password */}
+                        <div>
+                            <label className="block text-sm font-semibold text-gray-700">Password</label>
+                            <input
+                                type="password"
+                                required
+                                value={formData.Password}
+                                onChange={(e) => setFormData({ ...formData, Password: e.target.value })}
+                                className="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
+                            />
+                        </div>
+
+                        {/* Submit Button */}
+                        <button
+                            type="submit"
+                            className="w-full py-3 px-6 bg-indigo-600 text-white text-lg font-semibold rounded-md shadow hover:bg-indigo-700 transition-all focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                        >
+                            Register Shop
+                        </button>
                     </form>
                 </div>
             </div>
-        </div>
+        </>
+     
 
     );
-};
+}
 
-export default UserRegister;
+export default UserRegister

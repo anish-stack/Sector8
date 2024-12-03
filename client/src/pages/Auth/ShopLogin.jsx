@@ -1,12 +1,17 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
+import { Eye, EyeOff, Store, AlertCircle, Loader2 } from 'lucide-react';
 
 const ShopLogin = () => {
   const [formData, setFormData] = useState({
     Email: "",
     Password: ""
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState("");
   const BackendUrl = import.meta.env.VITE_REACT_APP_BACKEND_URL;
 
   const handleChange = (e) => {
@@ -15,123 +20,181 @@ const ShopLogin = () => {
       ...prevState,
       [name]: value
     }));
+    setError(""); // Clear error when user starts typing
+  };
+
+  const validateForm = () => {
+    if (!formData.Email || !formData.Password) {
+      setError("All fields are required");
+      return false;
+    }
+    if (!/\S+@\S+\.\S+/.test(formData.Email)) {
+      setError("Please enter a valid email address");
+      return false;
+    }
+    if (formData.Password.length < 6) {
+      setError("Password must be at least 6 characters long");
+      return false;
+    }
+    return true;
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!validateForm()) return;
+
+    setIsLoading(true);
+    setError("");
 
     try {
       const response = await axios.post(`${BackendUrl}/login-shop-user`, formData);
-      // Assuming your server responds with some data upon successful login
-      // console.log('Login Successful:', response.data);
+      const { token, login } = response.data;
 
-      const data = response.data.token;
-
-      if (response.data.login.ListingPlan === 'Free') {
-        toast.success('Login Successful');
-        localStorage.setItem('ShopToken', data);
-        window.location.href = "/Shop-Dashboard";
-      } else if (response.data.login.ListingPlan === 'Silver' || response.data.login.ListingPlan === 'Gold') {
-        // Check if payment is done
-        if (response.data.login.PaymentDone === true) {
-          toast.success('Login Successful');
-          localStorage.setItem('ShopToken', data);
-          window.location.href = "/Shop-Dashboard";
+      if (login.ListingPlan === 'Free') {
+        handleSuccessfulLogin(token);
+      } else if (['Silver', 'Gold'].includes(login.ListingPlan)) {
+        if (login.PaymentDone) {
+          handleSuccessfulLogin(token);
         } else {
-          toast.error('Payment is not done.');
+          setError("Payment is pending. Please complete your payment to access the dashboard.");
+          toast.error('Payment is pending');
         }
       }
-
-      setFormData({
-        Email: '',
-        Password: ''
-      });
-
-      // Redirect or perform any other action upon successful login
-
     } catch (error) {
-      console.error('Login Error:', error);
-      toast.error('Login Failed. Please check your credentials.');
+      const errorMessage = error.response?.data?.message || 'Login failed. Please check your credentials.';
+      setError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
+      setIsLoading(false);
     }
   };
 
+  const handleSuccessfulLogin = (token) => {
+    localStorage.setItem('ShopToken', token);
+    toast.success('Login successful! Redirecting to dashboard...');
+    setTimeout(() => {
+      window.location.href = "/Shop-Dashboard";
+    }, 1000);
+  };
 
   return (
-    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
-      <div className="sm:mx-auto sm:w-full sm:max-w-sm">
-        <img
-          className="mx-auto h-10 w-auto"
-          src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-          alt="Your Company"
-        />
-        <h2 className="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
-          Sign in to Shop account
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="min-h-screen bg-gradient-to-b from-indigo-50 to-white flex flex-col justify-center px-6 py-12 lg:px-8"
+    >
+      <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <motion.div
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: "spring", stiffness: 200, damping: 15 }}
+          className="w-20 h-20 mx-auto bg-indigo-600 rounded-full flex items-center justify-center"
+        >
+          <Store className="w-10 h-10 text-white" />
+        </motion.div>
+        
+        <h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">
+          Shop Login
         </h2>
+        <p className="mt-2 text-center text-sm text-gray-600">
+          Access your shop dashboard
+        </p>
       </div>
 
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
-              Email
-            </label>
-            <div className="mt-2">
-              <input
-                id="Email"
-                name="Email"
-                type="email"
-                autoComplete="Email"
-                required
-                value={formData.Email}
-                onChange={handleChange}
-                className="block px-2 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
-            </div>
-          </div>
+      <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="bg-white px-6 py-8 shadow-xl rounded-xl sm:px-10"
+        >
+          <AnimatePresence mode="wait">
+            {error && (
+              <motion.div
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="mb-4 p-3 rounded-lg bg-red-50 flex items-center gap-2 text-red-700"
+              >
+                <AlertCircle className="w-5 h-5" />
+                <p className="text-sm">{error}</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-          <div>
-            <div className="flex items-center justify-between">
-              <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div>
+              <label htmlFor="Email" className="block text-sm font-medium text-gray-700">
+                Email address
+              </label>
+              <div className="mt-1">
+                <input
+                  id="Email"
+                  name="Email"
+                  type="email"
+                  autoComplete="email"
+                  required
+                  value={formData.Email}
+                  onChange={handleChange}
+                  className="block w-full px-3 py-2 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200"
+                  placeholder="your@email.com"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label htmlFor="Password" className="block text-sm font-medium text-gray-700">
                 Password
               </label>
+              <div className="mt-1 relative">
+                <input
+                  id="Password"
+                  name="Password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                  required
+                  value={formData.Password}
+                  onChange={handleChange}
+                  className="block w-full px-3 py-2 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                >
+                  {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                </button>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between">
               <div className="text-sm">
-                <a href="/Forget-Password" className="font-semibold text-indigo-600 hover:text-indigo-500">
-                  Forgot password?
+                <a href="/Forget-Password" className="font-medium text-indigo-600 hover:text-indigo-500 transition-colors duration-200">
+                  Forgot your password?
                 </a>
               </div>
             </div>
-            <div className="mt-2">
-              <input
-                id="Password"
-                name="Password"
-                type="Password"
-                autoComplete="current-password"
-                required
-                value={formData.Password}
-                onChange={handleChange}
-                className="block px-2 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              />
-            </div>
-          </div>
 
-          <div>
-            <button
+            <motion.button
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
               type="submit"
-              className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+              disabled={isLoading}
+              className="w-full flex justify-center items-center gap-2 py-3 px-4 rounded-lg bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 text-white font-medium transition-colors duration-200 disabled:opacity-70 disabled:cursor-not-allowed"
             >
-              Sign in
-            </button>
-          </div>
-        </form>
-
-        {/* <p className="mt-10 text-center text-sm text-gray-500">
-          Not a member?{' '}
-          <a href="/User-register-by-Partner/7458" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
-            Start Your First Post Free On Today
-          </a>
-        </p> */}
+              {isLoading ? (
+                <>
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                  Signing in...
+                </>
+              ) : (
+                'Sign in'
+              )}
+            </motion.button>
+          </form>
+        </motion.div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

@@ -8,6 +8,7 @@ const { getUnApprovedPosts, MakeAPostApproved, getDashboardData } = require('../
 const { createPackage, getAllPackages, updatePackage, deletePackage } = require('../controllers/Packagecontroller');
 const { createCity, updateCity, deleteCity, getAllCities } = require('../controllers/Citycontroller');
 const { createCategory, updateCategory, getAllCategories, deleteCategory } = require('../controllers/CategoriesController');
+const { CreateBanner, GetAllBanner, UpdateBanner, DeleteBanner, GetAllBannerActive, MakeSetting, GetSetting, UpdateSetting, createMarquee, updateMarquee, deleteMarquee, getAllMarquee } = require('../controllers/Webpage.controller');
 const router = express.Router();
 
 const storage = multer.memoryStorage();
@@ -25,7 +26,7 @@ router.post('/Create-Listing', upload.any(), CreateListing); // Using upload.any
 router.post('/Create-Post', protect, upload.any(), CreatePost);
 router.post('/paymentverification', paymentVerification)
 router.get('/get-Listing-un', getUnApprovedPosts);
-router.get('/get-listing',getAllPostApprovedPost)
+router.get('/get-listing', getAllPostApprovedPost)
 router.get('/get-listing/:id', getPostById);
 router.delete('/delete-listing/:id', deletePostById);
 router.delete('/delete-all-listings', deleteAllPost);
@@ -37,8 +38,8 @@ router.get('/list-of-shop-user', protect, GetAllShopListByPartner);
 router.get('/My-Shop-Details', protect, MyShopDetails);
 router.get('/My-Shop-Post', protect, getMyPostOnly);
 router.get('/Post-by-categories/:Name', getPostByCategory);
-router.post('/Create-Forget-Password',CreateForgetPasswordRequest)
-router.post('/verify-Otp-For-ForgetPassword',verifyOtp)
+router.post('/Create-Forget-Password', CreateForgetPasswordRequest)
+router.post('/verify-Otp-For-ForgetPassword', verifyOtp)
 
 
 router.post('/Search', SearchByPinCodeCityAndWhatYouWant);
@@ -73,7 +74,35 @@ router.get('/admin-get-city', getAllCities);
 router.delete('/admin-delete-city/:id', deleteCity);
 
 
+// Banners
+router.post('/create-banner', upload.single('image'), CreateBanner)
+router.get('/get-banner', GetAllBanner)
+router.get('/get-banner-active', GetAllBannerActive)
 
+//setting
+router.post('/setting', MakeSetting)
+router.get('/get-setting', GetSetting)
+router.post('/UpdateSetting', UpdateSetting)
+
+
+
+router.delete('/delete-banner/:id', DeleteBanner)
+router.post('/update-banner/:id',upload.single('image'), UpdateBanner)
+
+
+
+
+// Route for creating a marquee
+router.post('/create-marquee',createMarquee);
+
+// Route for updating a marquee
+router.patch('/update-marquee/:id',updateMarquee);
+
+// Route for deleting a marquee
+router.delete('/delete-marquee/:id',deleteMarquee);
+
+// Route for getting all marquees
+router.get('/get-all-marquees',getAllMarquee);
 
 
 
