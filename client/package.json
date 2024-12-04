@@ -10,11 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@tiptap/react": "^2.10.3",
+    "@tiptap/starter-kit": "^2.10.3",
     "axios": "^1.7.2",
     "client": "file:",
     "date-fns": "^3.6.0",
     "framer-motion": "^11.12.0",
     "i": "^0.3.7",
+    "jodit-react": "^4.1.2",
     "lucide-react": "^0.462.0",
     "npm": "^10.9.1",
     "react": "^18.3.1",

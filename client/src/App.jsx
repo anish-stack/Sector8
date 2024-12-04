@@ -16,7 +16,7 @@ import { useEffect, useState } from 'react';
 import axios from 'axios';
 import ShopLogin from './pages/Auth/ShopLogin';
 import PartnerDashboard from './pages/Partner/PartnerDashboard';
-import ShopDashboard from './UserDashboard/ShopDashboard';
+import ShopDashboard from './Shop/ShopDashboard';
 import CreateListing from './UserDashboard/CreateListing';
 import SearchProduct from './pages/Search/SearchProduct';
 import ShopProfile from './pages/ShopProfiles/ShopProfile';

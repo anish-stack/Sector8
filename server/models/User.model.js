@@ -2,6 +2,9 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 
 const ListingUserSchema = new mongoose.Schema({
+    ProfilePic:{
+        type:String
+    },
     UserName: {
         type: String,
         required: [true, "Please provide a User Name"]
@@ -52,6 +55,17 @@ const ListingUserSchema = new mongoose.Schema({
         type: String,
         required: [true, "Please provide Shop Category"]
     },
+    LandMarkCoordinates: {
+        type: {
+            type: String, // Must be "Point"
+            enum: ['Point'], // Restrict to "Point" only
+            required: true
+        },
+        coordinates: {
+            type: [Number], // Array of numbers for [longitude, latitude]
+            required: true
+        }
+    },
 
     HowMuchOfferPost: {
         type: Number,
@@ -91,6 +105,9 @@ const ListingUserSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    isUpdatedProfile:{
+        type:Boolean,
+    },
     PartnerId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "Partner"
@@ -99,6 +116,8 @@ const ListingUserSchema = new mongoose.Schema({
 
 // Add 2dsphere index to the Location field
 ListingUserSchema.index({ 'ShopAddress.Location': '2dsphere' });
+ListingUserSchema.index({ 'LandMarkCoordinates': '2dsphere' });
+
 
 ListingUserSchema.pre('save', async function (next) {
     const user = this;

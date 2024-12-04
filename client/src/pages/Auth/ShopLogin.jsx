@@ -49,25 +49,15 @@ const ShopLogin = () => {
     try {
       const response = await axios.post(`${BackendUrl}/login-shop-user`, formData);
       const { token, login } = response.data;
-      console.log(response.data)
-      if (login.ListingPlan === 'Free') {
-        localStorage.setItem('ShopToken', token);
-        toast.success('Login successful! Redirecting to dashboard...');
-        setTimeout(() => {
-          window.location.href = "/Shop-Dashboard";
-        }, 3000);
-      } else if (['Silver', 'Gold'].includes(login.ListingPlan)) {
-        if (login.PaymentDone) {
-          localStorage.setItem('ShopToken', token);
-          toast.success('Login successful! Redirecting to dashboard...');
-          setTimeout(() => {
-            window.location.href = "/Shop-Dashboard";
-          }, 3000);
-        } else {
-          setError("Payment is pending. Please complete your payment to access the dashboard.");
-          toast.error('Payment is pending');
-        }
-      }
+
+      localStorage.setItem('ShopToken', token);
+      localStorage.setItem('ShopUser', login);
+
+      toast.success('Login successful! Redirecting to dashboard...');
+      setTimeout(() => {
+        window.location.href = "/Shop-Dashboard";
+      }, 3000);
+
     } catch (error) {
       console.log(error)
       const errorMessage = error.response?.data?.message || 'Login failed. Please check your credentials.';

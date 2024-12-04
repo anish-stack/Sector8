@@ -174,6 +174,44 @@ app.get('/autocomplete', async (req, res) => {
     }
 });
 
+
+app.get('/geocode', async (req, res) => {
+    const { address } = req.query;
+
+    if (!address) {
+        return res.status(400).send({ error: 'Address is required' });
+    }
+
+    try {
+        // console.log(process.env.GOOGLE_MAP_KEY)
+        // Make a request to Google Geocoding API
+        const response = await axios.get('https://maps.googleapis.com/maps/api/geocode/json', {
+            params: {
+                address: address,
+                key: "AIzaSyCBATa-tKn2Ebm1VbQ5BU8VOqda2nzkoTU"
+            },
+        });
+        console.log(response.data)
+        if (response.data.status === 'OK') {
+            const location = response.data.results[0].geometry.location;
+            const lat = location.lat;
+            const lng = location.lng;
+
+            // Send the lat and lng back to the client
+            res.json({
+                latitude: lat,
+                longitude: lng,
+                formatted_address: response.data.results[0].formatted_address,
+            });
+        } else {
+            res.status(404).json({ error: 'No results found for the provided address' });
+        }
+    } catch (error) {
+        console.error('Error fetching geocoding data:', error);
+        res.status(500).send({ error: 'Server error' });
+    }
+});
+
 // Routes
 app.get('/', (req, res) => {
     res.send(`I am From Coupons Backend Server Running On Port Number ${PORT}`);

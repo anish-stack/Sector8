@@ -21,6 +21,7 @@ const initialFormData = {
         ShopNo: '',
         NearByLandMark: ''
     },
+    LandMarkCoordinates: '',
     ShopCategory: '',
     ListingPlan: 'Free',
     HowMuchOfferPost: '',
@@ -93,6 +94,27 @@ const UserRegister = () => {
             toast.error('Error fetching location');
         }
     };
+    const handleGeoCode = async (landmark) => {
+        if (!landmark) {
+            toast.error('Please enter landmark to proceed')
+            return
+        }
+        try {
+            const response = await axios.get(`http://localhost:7485/geocode?address=${landmark}`)
+            const locationData = response.data;
+            console.log(locationData)
+            setFormData((prev) => ({
+                ...prev,
+                LandMarkCoordinates: {
+                    type: 'Point',
+                    coordinates: [locationData?.longitude, locationData?.latitude]
+                }
+            }))
+        } catch (error) {
+            console.log(error)
+
+        }
+    }
 
     const handleSubmit = async (e) => {
         console.log(formData)
@@ -226,6 +248,7 @@ const UserRegister = () => {
                         <LocationInput
                             formData={formData}
                             setFormData={setFormData}
+                            GeoCode={handleGeoCode}
                             isGeolocationAvailable={isGeolocationAvailable}
                             isGeolocationEnabled={isGeolocationEnabled}
                         />

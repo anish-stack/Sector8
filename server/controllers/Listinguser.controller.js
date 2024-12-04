@@ -41,7 +41,7 @@ exports.ListUser = async (req, res) => {
         const {
             UserName, Email, ContactNumber, ShopName,
             ShopAddress, ShopCategory, ListingPlan,
-            HowMuchOfferPost, Password
+            HowMuchOfferPost, Password,LandMarkCoordinates
         } = req.body;
 
         // Auth check
@@ -92,8 +92,10 @@ exports.ListUser = async (req, res) => {
             UserName, Email, ContactNumber, ShopName,
             ShopAddress: formattedShopAddress,
             ShopCategory, ListingPlan,
+            ProfilePic: `https://ui-avatars.com/api/?name=${UserName}&background=random`,
             HowMuchOfferPost, Password,
             PartnerId,
+            LandMarkCoordinates,
             FreeListing: ListingPlan === 'Free - Rs:0' ? 'Free Listing' : undefined
         };
 
@@ -128,6 +130,145 @@ exports.ListUser = async (req, res) => {
     }
 };
 
+exports.UploadProfileImage = async (req, res) => {
+    try {
+        // Get the user ID from the request
+        const user = req.user.id;
+
+        if (!user) {
+            return res.status(StatusCodes.UNAUTHORIZED).json({
+                success: false,
+                message: 'Unauthorized'
+            });
+        }
+
+        const checkShop = await ListingUser.findById(user);
+        if (!checkShop) {
+            return res.status(StatusCodes.UNAUTHORIZED).json({
+                success: false
+            });
+        }
+
+        // Check if a file was uploaded
+        const file = req.file;
+        if (!file || Object.keys(file).length === 0) {
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                success: false,
+                message: 'No file uploaded'
+            });
+        }
+
+        // Upload image to Cloudinary and wait for result
+        const uploadResult = await new Promise((resolve, reject) => {
+            Cloudinary.uploader.upload_stream(
+                {
+                    folder: `profile_images`,
+                    public_id: `profile_${user}`,
+                    overwrite: true,
+                    transformation: { width: 300, height: 300, crop: 'fill' }
+                },
+                (error, result) => {
+                    if (error) {
+                        console.error('Cloudinary upload error:', error);
+                        reject('Error uploading image to Cloudinary');
+                    }
+                    resolve(result);
+                }
+            ).end(file.buffer);
+        });
+
+        // Update the user's profile picture URL
+        checkShop.ProfilePic = uploadResult.secure_url;
+        await checkShop.save();
+
+        // Return the result with Cloudinary image details
+        return res.status(StatusCodes.OK).json({
+            success: true,
+            message: 'Profile image uploaded successfully',
+            data: {
+                public_id: uploadResult.public_id,
+                url: uploadResult.secure_url
+            }
+        });
+
+    } catch (error) {
+        console.error('Error uploading profile image:', error);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: 'Error uploading profile image'
+        });
+    }
+};
+
+
+exports.UpdateProfileDetails = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        // Check if the user is authorized
+        if (!userId) {
+            return res.status(StatusCodes.UNAUTHORIZED).json({
+                success: false,
+                message: 'Unauthorized'
+            });
+        }
+
+        // Find the user's shop details
+        const checkShop = await ListingUser.findById(userId);
+        if (!checkShop) {
+            return res.status(StatusCodes.NOT_FOUND).json({
+                success: false,
+                message: 'Shop not found'
+            });
+        }
+
+        // Destructure the fields from the request body
+        const { ShopName, UserName, Email, ContactNumber } = req.body;
+        console.log(req.body)
+        // Prepare an object for the updated fields
+        const updatedFields = {};
+
+        // Check and add fields to be updated
+        if (ShopName && ShopName !== checkShop.ShopName) {
+            updatedFields.ShopName = ShopName;
+        }
+        if (UserName && UserName !== checkShop.UserName) {
+            updatedFields.UserName = UserName;
+        }
+        if (Email && Email !== checkShop.Email) {
+            updatedFields.Email = Email;
+        }
+        if (ContactNumber && ContactNumber !== checkShop.ContactNumber) {
+            updatedFields.ContactNumber = ContactNumber;
+        }
+     
+
+        // If no fields were updated, return a response
+        if (Object.keys(updatedFields).length === 0) {
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                success: false,
+                message: 'No fields have been updated.'
+            });
+        }
+
+        // Update the shop details with the new values
+        const updatedShop = await ListingUser.findByIdAndUpdate(userId, updatedFields, { new: true });
+
+        // Respond with the updated shop details
+        return res.status(StatusCodes.OK).json({
+            success: true,
+            message: 'Profile updated successfully',
+            data: updatedShop
+        });
+
+    } catch (error) {
+        console.error(error);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: 'Something went wrong while updating the profile.'
+        });
+    }
+};
 
 
 exports.getAllShops = async (req, res) => {
@@ -145,10 +286,11 @@ exports.getAllShops = async (req, res) => {
 
 exports.paymentVerification = async (req, res) => {
     try {
-        console.log(req.body)
+        // console.log(req.body)
         const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
 
         const body = razorpay_order_id + "|" + razorpay_payment_id;
+        let findUser = await ListingUser.findOne({ OrderId: razorpay_order_id });
 
         const expectedSignature = crypto
             .createHmac("sha256", process.env.RAZORPAY_APT_SECRET || "seWgj8epMRq7Oeb7bvC3IZCe")
@@ -165,17 +307,20 @@ exports.paymentVerification = async (req, res) => {
                 razorpay_payment_id,
                 razorpay_signature,
             });
-            const findUser = await ListingUser.findOne({ OrderId: razorpay_order_id });
             if (findUser) {
                 findUser.PaymentDone = true;
                 await findUser.save();
             } else {
+
                 console.error('User not found for the given order ID');
+
             }
             res.redirect(
                 `${process.env.FRONTEND_URL}/paymentsuccess?reference=${razorpay_payment_id}`
             );
         } else {
+            findUser.PaymentDone = false;
+            await findUser.save();
             res.status(400).json({
                 success: false,
                 message: 'Payment verification failed',
@@ -718,23 +863,101 @@ exports.getAllPost = async (req, res) => {
 };
 exports.getAllPostApprovedPost = async (req, res) => {
     try {
-        console.log("i am hit");
+        let listings = [];
+        const query = req.query;
+        const { lat, lng } = query;
 
-        // Fetch all listings that are approved
-        const listings = await Listing.find({ isApprovedByAdmin: true }).populate('ShopId');
-
-        if (listings.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: 'No listings found.',
+        // If no lat or lng is provided, fetch all approved listings without geospatial filtering
+        if (!lat || !lng) {
+            listings = await Listing.find({ isApprovedByAdmin: true }).populate('ShopId');
+            return res.status(200).json({
+                success: true,
+                count: listings.length,
+                data: listings.reverse(), // Optional: reverse the order if needed
             });
         }
 
-        // Return shuffled listings
+        // Convert lat and lng to float and ensure valid coordinates
+        const coordinates = [parseFloat(lng), parseFloat(lat)];
+
+        // Validate coordinates
+        if (isNaN(coordinates[0]) || isNaN(coordinates[1])) {
+            return res.status(400).json({
+                success: false,
+                error: 'Invalid latitude or longitude provided.',
+            });
+        }
+        
+        // Fetch listings within 2km of the provided coordinates, first checking ShopAddress.Location
+      listings = await Listing.aggregate([
+            // Step 1: Populate ShopId first
+            {
+              $lookup: {
+                from: 'shops',  // Replace 'shops' with the correct collection name for the shops
+                localField: 'ShopId',  // The field in your Listing collection
+                foreignField: '_id',  // The field in the Shop collection that matches ShopId
+                as: 'ShopDetails',  // The name of the new array field to hold populated data
+              },
+            },
+          
+            // Step 2: Unwind the populated ShopDetails array
+            {
+              $unwind: {
+                path: '$ShopDetails',
+                preserveNullAndEmptyArrays: true,  // Handle cases where there's no matching Shop
+              },
+            },
+          
+            // Step 3: GeoNear query using populated ShopAddress.Location
+            {
+              $geoNear: {
+                near: { type: 'Point', coordinates: coordinates },
+                distanceField: 'distance',
+                maxDistance: 2000,  // 2 km in meters
+                spherical: true,
+                query: { 'ShopDetails.ShopAddress.Location': { $exists: true } },  // Use the populated field
+              },
+            },
+          
+            // Step 4: Apply any additional filtering like isApprovedByAdmin
+            {
+              $match: {
+                isApprovedByAdmin: true,  // Filter for approved listings
+              },
+            },
+          ]);
+          
+          console.log(listings);
+          
+
+        // If no listings found based on ShopAddress.Location, check the LandMarkCoordinates field
+        if (listings.length === 0) {
+            listings = await Listing.aggregate([
+                {
+                    $geoNear: {
+                        near: { type: 'Point', coordinates: coordinates },
+                        distanceField: 'distance',
+                        maxDistance: 2000,  // 2 km in meters
+                        spherical: true,
+                        query: { 'ShopId.LandMarkCoordinates': { $exists: true } },
+                    },
+                },
+                { $match: { isApprovedByAdmin: true } },
+            ]);
+        }
+
+        // If still no listings are found, return all approved listings
+        if (listings.length === 0) {
+            listings = await Listing.find({ isApprovedByAdmin: true }).populate('ShopId');
+        }
+
+        console.log(listings.length); // Log the listings
+
+        // Return the result to the client
         return res.status(200).json({
             success: true,
             count: listings.length,
-            data: listings,
+            data: listings.reverse(), // Optional: reverse the order if needed
         });
     } catch (error) {
         console.error('Error fetching listings:', error);

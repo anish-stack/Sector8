@@ -41,7 +41,7 @@ const ListingCard = ({ item, index }) => {
             </h3>
 
             <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-              {item.ShopId.ShopAddress.NearByLandMark}, {item.ShopId.ShopAddress.PinCode}
+              {item.ShopId?.ShopAddress?.NearByLandMark}, {item?.ShopId.ShopAddress.PinCode}
             </p>
 
             {item.Items.length > 0 && (

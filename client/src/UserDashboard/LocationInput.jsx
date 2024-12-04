@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const LocationInput = ({ formData, setFormData, isGeolocationAvailable, isGeolocationEnabled }) => {
+const LocationInput = ({ formData, setFormData, isGeolocationAvailable, isGeolocationEnabled,GeoCode }) => {
   const [suggestions, setSuggestions] = useState([]); // State to hold autocomplete suggestions
   const [loading, setLoading] = useState(false); // State to handle loading spinner
 
@@ -13,6 +13,7 @@ const LocationInput = ({ formData, setFormData, isGeolocationAvailable, isGeoloc
       ...formData,
       ShopAddress: { ...formData.ShopAddress, NearByLandMark: value },
     });
+
 
     try {
       const { data } = await axios.get('http://localhost:7485/autocomplete', {
@@ -33,6 +34,7 @@ const LocationInput = ({ formData, setFormData, isGeolocationAvailable, isGeoloc
       ...formData,
       ShopAddress: { ...formData.ShopAddress, NearByLandMark: suggestion.description },
     });
+    GeoCode(suggestion.description)
     setSuggestions([]); // Clear suggestions after selection
   };
 

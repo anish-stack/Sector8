@@ -1,7 +1,7 @@
 const express = require('express');
 const { createPartner, verifyOtpAndEmail, resendAccountVerifyOtp, resendForgetPasswordOtp, login, logout, verifyForgetPasswordOtp, deletePartnerAccount, forgetPasswordRequest, GetAllShopListByPartner, getAllPartner, GetAllShopListByPartnerAdmin } = require('../controllers/Partnercontroller');
 const { CreateListing, getAllListing, getListingById, deleteListingById, deleteAllListings, UpdateListing, getPostByCategory } = require('../controllers/ListingControllers');
-const { ListUser, LoginListUser, MyShopDetails, CreatePost, getAllPost, getPostById, deletePostById, deleteAllPost, getMyPostOnly, SearchByPinCodeCityAndWhatYouWant, getAllShops, DeleteListUser, updateDetailsOfListUser, paymentVerification, showPaymentDetails, allPayments, CreateForgetPasswordRequest, verifyOtp, getAllPostApprovedPost } = require('../controllers/Listinguser.controller');
+const { ListUser, LoginListUser, MyShopDetails, CreatePost, getAllPost, getPostById, deletePostById, deleteAllPost, getMyPostOnly, SearchByPinCodeCityAndWhatYouWant, getAllShops, DeleteListUser, updateDetailsOfListUser, paymentVerification, showPaymentDetails, allPayments, CreateForgetPasswordRequest, verifyOtp, getAllPostApprovedPost, UploadProfileImage, UpdateProfileDetails } = require('../controllers/Listinguser.controller');
 const { protect } = require('../middlewares/Protect');
 const multer = require('multer');
 const { getUnApprovedPosts, MakeAPostApproved, getDashboardData } = require('../controllers/Shop');
@@ -40,6 +40,10 @@ router.get('/My-Shop-Post', protect, getMyPostOnly);
 router.get('/Post-by-categories/:Name', getPostByCategory);
 router.post('/Create-Forget-Password', CreateForgetPasswordRequest)
 router.post('/verify-Otp-For-ForgetPassword', verifyOtp)
+router.post('/Upload-Profile-Image',protect,upload.single('image'), UploadProfileImage)
+router.post('/Upload-Profile-Details',protect, UpdateProfileDetails)
+
+
 
 
 router.post('/Search', SearchByPinCodeCityAndWhatYouWant);
