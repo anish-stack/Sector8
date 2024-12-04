@@ -12,7 +12,7 @@ const PackageSelector = ({ packages, value, onChange })=> {
         >
         <option value="Free">Free - Rs:0</option>
         {packages.map((pkg) => (
-          <option key={pkg._id} value={pkg.name}>
+          <option key={pkg._id} value={pkg.packageName}>
             {pkg.packageName} - Rs:{pkg.packagePrice}
           </option>
         ))}

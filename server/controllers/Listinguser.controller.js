@@ -37,7 +37,7 @@ exports.ListUser = async (req, res) => {
                 .json({ success: false, errors: errors.array() });
         }
 
-        console.log(req.body);
+    
         const {
             UserName, Email, ContactNumber, ShopName,
             ShopAddress, ShopCategory, ListingPlan,

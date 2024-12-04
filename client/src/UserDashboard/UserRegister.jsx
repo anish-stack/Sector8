@@ -28,7 +28,7 @@ const initialFormData = {
     Password: ''
 };
 const BackendUrl = import.meta.env.VITE_REACT_APP_BACKEND_URL;
-console.log(BackendUrl)
+// console.log(BackendUrl)
 const UserRegister = () => {
     const [formData, setFormData] = useState(initialFormData);
     const [categories, setCategories] = useState([]);

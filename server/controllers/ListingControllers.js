@@ -4,7 +4,8 @@ const Cloudinary = require('cloudinary').v2;
 const { validationResult } = require('express-validator');
 const sendEmail = require('../utils/SendEmail');
 const ListingUser = require('../models/User.model')
-const dotenv = require('dotenv')
+const dotenv = require('dotenv');
+const Package = require('../models/Pacakge');
 dotenv.config()
 Cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
@@ -14,12 +15,11 @@ Cloudinary.config({
 
 exports.CreateListing = async (req, res) => {
     try {
-        console.log("i am hit")
+      
         const ShopId = req.user.id;
         const CoverImages = req.files['images'];
         const itemsImages = req.body['Items'];
-        console.log("Items", itemsImages)
-        console.log("CoverImages", CoverImages)
+     
         if (!ShopId) {
             return res.status(401).json({
                 success: false,
@@ -29,19 +29,19 @@ exports.CreateListing = async (req, res) => {
 
         const CheckMyShop = await ListingUser.findById(ShopId).select('-Password');
         const { ListingPlan, HowMuchOfferPost } = CheckMyShop;
-        const planLimits = {
-            Free: 1,
-            Silver: 5,
-            Gold: 10
-        };
+       
+        const Plans = await Package.findOne({
+            packageName: ListingPlan
+        })
 
-        if (HowMuchOfferPost >= planLimits[ListingPlan]) {
+        if (HowMuchOfferPost >= Plans?.postsDone) {
             return res.status(403).json({
                 success: false,
                 msg: `You have reached the post limit for your ${ListingPlan} plan. Please upgrade your plan.`
             });
         }
 
+        
         const { Title, Details } = req.body;
 
         const Items = [];
