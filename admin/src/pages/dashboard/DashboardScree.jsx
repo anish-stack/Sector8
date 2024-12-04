@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-
+import {
+    Bell, Users, Package, Handshake, DollarSign, MapPin, Store, Coins, CheckCircle, XCircle
+} from 'lucide-react';
 import 'tailwindcss/tailwind.css';
 
 const DashboardScreen = () => {
@@ -11,20 +13,20 @@ const DashboardScreen = () => {
             try {
                 const response = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/admin-Statistics`);
                 setData(response.data.data);
-                console.log(response.data.data)
             } catch (error) {
                 console.error('Error fetching dashboard data:', error);
             }
         };
-
         fetchData();
     }, []);
-    const loadingClasses = "flex justify-center items-center h-screen";
+
     if (!data) {
-        return <div className={loadingClasses}>
-        <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-gray-900"></div>
-        <span className="ml-4 text-xl font-semibold">Loading...</span>
-      </div>;
+        return (
+            <div className="flex justify-center items-center h-screen">
+                <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
+                <span className="ml-4 text-xl font-semibold">Loading...</span>
+            </div>
+        );
     }
 
     const {
@@ -38,153 +40,79 @@ const DashboardScreen = () => {
         totalApprovedPosts,
         totalUnapprovedPosts,
         totalCityWeDeal,
-        totalCategoriesWeDeal
+        totalCategoriesWeDeal,
     } = data;
 
-    const chartColors = ['#36A2EB', '#FFCE56', '#FF6384', '#4CAF50', '#F44336'];
-
     return (
-        <div className="container mx-auto p-1">
-            <div className="flex justify-end mb-4">
+        <div className="  mx-auto">
+            {/* Notification Section */}
+            <div className="flex justify-end mb-6">
                 <div className="relative">
-                    <a href="/approve-post" className="flex cursor-pointer items-center">
-                        <i className="fa-solid fa-bell text-red-500 text-2xl mr-1"></i>
+                    <a href="/approve-post" className="flex items-center space-x-2 cursor-pointer">
+                        <Bell className="text-red-500 text-2xl" />
                         <span className="bg-red-500 rounded-full h-6 w-6 flex items-center justify-center text-white text-xs font-bold">
-                            {totalUnapprovedPosts || "0"}
+                            {totalUnapprovedPosts || 0}
                         </span>
                     </a>
                 </div>
             </div>
-            <h1 className="text-3xl font-bold mb-4">Admin Dashboard</h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                <div className="bg-white shadow-lg rounded-lg p-6">
-                    <i className="fa-solid fa-user text-blue-500 text-3xl mb-4 "></i>
-                    <h2 className="text-xl font-semibold">Total Users</h2>
-                    <p className="text-2xl">{totalUsers || "0"}</p>
-                </div>
-                <div className="bg-white shadow-lg rounded-lg p-6">
-                    <i className="fa-solid fa-cart-shopping text-yellow-500 text-3xl mb-4"></i>
-                    <h2 className="text-xl font-semibold">Total Packages</h2>
-                    <p className="text-2xl">{packageLength || "0"}</p>
-                </div>
-                <div className="bg-white shadow-lg rounded-lg p-6">
-                    <i className="fa-solid fa-box-open text-green-500 text-3xl mb-4"></i>
-                    <h2 className="text-xl font-semibold">Total Partners</h2>
-                    <p className="text-2xl">{partnerLength || "0"}</p>
-                </div>
-                <div className="bg-white shadow-lg rounded-lg p-6">
-                    <i className="fa-solid fa-sack-dollar text-purple-500 text-3xl mb-4"></i>
-                    <h2 className="text-xl font-semibold">Total Payment (₹)</h2>
-                    <p className="text-2xl">{totalPaymentAmountRupees.toFixed(2) || "0"}</p>
-                </div>
-                <div className="bg-white shadow-lg rounded-lg p-6">
-                    <i className=" fa-solid fa-city text-red-500 text-3xl mb-4"></i>
-                    <h2 className="text-xl whitespace-nowrap font-semibold">Total City  :-  {totalCityWeDeal || "0"}  </h2>
-                    <p className="text-2xl"></p>
-                </div>
-                <div className="bg-white shadow-lg rounded-lg p-6">
-                    <i className="fa-solid fa-store text-gray-900 text-3xl mb-4"></i>
-                    <h2 className="text-xl whitespace-nowrap font-semibold">Total Categories :-  {totalCategoriesWeDeal || "0"} </h2>
-                </div>
-                <div className="bg-white shadow-lg rounded-lg p-6 max-w-sm mx-auto">
-    <div className="flex items-center mb-4">
-        <i className="fa-solid fa-list-ol text-gray-900 text-3xl"></i>
-        <h2 className="text-xl font-semibold ml-4">Total Listings</h2>
-    </div>
-    <div className="flex flex-col space-y-2">
-        <div className="flex items-center justify-between">
-            <span className="font-medium">Gold</span>
-            <span className="flex items-center">
-                <i className="fa-solid fa-coins text-yellow-500 mr-2"></i> {totalGoldListing || "0"}
-            </span>
-        </div>
-        <div className="flex items-center justify-between">
-            <span className="font-medium">Silver</span>
-            <span className="flex items-center">
-                <i className="fa-solid fa-coins text-gray-500 mr-2"></i> {totalSilverListing || "0"}
-            </span>
-        </div>
-        <div className="flex items-center justify-between">
-            <span className="font-medium">Free</span>
-            <span className="flex items-center">
-                <i className="fa-solid fa-coins text-green-500 mr-2"></i> {totalFreeListing || "0"}
-            </span>
-        </div>
-    </div>
-</div>
 
+            {/* Dashboard Header */}
+            <h1 className="text-3xl font-bold mb-6 text-center">Admin Dashboard</h1>
+
+            {/* Statistics Grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <StatCard icon={<Users className="text-blue-500" />} title="Total Users" value={totalUsers} />
+                <StatCard icon={<Package className="text-yellow-500" />} title="Total Packages" value={packageLength} />
+                <StatCard icon={<Handshake className="text-green-500" />} title="Total Partners" value={partnerLength} />
+                <StatCard
+                    icon={<DollarSign className="text-purple-500" />}
+                    title="Total Payment (₹)"
+                    value={totalPaymentAmountRupees.toFixed(2)}
+                />
+                <StatCard icon={<MapPin className="text-red-500" />} title="Total Cities" value={totalCityWeDeal} />
+                <StatCard icon={<Store className="text-gray-900" />} title="Total Categories" value={totalCategoriesWeDeal} />
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-8">
-                <div className="bg-white shadow-lg rounded-lg p-6">
+
+            {/* Listings Overview */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-8">
+                <div className="bg-white shadow-md rounded-lg p-6">
                     <h2 className="text-xl font-semibold mb-4">Listings Breakdown</h2>
-                    <div className="flex justify-between items-center mb-4">
-                        <div className="flex-1 relative">
-                            <p className="text-lg text-gray-600">Free Listings</p>
-                            <div className="bg-gray-300 h-4 w-full rounded-lg">
-                                <div
-                                    className="bg-blue-500 h-4 rounded-lg"
-                                    style={{ width: `${(totalFreeListing / (totalFreeListing + totalGoldListing + totalSilverListing)) * 100}%` }}
-                                ></div>
-                                <div className="absolute top-0 right-0 -mr-4 mt-1 bg-blue-500 text-white px-2 py-1 rounded-md hidden group-hover:block">
-                                    {totalFreeListing}
-                                </div>
-                            </div>
-                        </div>
-                        <div className="flex-1 ml-4 relative">
-                            <p className="text-lg text-gray-600">Gold Listings</p>
-                            <div className="bg-gray-300 h-4 w-full rounded-lg">
-                                <div
-                                    className="bg-yellow-500 h-4 rounded-lg"
-                                    style={{ width: `${(totalGoldListing / (totalFreeListing + totalGoldListing + totalSilverListing)) * 100}%` }}
-                                ></div>
-                                <div className="absolute top-0 right-0 -mr-4 mt-1 bg-yellow-500 text-white px-2 py-1 rounded-md hidden group-hover:block">
-                                    {totalGoldListing}
-                                </div>
-                            </div>
-                        </div>
-                        <div className="flex-1 ml-4 relative">
-                            <p className="text-lg text-gray-600">Silver Listings</p>
-                            <div className="bg-gray-300 h-4 w-full rounded-lg">
-                                <div
-                                    className="bg-red-500 h-4 rounded-lg"
-                                    style={{ width: `${(totalSilverListing / (totalFreeListing + totalGoldListing + totalSilverListing)) * 100}%` }}
-                                ></div>
-                                <div className="absolute top-0 right-0 -mr-4 mt-1 bg-red-500 text-white px-2 py-1 rounded-md hidden group-hover:block">
-                                    {totalSilverListing}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <ListingBar label="Free Listings" value={totalFreeListing} total={totalFreeListing + totalGoldListing + totalSilverListing} color="blue-500" />
+                    <ListingBar label="Gold Listings" value={totalGoldListing} total={totalFreeListing + totalGoldListing + totalSilverListing} color="yellow-500" />
+                    <ListingBar label="Silver Listings" value={totalSilverListing} total={totalFreeListing + totalGoldListing + totalSilverListing} color="gray-500" />
                 </div>
-                <div className="bg-white shadow-lg rounded-lg p-6">
+
+                <div className="bg-white shadow-md rounded-lg p-6">
                     <h2 className="text-xl font-semibold mb-4">Posts Approval Status</h2>
-                    <div className="flex justify-between items-center mb-4">
-                        <div className="flex-1 relative">
-                            <p className="text-lg text-gray-600">Approved Posts</p>
-                            <div className="bg-gray-300 h-4 w-full rounded-lg">
-                                <div
-                                    className="bg-green-500 h-4 rounded-lg"
-                                    style={{ width: `${(totalApprovedPosts / (totalApprovedPosts + totalUnapprovedPosts)) * 100}%` }}
-                                ></div>
-                                <div className="absolute top-0 right-0 -mr-4 mt-1 bg-green-500 text-white px-2 py-1 rounded-md hidden group-hover:block">
-                                    {totalApprovedPosts}
-                                </div>
-                            </div>
-                        </div>
-                        <div className="flex-1 ml-4 relative">
-                            <p className="text-lg text-gray-600">Unapproved Posts</p>
-                            <div className="bg-gray-300 h-4 w-full rounded-lg">
-                                <div
-                                    className="bg-red-500 h-4 rounded-lg"
-                                    style={{ width: `${(totalUnapprovedPosts / (totalApprovedPosts + totalUnapprovedPosts)) * 100}%` }}
-                                ></div>
-                                <div className="absolute top-0 right-0 -mr-4 mt-1 bg-red-500 text-white px-2 py-1 rounded-md hidden group-hover:block">
-                                    {totalUnapprovedPosts}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <ListingBar label="Approved Posts" value={totalApprovedPosts} total={totalApprovedPosts + totalUnapprovedPosts} color="green-500" />
+                    <ListingBar label="Unapproved Posts" value={totalUnapprovedPosts} total={totalApprovedPosts + totalUnapprovedPosts} color="red-500" />
                 </div>
+            </div>
+        </div>
+    );
+};
+
+// Reusable Stat Card Component
+const StatCard = ({ icon, title, value }) => (
+    <div className="bg-white shadow-md rounded-lg p-6 flex flex-col items-center">
+        <div className="text-3xl mb-4">{icon}</div>
+        <h2 className="text-lg font-semibold">{title}</h2>
+        <p className="text-2xl font-bold">{value || 0}</p>
+    </div>
+);
+
+// Reusable Progress Bar Component
+const ListingBar = ({ label, value, total, color }) => {
+    const percentage = ((value / total) * 100).toFixed(2);
+    return (
+        <div className="mb-4">
+            <div className="flex justify-between items-center mb-2">
+                <span className="font-medium text-gray-700">{label}</span>
+                <span className="font-medium">{value}</span>
+            </div>
+            <div className="w-full bg-gray-300 rounded-full h-4">
+                <div className={`bg-${color} h-4 rounded-full`} style={{ width: `${percentage}%` }}></div>
             </div>
         </div>
     );

@@ -201,7 +201,7 @@ exports.UpdateBanner = async (req, res) => {
 
 exports.MakeSetting = async (req, res) => {
     try {
-        const { logo, contactNumber, adminId, officeAddress, links, FooterEmail } = req.body;
+        const { logo,footerLogo,BioFooter, contactNumber, adminId, officeAddress, links, FooterEmail } = req.body;
 
         const newSetting = new Settings({
             logo,
@@ -209,7 +209,9 @@ exports.MakeSetting = async (req, res) => {
             adminId,
             officeAddress,
             links,
-            FooterEmail
+            FooterEmail,
+            footerLogo,
+            BioFooter
         });
 
         const savedSetting = await newSetting.save();

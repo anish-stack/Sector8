@@ -5,6 +5,14 @@ const SettingsSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
+    footerLogo:{
+        type: String,
+        trim: true,
+    },
+    BioFooter:{
+        type: String,
+        trim: true,
+    },
     contactNumber: {
         type: String,
         trim: true,

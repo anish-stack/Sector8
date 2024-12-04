@@ -12,7 +12,7 @@ const Footer = () => {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const response = await axios.get('http://localhost:7485/api/v1/get-setting');
+        const response = await axios.get('https://api.naideal.com/api/v1/get-setting');
         if (response.data.success) {
           setSettings(response.data.data);
           console.log(response.data.data)
@@ -34,14 +34,12 @@ const Footer = () => {
           <div className="space-y-6">
             <div className="flex items-center gap-2">
               <a href="/" className="flex items-center space-x-2">
-                <img src={settings?.logo || "https://placehold.co/60x40"} alt="Logo" className="h-10" />
+                <img src={settings?.footerLogo || "https://placehold.co/60x40"} alt="Logo" className="h-10" />
               </a>
 
             </div>
             <p className="text-gray-300">
-              Naideal is a multi-vendor e-commerce platform connecting buyers and sellers.
-              Offering diverse products, secure payments, and real-time tracking, we ensure
-              a seamless shopping experience.
+            {settings?.BioFooter}
             </p>
             <SocialLinks data={settings?.links} />
           </div>

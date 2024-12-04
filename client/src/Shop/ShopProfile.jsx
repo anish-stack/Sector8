@@ -120,7 +120,7 @@ const ShopProfile = ({ shopDetails, onUpgradePackage, onLogout, onProfileUpload,
 
                         <button
                             onClick={onUpgradePackage}
-                            className="w-full flex items-center justify-center gap-3 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white py-3 px-5 rounded-lg shadow-md transform hover:scale-105 transition-all duration-300 ease-in-out"
+                            className="w-full flex whitespace-nowrap items-center justify-center gap-3 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 hover:from-indigo-600 hover:via-purple-600 hover:to-pink-600 text-white py-3 px-5 rounded-lg shadow-md transform hover:scale-105 transition-all duration-300 ease-in-out"
                         >
                             <Crown className="w-6 h-6" />
                             <span className="text-lg font-semibold">Upgrade Your Package</span>

@@ -4,11 +4,16 @@ import axios from 'axios';
 const Settings = () => {
   const [settings, setSettings] = useState({
     logo: '',
+    favicon:'',
+    Metatitle:'',
+    MetaDescript:'',
     contactNumber: '',
     adminId: '',
     officeAddress: '',
     links: [{ appName: '', appLink: '' }],
     FooterEmail: '',
+    footerLogo:'',
+    BioFooter:'',
   });
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
@@ -17,7 +22,7 @@ const Settings = () => {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const response = await axios.get('http://localhost:7485/api/v1/get-setting');
+        const response = await axios.get('https://api.naideal.com/api/v1/get-setting');
         if (response.data.success) {
           setSettings(response.data.data);
         } else {
@@ -73,7 +78,7 @@ const Settings = () => {
     e.preventDefault();
     setUpdating(true);
     try {
-      const response = await axios.post('http://localhost:7485/api/v1/UpdateSetting', settings);
+      const response = await axios.post('https://api.naideal.com/api/v1/UpdateSetting', settings);
       if (response.data.success) {
         alert('Settings updated successfully!');
       } else {
@@ -99,6 +104,16 @@ const Settings = () => {
             type="text"
             name="logo"
             value={settings.logo}
+            onChange={handleChange}
+            className="w-full p-2 border border-gray-300 rounded"
+          />
+        </div>
+        <div>
+          <label className="block font-medium text-gray-700">Footer Logo URL</label>
+          <input
+            type="text"
+            name="footerLogo"
+            value={settings.footerLogo}
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded"
           />
@@ -139,6 +154,16 @@ const Settings = () => {
             type="email"
             name="FooterEmail"
             value={settings.FooterEmail}
+            onChange={handleChange}
+            className="w-full p-2 border border-gray-300 rounded"
+          />
+        </div>
+        <div>
+          <label className="block font-medium text-gray-700">Footer Bio</label>
+          <textarea
+           rows={4}
+            name="BioFooter"
+            value={settings.BioFooter}
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded"
           />

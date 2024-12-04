@@ -1,90 +1,87 @@
-// Sidebar.js
-import React from 'react';
+import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { cn } from '../../lib/utils'; // Assuming you have the cn function in the same directory
+import { Menu, X, LayoutDashboard, Users, Store, DiamondPercent, Tag, MapPin, Image, CheckSquare, MessageSquare, CreditCard, Package, Settings, LogOut } from 'lucide-react';
 
-const Sidebar = () => {
-    const handleLogout = () => {
-        localStorage.removeItem('newDealToken')
-        window.location.reload()
-    }
-    return (
-        <>
+const menuItems = [
+  { path: '/', label: 'Dashboard', icon: LayoutDashboard },
+  { path: '/Partners', label: 'All Partners', icon: Users },
+  { path: '/All-Shops', label: 'All Shops', icon: Store },
+  { path: '/All-categories', label: 'Categories', icon: Tag },
+  { path: '/All-City', label: 'City', icon: MapPin },
+  { path: '/Home-Banner', label: 'Home Banner', icon: Image },
+  { path: '/All-Post?All=true', label: 'Offers-Posted', icon: DiamondPercent },
 
-            <div className="flex h-screen">
-                <aside className="w-72 bg-gray-800 text-white lg:w-64 md:w-48 sm:w-40">
-                    <div className="p-4">
-                        <h1 className="text-xl font-semibold">Nai Deal Admin</h1>
-                    </div>
-                    <nav className="mt-4">
-                        <ul>
-                            <li className="p-1 hover:bg-gray-700">
-                                <NavLink to="/" className={({ isActive }) => cn("block px-4 py-2", isActive ? "bg-gray-700" : "")}>
-                                    Dashboard
-                                </NavLink>
-                            </li>
-                            <li className="p-1 hover:bg-gray-700">
-                                <NavLink to="/Partners" className={({ isActive }) => cn("block px-4 py-2", isActive ? "bg-gray-700" : "")}>
-                                    All Partner
-                                </NavLink>
-                            </li>
-                            <li className="p-1 hover:bg-gray-700">
-                                <NavLink to="/All-Shops" className={({ isActive }) => cn("block px-4 py-2", isActive ? "bg-gray-700" : "")}>
-                                    All Shops
-                                </NavLink>
-                            </li>
-                            <li className="p-1 hover:bg-gray-700">
-                                <NavLink to="/All-categories" className={({ isActive }) => cn("block px-4 py-2", isActive ? "bg-gray-700" : "")}>
-                                    Categories
-                                </NavLink>
-                            </li>
-                            <li className="p-1 hover:bg-gray-700">
-                                <NavLink to="/All-City" className={({ isActive }) => cn("block px-4 py-2", isActive ? "bg-gray-700" : "")}>
-                                    City
-                                </NavLink>
-                            </li>
-                            <li className="p-1 hover:bg-gray-700">
-                                <NavLink to="/Home-Banner" className={({ isActive }) => cn("block px-4 py-2", isActive ? "bg-gray-700" : "")}>
-                                    Home Banner
-                                </NavLink>
-                            </li>
-                            <li className="p-1 hover:bg-gray-700">
-                                <NavLink to="/approve-post" className={({ isActive }) => cn("block px-4 py-2", isActive ? "bg-gray-700" : "")}>
-                                    Approve Post
-                                </NavLink>
-                            </li>
-                            <li className="p-1 hover:bg-gray-700">
-                                <NavLink to="/Marquees" className={({ isActive }) => cn("block px-4 py-2", isActive ? "bg-gray-700" : "")}>
-                                Marquees
-                                </NavLink>
-                            </li>
-                            <li className="p-1 hover:bg-gray-700">
-                                <NavLink to="/All-Payments-Details" className={({ isActive }) => cn("block px-4 py-2", isActive ? "bg-gray-700" : "")}>
-                                    Payments
-                                </NavLink>
-                            </li>
-                            <li className="p-1 hover:bg-gray-700">
-                                <NavLink to="/All-Packages" className={({ isActive }) => cn("block px-4 py-2", isActive ? "bg-gray-700" : "")}>
-                                    Packages
-                                </NavLink>
-                            </li>
-                            <li className="p-1 hover:bg-gray-700">
-                                <NavLink to="/Settings" className={({ isActive }) => cn("block px-4 py-2", isActive ? "bg-gray-700" : "")}>
-                                    Settings
-                                </NavLink>
-                            </li>
-                            <li className="p-1 hover:bg-gray-700">
-                                <NavLink onClick={handleLogout} className={({ isActive }) => cn("block px-4 py-2", isActive ? "bg-gray-700" : "")}>
-                                    Logout
-                                </NavLink>
-                            </li>
-                        </ul>
-                    </nav>
-                </aside>
+  { path: '/approve-post', label: 'Approve Post', icon: CheckSquare },
+  { path: '/Marquees', label: 'Marquees', icon: MessageSquare },
+  { path: '/All-Payments-Details', label: 'Payments', icon: CreditCard },
+  { path: '/All-Packages', label: 'Packages', icon: Package },
+  { path: '/Settings', label: 'Settings', icon: Settings },
+];
 
-            </div>
-        </>
-    );
+const Header = () => {
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const handleLogout = () => {
+    localStorage.removeItem('newDealToken');
+    window.location.reload();
+  };
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  return (
+    <>
+      <button
+        onClick={toggleMobileMenu}
+        className="lg:hidden fixed top-4 left-4 z-50 p-2 rounded-md bg-gray-800 text-white"
+      >
+        {isMobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+      </button>
+
+      <aside
+        className={`${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-40 w-64 bg-gray-800 text-white transition-transform duration-300 ease-in-out transform`}
+      >
+        <div className="p-6 border-b border-gray-700">
+          <h1 className="text-2xl font-bold">Nai Deal Admin</h1>
+        </div>
+
+        <nav className="mt-6 px-4">
+          <ul className="space-y-1">
+            {menuItems.map((item) => {
+              const Icon = item.icon;
+              return (
+                <li key={item.path}>
+                  <NavLink
+                    to={item.path}
+                    className={({ isActive }) =>
+                      `flex items-center px-4 py-2 text-sm rounded-lg transition-colors ${isActive
+                        ? 'bg-gray-700 text-white'
+                        : 'text-gray-300 hover:bg-gray-700 hover:text-white'
+                      }`
+                    }
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <Icon className="w-5 h-5 mr-3" />
+                    {item.label}
+                  </NavLink>
+                </li>
+              );
+            })}
+            <li>
+              <button
+                onClick={handleLogout}
+                className="w-full flex items-center px-4 py-3 text-sm text-gray-300 rounded-lg hover:bg-gray-700 hover:text-white transition-colors"
+              >
+                <LogOut className="w-5 h-5 mr-3" />
+                Logout
+              </button>
+            </li>
+          </ul>
+        </nav>
+      </aside>
+    </>
+  );
 };
 
-export default Sidebar;
+export default Header;

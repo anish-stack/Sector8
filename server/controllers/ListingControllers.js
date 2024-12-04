@@ -322,6 +322,123 @@ exports.UpdateListing = async (req, res) => {
     }
 };
 
+exports.UpdateListingAdmin = async (req, res) => {
+    try {
+        const ShopId = req.query.id;
+        const ListingId = req.query.ListingId;
+
+        if (!ShopId) {
+            return res.status(401).json({
+                success: false,
+                msg: "Please Login"
+            });
+        }
+      
+        const CheckMyShop = await ListingUser.findById(ShopId).select('-Password');
+        if (!CheckMyShop) {
+            return res.status(404).json({
+                success: false,
+                msg: "Shop not found"
+            });
+        }
+
+        const { Title, Details } = req.body;
+
+        const listing = await Listing.findById(ListingId);
+        if (!listing) {
+            return res.status(404).json({
+                success: false,
+                msg: "Listing not found"
+            });
+        }
+
+        if (listing.ShopId.toString() !== ShopId) {
+            return res.status(403).json({
+                success: false,
+                msg: "Unauthorized"
+            });
+        }
+
+        const Items = [];
+        for (let i = 0; req.body[`Items[${i}].itemName`] !== undefined; i++) {
+            Items.push({
+                itemName: req.body[`Items[${i}].itemName`],
+                MrpPrice: req.body[`Items[${i}].MrpPrice`],
+                Discount: req.body[`Items[${i}].Discount`],
+                dishImages: []
+            });
+        }
+
+        console.log('Items before adding images:', Items);
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ success: false, errors: errors.array() });
+        }
+
+        // console.log("dishImage", req.files['dishImage'] )
+        const images = req.files['MainImage']  || [];
+        const dishImagesUrl = req.files['dishImage'].map(file => file);
+
+        // console.log('dishImagesUrl:', dishImagesUrl);
+
+        const uploadedDishImages = await Promise.all(dishImagesUrl.map(file => uploadImage(file)));
+
+        // console.log('uploadedDishImages:', images);
+
+        uploadedDishImages.forEach((upload, index) => {
+            if (Items[index]) {
+                Items[index].dishImages.push({
+                    public_id: upload.public_id,
+                    ImageUrl: upload.ImageUrl
+                });
+            }
+        });
+
+        const uploadedImages = await Promise.all(images.map(file => uploadImage(file)));
+
+        // console.log('uploadedImages:', uploadedImages);
+
+        if (Title) listing.Title = Title;
+        if (Details) listing.Details = Details;
+        if (Items.length) listing.Items = Items;
+
+        if (uploadedImages.length) {
+            const updatedPictures = [...listing.Pictures];
+
+            uploadedImages.forEach(upload => {
+                const existingImageIndex = updatedPictures.findIndex(picture => picture.public_id === upload.public_id);
+                if (existingImageIndex !== -1) {
+                    updatedPictures[existingImageIndex] = upload;
+                } else {
+                    updatedPictures.push({
+                        public_id: upload.public_id,
+                        ImageUrl: upload.ImageUrl
+                    });
+                }
+            });
+
+            listing.Pictures = updatedPictures;
+
+            console.log('Updated Pictures:', updatedPictures);
+        }
+
+        await listing.save();
+
+        res.status(200).json({
+            success: true,
+            msg: "Listing updated successfully",
+            listing
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            success: false,
+            msg: "Error updating listing",
+            error: error.message
+        });
+    }
+};
 
 exports.getPostByCategory = async (req, res) => {
     try {

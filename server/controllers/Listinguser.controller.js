@@ -286,7 +286,7 @@ exports.getAllShops = async (req, res) => {
 
 exports.paymentVerification = async (req, res) => {
     try {
-        // console.log(req.body)
+        console.log(req.body)
         const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = req.body;
 
         const body = razorpay_order_id + "|" + razorpay_payment_id;
@@ -629,7 +629,7 @@ exports.MyShopDetails = async (req, res) => {
     try {
         // Assuming req.user.id is set correctly
         const MyShop = req.user.id;
-        console.log('User ID:', MyShop);
+        // console.log('User ID:', MyShop);
 
         // Finding the shop details based on the user ID
         const CheckMyShop = await ListingUser.findById(MyShop).select('-Password');
@@ -1073,7 +1073,7 @@ exports.getPostById = async (req, res) => {
 
 exports.getMyPostOnly = async (req, res) => {
     try {
-        const ShopId = req.user.id; // Assuming req.user.id contains the authenticated user's ShopId
+        const ShopId = req.user.id || req.query.id; 
         const listings = await Listing.find({ ShopId });
 
         if (listings.length === 0) {
@@ -1098,6 +1098,38 @@ exports.getMyPostOnly = async (req, res) => {
     }
 };
 
+exports.getMyAllPost = async (req, res) => {
+    try {
+        // Extract ShopId from query parameters
+        const ShopId = req.query.id; 
+
+        // Query listings based on ShopId, or fetch all if no ShopId is provided
+        const query = ShopId ? { ShopId } : {};
+        const listings = await Listing.find(query);
+
+        if (listings.length === 0) {
+            return res.status(404).json({
+                success: false,
+                message: ShopId
+                    ? 'No listings found for this shop.'
+                    : 'No listings found.',
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            count: listings.length,
+            data: listings,
+        });
+
+    } catch (error) {
+        console.error('Error fetching listings:', error);
+        return res.status(500).json({
+            success: false,
+            error: 'Server error. Could not fetch listings.',
+        });
+    }
+};
 
 
 exports.SearchByPinCodeCityAndWhatYouWant = async (req, res) => {
@@ -1295,8 +1327,8 @@ exports.allPayments = async (req, res) => {
                     method: 'get',
                     url: `https://api.razorpay.com/v1/orders/${orderId}`,
                     auth: {
-                        username: "rzp_test_gwvXwuaK4gKsY3",
-                        password: "nOcR6CCRiRYyDc87EXPzansH"
+                        username: "rzp_test_gQGRDFaoEskOdr",
+                        password: "seWgj8epMRq7Oeb7bvC3IZCe"
                     },
                     headers: {
                         'Content-Type': 'application/json'

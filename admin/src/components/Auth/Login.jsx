@@ -1,44 +1,74 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
+import axios from 'axios';
+import CryptoJS from 'crypto-js';
+import toast from 'react-hot-toast';
+import { useEffect } from 'react';
 
 const Login = () => {
   const [formData, setFormData] = useState({
-    Email: "default@example.com",
-    Password: "defaultpassword"
-  })
-  const token = 'qsdcvbnmkloliuytresxcvbjkoiugfxcvhjoliuydcvbnmkuytfd'
+    email: "",
+    password: ""
+  });
+
+  const [settings, setSettings] = useState({})
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const response = await axios.get('https://api.naideal.com/api/v1/get-setting');
+        if (response.data.success) {
+          setSettings(response.data.data);
+        } else {
+          console.error(response.data.message);
+        }
+      } catch (error) {
+        console.error('Error fetching settings:', error.message);
+      }
+    };
+    fetchSettings();
+  }, []);
 
   const handleChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: value
-    })
-  }
+    });
+  };
 
   const handleLogin = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
     try {
-      // Mock login check
-      if (formData.Email === "default@example.com" && formData.Password === "defaultpassword") {
-        localStorage.setItem('newDealToken', token)
-        alert('Login successful')
-        // send to home route
-        window.location.href = "/"
+      // Send login request to backend
+      const response = await axios.post('https://api.naideal.com/admin-login', formData);
+
+      // Check if login is successful
+      if (response.data.login) {
+        // Encrypt session data
+        const encryptedData = CryptoJS.AES.encrypt(
+          JSON.stringify(response.data), // Convert object to string before encryption
+          'secret-key') // Use a secret key for encryption
+          .toString();
+
+        // Save encrypted data to sessionStorage
+        toast.success("Login successful")
+        sessionStorage.setItem('loginData', encryptedData);
+        window.location.reload()
+        console.log('Login successful, data stored in session');
       } else {
-        alert('Invalid email or password')
+        console.error('Login failed');
       }
     } catch (error) {
-      console.error('Login failed', error)
+      console.error('Login failed', error);
     }
-  }
+  };
 
   return (
     <div className=''>
       <div className="flex min-h-screen flex-1 flex-col justify-center px-6 py-12 lg:px-8">
         <div className="sm:mx-auto sm:w-full sm:max-w-sm">
           <img
-            alt="Your Company"
-            src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+            alt="Nai Deal"
+            src={settings?.logo || "https://placehold.co/600x200"}
             className="mx-auto h-10 w-auto"
           />
           <h2 className="mt-10 capitalize text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
@@ -49,17 +79,17 @@ const Login = () => {
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
-              <label htmlFor="Email" className="block text-sm font-medium leading-6 text-gray-900">
+              <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900">
                 Email address
               </label>
               <div className="mt-2">
                 <input
-                  id="Email"
-                  name="Email"
+                  id="email"
+                  name="email"
                   type="email"
                   required
                   autoComplete="email"
-                  value={formData.Email}
+                  value={formData.email}
                   onChange={handleChange}
                   className="block w-full border px-2 border-black rounded-md py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
@@ -74,12 +104,12 @@ const Login = () => {
               </div>
               <div className="mt-2">
                 <input
-                  id="Password"
-                  name="Password"
+                  id="password"
+                  name="password"
                   type="password"
                   required
                   autoComplete="current-password"
-                  value={formData.Password}
+                  value={formData.password}
                   onChange={handleChange}
                   className="block w-full border px-2 border-black rounded-md py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
@@ -95,17 +125,10 @@ const Login = () => {
               </button>
             </div>
           </form>
-
-          {/* <p className="mt-10 text-center text-sm text-gray-500">
-            Not a member?{' '}
-            <a href="#" className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
-              Start a 14 day free trial
-            </a>
-          </p> */}
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Login
+export default Login;

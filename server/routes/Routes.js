@@ -1,7 +1,7 @@
 const express = require('express');
 const { createPartner, verifyOtpAndEmail, resendAccountVerifyOtp, resendForgetPasswordOtp, login, logout, verifyForgetPasswordOtp, deletePartnerAccount, forgetPasswordRequest, GetAllShopListByPartner, getAllPartner, GetAllShopListByPartnerAdmin } = require('../controllers/Partnercontroller');
-const { CreateListing, getAllListing, getListingById, deleteListingById, deleteAllListings, UpdateListing, getPostByCategory } = require('../controllers/ListingControllers');
-const { ListUser, LoginListUser, MyShopDetails, CreatePost, getAllPost, getPostById, deletePostById, deleteAllPost, getMyPostOnly, SearchByPinCodeCityAndWhatYouWant, getAllShops, DeleteListUser, updateDetailsOfListUser, paymentVerification, showPaymentDetails, allPayments, CreateForgetPasswordRequest, verifyOtp, getAllPostApprovedPost, UploadProfileImage, UpdateProfileDetails } = require('../controllers/Listinguser.controller');
+const { CreateListing, getAllListing, getListingById, deleteListingById, deleteAllListings, UpdateListing, getPostByCategory, UpdateListingAdmin } = require('../controllers/ListingControllers');
+const { ListUser, LoginListUser, MyShopDetails, CreatePost, getAllPost, getPostById, deletePostById, deleteAllPost, getMyPostOnly, SearchByPinCodeCityAndWhatYouWant, getAllShops, DeleteListUser, updateDetailsOfListUser, paymentVerification, showPaymentDetails, allPayments, CreateForgetPasswordRequest, verifyOtp, getAllPostApprovedPost, UploadProfileImage, UpdateProfileDetails, getMyAllPost } = require('../controllers/Listinguser.controller');
 const { protect } = require('../middlewares/Protect');
 const multer = require('multer');
 const { getUnApprovedPosts, MakeAPostApproved, getDashboardData } = require('../controllers/Shop');
@@ -48,6 +48,11 @@ router.post('/Upload-Profile-Details',protect, UpdateProfileDetails)
 
 router.post('/Search', SearchByPinCodeCityAndWhatYouWant);
 router.put('/My-Shop-Edit-post/:id', protect, upload.any(), UpdateListing)
+router.put('/admin-Shop-Edit-post', upload.fields([
+    { name: 'MainImage', maxCount: 1 },
+    { name: 'dishImage', maxCount: 10 },
+]), UpdateListingAdmin)
+
 
 // admins
 router.post('/admin-create-packages', createPackage)
@@ -76,6 +81,8 @@ router.post('/admin-create-city', createCity);
 router.post('/admin-update-city/:id', updateCity);
 router.get('/admin-get-city', getAllCities);
 router.delete('/admin-delete-city/:id', deleteCity);
+router.get('/admin-get-post', getMyAllPost);
+
 
 
 // Banners
