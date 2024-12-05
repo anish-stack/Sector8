@@ -105,6 +105,9 @@ const ListingUserSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    PackagePlanIssued:{
+        type: Number,
+    },
     isUpdatedProfile:{
         type:Boolean,
     },

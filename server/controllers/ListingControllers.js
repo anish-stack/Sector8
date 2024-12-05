@@ -15,11 +15,10 @@ Cloudinary.config({
 
 exports.CreateListing = async (req, res) => {
     try {
-      
+
         const ShopId = req.user.id;
-        const CoverImages = req.files['images'];
-        const itemsImages = req.body['Items'];
-     
+   
+
         if (!ShopId) {
             return res.status(401).json({
                 success: false,
@@ -29,7 +28,7 @@ exports.CreateListing = async (req, res) => {
 
         const CheckMyShop = await ListingUser.findById(ShopId).select('-Password');
         const { ListingPlan, HowMuchOfferPost } = CheckMyShop;
-       
+
         const Plans = await Package.findOne({
             packageName: ListingPlan
         })
@@ -41,51 +40,65 @@ exports.CreateListing = async (req, res) => {
             });
         }
 
-        
-        const { Title, Details } = req.body;
 
-        const Items = [];
-        for (let i = 0; req.body[`Items[${i}].itemName`] !== undefined; i++) {
-            Items.push({
-                itemName: req.body[`Items[${i}].itemName`],
-                Discount: req.body[`Items[${i}].Discount`]
-            });
-        }
+        const { Title, Details ,HtmlContent} = req.body;
+      
 
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ success: false, errors: errors.array() });
         }
 
-        const uploadImage = (file) => {
+      
+        const Items = [];
+
+        // Process Items and their dishImages
+        const itemsMap = {};
+        req.files.forEach(file => {
+            const match = file.fieldname.match(/Items\[(\d+)\]\.dishImages\[(\d+)\]/);
+            if (match) {
+                const [_, itemIndex, imageIndex] = match;
+                if (!itemsMap[itemIndex]) {
+                    itemsMap[itemIndex] = { dishImages: [] };
+                }
+                itemsMap[itemIndex].dishImages.push(file);
+            }
+        });
+
+        // Upload images to Cloudinary
+        const uploadToCloudinary = async (file) => {
             return new Promise((resolve, reject) => {
-                const stream = Cloudinary.uploader.upload_stream((error, result) => {
-                    if (result) {
-                        resolve({ public_id: result.public_id, ImageUrl: result.secure_url });
-                    } else {
+                Cloudinary.uploader.upload_stream({
+                    folder: 'your_upload_folder' // Adjust folder as per your setup
+                }, (error, result) => {
+                    if (error) {
                         reject(error);
+                    } else {
+                        resolve({ public_id: result.public_id, ImageUrl: result.secure_url });
                     }
-                });
-                stream.end(file.buffer);
+                }).end(file.buffer);
             });
         };
 
-        const images = req.files['images'] || [];
-        const dishImages = req.files['dishImages'] || [];
+        // Process items with dishImages
+        for (const index of Object.keys(itemsMap)) {
+            const item = itemsMap[index];
+            const uploadedImages = await Promise.all(item.dishImages.map(file => uploadToCloudinary(file)));
+            Items.push({
+                itemName: req.body[`Items[${index}].itemName`],
+                MrpPrice: req.body[`Items[${index}].MrpPrice`],
+                Discount: req.body[`Items[${index}].Discount`],
+                dishImages: uploadedImages
+            });
+        }
 
-        const uploadedImages = await Promise.all(images.map(file => uploadImage(file)));
-        const uploadedDishImages = await Promise.all(dishImages.map(file => uploadImage(file)));
-
-        uploadedDishImages.forEach((upload, index) => {
-            Items[index].Image = upload.secure_url;
-            Items[index].public_id = upload.public_id;
-        });
 
         const newPost = await Listing.create({
             Title,
             Details,
             Items,
-            Pictures: uploadedImages,
+            HtmlContent,
+            Pictures: uploadedGeneralImages,
             ShopId
         });
 
@@ -98,6 +111,7 @@ exports.CreateListing = async (req, res) => {
             post: newPost
         });
     } catch (error) {
+        console.log(error)
         res.status(500).json({
             success: false,
             msg: "Error creating post",
@@ -333,7 +347,7 @@ exports.UpdateListingAdmin = async (req, res) => {
                 msg: "Please Login"
             });
         }
-      
+
         const CheckMyShop = await ListingUser.findById(ShopId).select('-Password');
         if (!CheckMyShop) {
             return res.status(404).json({
@@ -377,7 +391,7 @@ exports.UpdateListingAdmin = async (req, res) => {
         }
 
         // console.log("dishImage", req.files['dishImage'] )
-        const images = req.files['MainImage']  || [];
+        const images = req.files['MainImage'] || [];
         const dishImagesUrl = req.files['dishImage'].map(file => file);
 
         // console.log('dishImagesUrl:', dishImagesUrl);
@@ -459,8 +473,8 @@ exports.getPostByCategory = async (req, res) => {
 
             // Attach plan information to each post
             const postsWithPlan = posts.map(post => ({
-                ...post.toObject(), 
-                Plan: listing?.ListingPlan 
+                ...post.toObject(),
+                Plan: listing?.ListingPlan
             }));
 
             return postsWithPlan;

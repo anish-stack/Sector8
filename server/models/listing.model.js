@@ -54,6 +54,9 @@ const ListingData = new mongoose.Schema({
         type:Boolean,
         default:false
     },
+    HtmlContent:{
+        type:String,
+    },
     ShopId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "ShopUser",

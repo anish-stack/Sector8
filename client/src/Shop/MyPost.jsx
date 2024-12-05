@@ -24,10 +24,20 @@ const MyPost = ({ fetchMyShopDetails }) => {
         headers: { Authorization: `Bearer ${token}` },
       });
     //   console.log(response.data.data)
-      setPosts(response.data.data);
+      if(response.data.data.length === 0){
+        setPosts([])
+      }else{
+        setPosts(response.data.data);
+
+      }
     } catch (error) {
-      setError('Failed to fetch posts. Please try again later.');
-      console.error('Error fetching posts:', error);
+      if(error?.response?.status === 404){
+        setPosts([])
+      }else{
+
+        setError('Failed to fetch posts. Please try again later.');
+        console.error('Error fetching posts:', error);
+      }
     } finally {
       setLoading(false);
     }
@@ -104,9 +114,17 @@ const MyPost = ({ fetchMyShopDetails }) => {
   return (
     <div className="space-y-6">
       {posts.length === 0 ? (
-        <div className="text-center py-8">
-          <p className="text-gray-500 mb-4">No posts found. Create your first post!</p>
-        </div>
+     <div className="flex flex-col items-center justify-center h-full py-8 bg-gray-50">
+     <img 
+       src="https://i.ibb.co/cDb0b2R/social-media.png" 
+       alt="No posts" 
+       className="w-32 h-32 mb-4 object-contain"
+     />
+     <p className="text-gray-600 text-lg font-medium">
+       No posts found. Create your first post!
+     </p>
+   </div>
+   
       ) : (
         <>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

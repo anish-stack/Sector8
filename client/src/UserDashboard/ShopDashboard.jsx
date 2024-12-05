@@ -18,12 +18,13 @@ const ShopDashboard = () => {
                     Authorization: `Bearer ${token}`
                 }
             })
+            console.log(response)
             const data = response.data.user
-            console.log(data)
+            console.log("User",data)
             setShopDetails(data)
 
         } catch (error) {
-            console.log(error)
+            console.log("error hu mai",error)
         }
     }
     useEffect(() => {

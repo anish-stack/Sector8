@@ -159,10 +159,12 @@ app.post('/Fetch-Current-Location', async (req, res) => {
 
 
 app.post('/admin-login', (req, res) => {
+    console.log(req.body)
     const { email, password } = req.body;
-    const defaultEmail = process.env.ADMIN_EMAIL
-    const defaultPassword = process.env.ADMIN_PASSWORD;
+    const defaultEmail = process.env.ADMIN_EMAIL || "admin@gmail.com"
+    const defaultPassword = process.env.ADMIN_PASSWORD || "naideal@admin";
 
+    console.log(defaultEmail)
     if (email === defaultEmail && password === defaultPassword) {
 
         res.json({ message: 'Login successful', login: true })

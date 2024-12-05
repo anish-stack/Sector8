@@ -22,6 +22,7 @@ const Partner = require('../models/Partner.model')
 const { validationResult } = require('express-validator');
 const authService = require('../Service/authService');
 const paymentService = require('../Service/paymentService');
+const Package = require('../models/Pacakge');
 Cloudinary.config({
     cloud_name: process.env.CLOUD_NAME,
     api_key: process.envCLOUDINARY_API_KEY,
@@ -44,6 +45,7 @@ exports.ListUser = async (req, res) => {
             HowMuchOfferPost, Password,LandMarkCoordinates
         } = req.body;
 
+        // console.log(req.body)
         // Auth check
         const token = authService.extractToken(req);
         if (!token) {
@@ -61,7 +63,7 @@ exports.ListUser = async (req, res) => {
 
         // If user exists and they don't have a free listing, create a payment order
         if (existingUser) {
-            if (existingUser.FreeListing && ListingPlan !== 'Free - Rs:0') {
+            if (existingUser.FreeListing && ListingPlan !== 'Free') {
                 const order = await paymentService.createOrder(ListingPlan, UserName);
                 return res.status(StatusCodes.OK)
                     .json({ success: true, order });
@@ -87,13 +89,19 @@ exports.ListUser = async (req, res) => {
             }
         };
 
+        const plans = await Plans.find()
+        const plan = plans.find(plan => plan.packageName === ListingPlan)
+
+
         // Create user data
         const userData = {
             UserName, Email, ContactNumber, ShopName,
             ShopAddress: formattedShopAddress,
             ShopCategory, ListingPlan,
             ProfilePic: `https://ui-avatars.com/api/?name=${UserName}&background=random`,
-            HowMuchOfferPost, Password,
+            HowMuchOfferPost,
+            PackagePlanIssued:plan.postsDone,
+            Password,
             PartnerId,
             LandMarkCoordinates,
             FreeListing: ListingPlan === 'Free - Rs:0' ? 'Free Listing' : undefined
@@ -661,21 +669,32 @@ exports.CreatePost = async (req, res) => {
         }
 
         const CheckMyShop = await ListingUser.findById(ShopId).select('-Password');
-        const { ListingPlan, HowMuchOfferPost } = CheckMyShop;
-        const planLimits = {
-            Free: 1,
-            Silver: 5,
-            Gold: 10
-        };
+        if (!CheckMyShop) {
+            return res.status(404).json({ 
+                success: false, 
+                msg: "Shop not found" 
+            });
+        }
 
-        if (HowMuchOfferPost >= planLimits[ListingPlan]) {
+        const { ListingPlan, HowMuchOfferPost } = CheckMyShop;
+
+        const Plans = await Package.findOne({ packageName: ListingPlan });
+        if (!Plans) {
+            return res.status(404).json({
+                success: false,
+                msg: `No package found for plan: ${ListingPlan}`
+            });
+        }
+
+        if (HowMuchOfferPost >= Plans.postsDone) {
             return res.status(403).json({
                 success: false,
                 msg: `You have reached the post limit for your ${ListingPlan} plan. Please upgrade your plan.`
             });
         }
 
-        const { Title, Details } = req.body;
+        const { Title, Details, HtmlContent } = req.body;
+
         const Items = [];
 
         // Process Items and their dishImages
@@ -727,6 +746,7 @@ exports.CreatePost = async (req, res) => {
             Title,
             Details,
             Items,
+            HtmlContent,
             Pictures: uploadedGeneralImages,
             ShopId,
         });

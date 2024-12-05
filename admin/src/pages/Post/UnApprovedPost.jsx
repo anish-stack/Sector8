@@ -12,112 +12,104 @@ const UnApprovedPost = () => {
         const fetchPosts = async () => {
             try {
                 const res = await axios.get(`${process.env.REACT_APP_BACKEND_URL}/get-Listing-un`);
-
-                // Logging the original data
-                console.log('Original data:', res.data.unApprovedPosts                );
-                    const data = res.data.unApprovedPosts
-                    setUnApprovedPosts(data)
-      
-             
+                setUnApprovedPosts(res.data.unApprovedPosts || []);
             } catch (error) {
                 console.error('Error fetching unapproved posts:', error);
             }
         };
-    
+
         fetchPosts();
     }, []);
-    
+
     // Pagination logic
     const indexOfLastPost = currentPage * postsPerPage;
     const indexOfFirstPost = indexOfLastPost - postsPerPage;
     const currentPosts = unApprovedPosts.slice(indexOfFirstPost, indexOfLastPost);
 
-    // Change page
-    const paginate = pageNumber => setCurrentPage(pageNumber);
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
-    // Handle approval
     const handleApprove = async (postId) => {
         try {
             await axios.put(`${process.env.REACT_APP_BACKEND_URL}/admin-approve-post/${postId}`);
-            toast.success('Post Approved Successful')
-            setUnApprovedPosts(unApprovedPosts.filter(post => post._id !== postId));
+            toast.success('Post approved successfully!');
+            setUnApprovedPosts(unApprovedPosts.filter((post) => post._id !== postId));
         } catch (error) {
             console.error('Error approving post:', error);
         }
     };
 
-    // Handle deletion
     const handleDelete = async (postId) => {
         try {
             await axios.delete(`${process.env.REACT_APP_BACKEND_URL}/delete-listing/${postId}`);
-            setUnApprovedPosts(unApprovedPosts.filter(post => post._id !== postId));
+            toast.success('Post deleted successfully!');
+            setUnApprovedPosts(unApprovedPosts.filter((post) => post._id !== postId));
         } catch (error) {
             console.error('Error deleting post:', error);
         }
     };
 
-    // Format date and time
     const formatDateTime = (createdAt) => {
         const date = new Date(createdAt);
-        const options = { hour: 'numeric', minute: 'numeric' };
-        return date.toLocaleDateString() + ' at ' + date.toLocaleTimeString([], options);
+        return `${date.toLocaleDateString()} at ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
     };
 
-    // Open modal with post details
     const openModal = (post) => {
         setModalPost(post);
     };
 
-    // Close modal
     const closeModal = () => {
         setModalPost(null);
     };
 
     return (
-        <div className="container mx-auto px-4">
+        <div className="container mx-auto px-4 py-6">
             <h1 className="text-2xl font-bold mb-4">Unapproved Posts</h1>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-                {currentPosts.length === 0 ? (
-                    <p>No Post For Approval</p>
-                ) : (
-                    currentPosts.map(post => (
-                        <div key={post._id} className="border border-gray-300 p-4">
-                            <h2 className="text-lg font-bold mb-2">{post.Title}</h2>
-                            <p className="text-gray-600 mb-2">{post.Details}</p>
-                            <div className="flex flex-wrap mb-2">
-                                {/* Display only the first picture */}
-                                <img
-                                    src={post.Pictures.length > 0 ? post.Pictures[0].ImageUrl : ''}
-                                    alt="Post Image"
-                                    className="w-24 h-24 object-cover mr-2 mb-2 cursor-pointer"
-                                />
-                            </div>
-                            <ul className="mb-2">
-                                {post.Items.map(item => (
-                                    <li key={item._id}>
-                                        <strong>{item.itemName}</strong> - MRP: {item.MrpPrice}, Discount: {item.Discount}%
-                                    </li>
-                                ))}
-                            </ul>
-                            <p className={`text-sm font-semibold ${post.isApprovedByAdmin ? 'text-green-600' : 'text-red-600'}`}>
-                                {post.isApprovedByAdmin ? 'Approved' : 'Not Approved'}
-                            </p>
-                            <p className="text-xs text-gray-500 mt-1">
-                                {formatDateTime(post.createdAt)}
-                            </p>
-                            <div className="mt-2 grid grid-cols-2 gap-2">
-                         
-                                <button onClick={() => handleApprove(post._id)} className="text-sm bg-green-500 hover:bg-green-600 text-white px-4 py-1 rounded mr-2">
-                                    Approve
-                                </button>
-                                <button onClick={() => handleDelete(post._id)} className="text-sm bg-red-500 hover:bg-red-600 text-white px-4 py-1 rounded">
-                                    Delete
-                                </button>
-                            </div>
-                        </div>
-                    ))
-                )}
-            </div>
+            {currentPosts.length === 0 ? (
+                <p>No posts for approval</p>
+            ) : (
+                <div className="overflow-x-auto">
+                    <table className="table-auto w-full border-collapse border border-gray-300">
+                        <thead>
+                            <tr className="bg-gray-100">
+                                <th className="border border-gray-300 px-4 py-2">Title</th>
+                                <th className="border border-gray-300 px-4 py-2">Details</th>
+                                <th className="border border-gray-300 px-4 py-2">Date</th>
+                                <th className="border border-gray-300 px-4 py-2">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {currentPosts.map((post) => (
+                                <tr key={post._id}>
+                                    <td className="border border-gray-300  px-4 py-2">{post.Title}</td>
+                                    <td className="border border-gray-300  px-4 py-2">{post.Details.slice(0, 20)}...</td>
+                                    <td className="border border-gray-300 px-4 py-2">{formatDateTime(post.createdAt)}</td>
+                                    <td className="border flex  px-4 py-2">
+                                        <button
+                                            onClick={() => openModal(post)}
+                                            className="text-sm bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded mr-2"
+                                        >
+                                            View
+                                        </button>
+                                        <button
+                                            onClick={() => handleApprove(post._id)}
+                                            className="text-sm bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded mr-2"
+                                        >
+                                            Approve
+                                        </button>
+                                        <button
+                                            onClick={() => handleDelete(post._id)}
+                                            className="text-sm bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
+                                        >
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+            )}
+
             {/* Pagination */}
             <div className="flex justify-center mt-4">
                 {Array.from({ length: Math.ceil(unApprovedPosts.length / postsPerPage) }, (_, i) => (
@@ -132,7 +124,60 @@ const UnApprovedPost = () => {
             </div>
 
             {/* Modal */}
-       
+            {modalPost && (
+                <div className="fixed z-[999] inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+                    <div className="bg-white rounded-lg p-6 w-3/4">
+                        <h2 className="text-xl font-bold mb-4">{modalPost.Title}</h2>
+                        <p className="mb-4">{modalPost.Details}</p>
+                        <div className="grid grid-cols-2 gap-2 mb-4">
+                            {modalPost.Pictures.map((pic, index) => (
+                                <img
+                                    key={index}
+                                    src={pic.ImageUrl}
+                                    alt={`Post Image ${index + 1}`}
+                                    className="w-full h-32 object-cover rounded"
+                                />
+                            ))}
+                        </div>
+                        <ul>
+                            {modalPost.Items.map((item) => (
+                                <li key={item._id} className="mb-2">
+                                    <strong>{item.itemName}</strong> - MRP: {item.MrpPrice}, Discount: {item.Discount}%
+                                </li>
+                            ))}
+                        </ul>
+                        <h1 className="text-2xl font-bold mb-4 text-gray-800">HTML Content</h1>
+                        <div
+                            className="modal-content text-sm text-gray-700 leading-relaxed"
+                            dangerouslySetInnerHTML={{ __html: modalPost?.HtmlContent }}
+                        />
+
+
+
+
+                        <div className="flex justify-end mt-4">
+                            <button
+                                onClick={() => handleApprove(modalPost._id)}
+                                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded mr-2"
+                            >
+                                Approve
+                            </button>
+                            <button
+                                onClick={() => handleDelete(modalPost._id)}
+                                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
+                            >
+                                Delete
+                            </button>
+                            <button
+                                onClick={closeModal}
+                                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded ml-2"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

@@ -7,7 +7,7 @@ const MarqueeActions = () => {
   const [active, setActive] = useState(true);
   const [editingId, setEditingId] = useState(null);
 
-  const API_URL = 'https://api.naideal.com/api/v1';
+  const API_URL = 'http://localhost:7485/api/v1';
 
   // Get all marquees
   const getAllMarquees = async () => {

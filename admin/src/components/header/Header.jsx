@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Menu, X, LayoutDashboard, Users, Store, DiamondPercent, Tag, MapPin, Image, CheckSquare, MessageSquare, CreditCard, Package, Settings, LogOut } from 'lucide-react';
+import { Menu, X, LayoutDashboard, Users, Store, DiamondPercent,Phone, Tag, MapPin, Image, CheckSquare, MessageSquare, CreditCard, Package, Settings, LogOut } from 'lucide-react';
 
 const menuItems = [
   { path: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -10,6 +10,7 @@ const menuItems = [
   { path: '/All-City', label: 'City', icon: MapPin },
   { path: '/Home-Banner', label: 'Home Banner', icon: Image },
   { path: '/All-Post?All=true', label: 'Offers-Posted', icon: DiamondPercent },
+  { path: '/All-Contacts', label: 'Contact', icon: Phone },
 
   { path: '/approve-post', label: 'Approve Post', icon: CheckSquare },
   { path: '/Marquees', label: 'Marquees', icon: MessageSquare },

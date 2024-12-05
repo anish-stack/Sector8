@@ -16,7 +16,7 @@ const LocationInput = ({ formData, setFormData, isGeolocationAvailable, isGeoloc
 
 
     try {
-      const { data } = await axios.get('https://api.naideal.com/autocomplete', {
+      const { data } = await axios.get('http://localhost:7485/autocomplete', {
         params: { input: value },
       });
       setSuggestions(data); // Update suggestions

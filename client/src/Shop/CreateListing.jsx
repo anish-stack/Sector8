@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import axios from 'axios';
 import { toast, Toaster } from 'react-hot-toast';
 import { X, Plus, Loader } from 'lucide-react';
 import ImageUpload from './forms/ImageUpload';
 import ItemForm from './forms/ItemForm';
-import RichTextEditor from './editor/RichTextEditor';
 
+import JoditEditor from 'jodit-react';
 const CreateListing = ({ isOpen, onClose }) => {
   const [btnLoading, setBtnLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -17,14 +17,19 @@ const CreateListing = ({ isOpen, onClose }) => {
   });
   const [imagePreviews, setImagePreviews] = useState([]);
   const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
+  const editor = useRef(null);
+  const config = useMemo(() => ({
+    readonly: false,
+  }), []);
+  
 
   useEffect(() => {
-    const isFormIncomplete = !formData.Title || !formData.Details || 
+    const isFormIncomplete = !formData.Title || !formData.Details ||
       formData.Items.some(item => !item.itemName || !item.Discount);
     const isImageLimitExceeded = formData.Pictures.length > 5;
     setIsSubmitDisabled(isFormIncomplete || isImageLimitExceeded);
   }, [formData]);
-//   console.log(formData)
+  //   console.log(formData)
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -77,6 +82,7 @@ const CreateListing = ({ isOpen, onClose }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // console.log(formData.HtmlContent)
     try {
       const data = new FormData();
       Object.keys(formData).forEach(key => {
@@ -93,19 +99,23 @@ const CreateListing = ({ isOpen, onClose }) => {
           formData.Pictures.forEach(file => {
             data.append('images', file);
           });
+        } else if (key === 'HtmlContent') {
+          console.log('Appending HtmlContent:', formData[key]); // Debugging log
+          data.append(key, formData[key]); // Ensure it's included as plain text
         } else {
           data.append(key, formData[key]);
         }
       });
+      
 
       setBtnLoading(true);
       const token = localStorage.getItem('ShopToken');
       const BackendUrl = import.meta.env.VITE_REACT_APP_BACKEND_URL;
-      
+
       const response = await axios.post(`${BackendUrl}/Create-Post`, data, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      
+
       toast.success(response.data.msg);
       onClose();
       window.location.reload();
@@ -175,16 +185,17 @@ const CreateListing = ({ isOpen, onClose }) => {
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Rich Content
               </label>
-              <RichTextEditor
+              
+              <JoditEditor
+                ref={editor}
                 value={formData.HtmlContent}
+                config={config}
+                tabIndex={1}
+                onBlur={newContent => setFormData(prev => ({ ...prev, HtmlContent: newContent }))}
                 onChange={(content) => setFormData(prev => ({ ...prev, HtmlContent: content }))}
               />
             </div>
-            <h2 className="mt-6 text-lg font-bold">Preview</h2>
-      <div
-        className="border p-4 mt-2"
-        dangerouslySetInnerHTML={{ __html: formData.content }}
-      />
+
 
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -231,11 +242,10 @@ const CreateListing = ({ isOpen, onClose }) => {
           <button
             type="submit"
             disabled={isSubmitDisabled || btnLoading}
-            className={`w-full py-3 px-4 rounded-lg text-white font-medium transition-all ${
-              isSubmitDisabled || btnLoading
-                ? 'bg-gray-400 cursor-not-allowed'
-                : 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700'
-            }`}
+            className={`w-full py-3 px-4 rounded-lg text-white font-medium transition-all ${isSubmitDisabled || btnLoading
+              ? 'bg-gray-400 cursor-not-allowed'
+              : 'bg-blue-500 hover:bg-blue-600 active:bg-blue-700'
+              }`}
           >
             {btnLoading ? (
               <span className="flex items-center justify-center gap-2">
