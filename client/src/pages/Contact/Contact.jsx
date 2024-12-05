@@ -1,20 +1,30 @@
 import React, { useState } from 'react';
 import { Send, MessageSquare } from 'lucide-react';
-
+import axios from 'axios';
+import toast from 'react-hot-toast'
 export function ContactForm() {
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    subject: '',
-    message: ''
+    Name: '',
+    PhoneNumber: '',
+    Email: '',
+    Subject: '',
+    Message: ''
   });
   const [status, setStatus] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setStatus('success');
-    setFormData({ name: '', email: '', subject: '', message: '' });
-    // Handle form submission logic here
+    try {
+      const data = await axios.post('http://localhost:7485/api/v1/Other/Contact', formData)
+      console.log(data.data)
+      setStatus('success');
+      toast.success(`We'll get back to you as soon as possible.`)
+    } catch (error) {
+      console.log(error)
+      toast.error(error?.response?.data?.error)
+      // setFormData({ name: '', email: '', subject: '', message: '' });
+    }
+
   };
 
   const handleChange = (e) => {
@@ -28,20 +38,20 @@ export function ContactForm() {
     <section className="relative py-20 overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 bg-gradient-to-br from-purple-600/5 to-blue-600/5" />
-      
+
       <div className="relative container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
             <div className="inline-block p-3 bg-purple-100 rounded-full mb-6">
               <MessageSquare className="w-6 h-6 text-purple-600" />
             </div>
-            
+
             <h2 className="text-3xl md:text-4xl font-bold mb-4">
               Get in Touch
             </h2>
-            
+
             <p className="text-gray-600 max-w-2xl mx-auto">
-              Have questions about our travel packages or need custom arrangements? 
+              Have questions about our travel packages or need custom arrangements?
               We're here to help make your dream vacation a reality.
             </p>
           </div>
@@ -50,6 +60,10 @@ export function ContactForm() {
             <div className="bg-green-50 text-green-700 px-6 py-4 rounded-lg text-center">
               <p className="font-medium">Thank you for your message!</p>
               <p className="text-sm mt-1">We'll get back to you as soon as possible.</p>
+              <button class="bg-green-500 mt-5 text-white font-bold py-2 px-4 rounded hover:bg-blue-600 transition duration-300">
+                <a href="/" class="no-underline">Go To Home</a>
+              </button>
+
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-6 bg-white p-8 rounded-2xl shadow-lg">
@@ -61,8 +75,8 @@ export function ContactForm() {
                   <input
                     type="text"
                     id="name"
-                    name="name"
-                    value={formData.name}
+                    name="Name"
+                    value={formData.Name}
                     onChange={handleChange}
                     required
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 
@@ -70,7 +84,7 @@ export function ContactForm() {
                     placeholder="Your name"
                   />
                 </div>
-                
+
                 <div>
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
                     Email
@@ -78,8 +92,8 @@ export function ContactForm() {
                   <input
                     type="email"
                     id="email"
-                    name="email"
-                    value={formData.email}
+                    name="Email"
+                    value={formData.Email}
                     onChange={handleChange}
                     required
                     className="w-full px-4 py-3 rounded-lg border border-gray-300 
@@ -88,16 +102,31 @@ export function ContactForm() {
                   />
                 </div>
               </div>
-
               <div>
-                <label htmlFor="subject" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="PhoneNumber" className="block text-sm font-medium text-gray-700 mb-2">
+                  Phone Number
+                </label>
+                <input
+                  type="text"
+                  id="PhoneNumber"
+                  name="PhoneNumber"
+                  value={formData.PhoneNumber}
+                  onChange={handleChange}
+                  required
+                  className="w-full px-4 py-3 rounded-lg border border-gray-300 
+                             focus:outline-none focus:border-purple-500 transition-colors"
+                  placeholder="98586947895"
+                />
+              </div>
+              <div>
+                <label htmlFor="Subject" className="block text-sm font-medium text-gray-700 mb-2">
                   Subject
                 </label>
                 <input
                   type="text"
-                  id="subject"
-                  name="subject"
-                  value={formData.subject}
+                  id="Subject"
+                  name="Subject"
+                  value={formData.Subject}
                   onChange={handleChange}
                   required
                   className="w-full px-4 py-3 rounded-lg border border-gray-300 
@@ -107,13 +136,13 @@ export function ContactForm() {
               </div>
 
               <div>
-                <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="Message" className="block text-sm font-medium text-gray-700 mb-2">
                   Message
                 </label>
                 <textarea
-                  id="message"
-                  name="message"
-                  value={formData.message}
+                  id="Message"
+                  name="Message"
+                  value={formData.Message}
                   onChange={handleChange}
                   required
                   rows={5}

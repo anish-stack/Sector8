@@ -36,9 +36,10 @@ const ShopProfile = ({ shopDetails, onUpgradePackage, onLogout, onProfileUpload,
                 <div className="relative">
                     <button
                         onClick={() => setMenuOpen(!menuOpen)}
-                        className="flex items-center justify-center gap-2 bg-gray-100 hover:bg-gray-200 text-gray-700 py-2 px-4 rounded-lg transition-all duration-300"
+                        className="flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-4 rounded-lg transition-all duration-300"
                     >
-                        <EllipsisVertical className="w-5 h-5" />
+                        <i className="fa-solid w-5 h-5 fa-ellipsis-vertical"></i>
+                        
                     </button>
                     {menuOpen && (
                         <div className="absolute z-[999] left-0 mt-2 w-48 bg-white shadow-lg rounded-lg text-sm text-gray-700">

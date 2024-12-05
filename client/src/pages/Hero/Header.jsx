@@ -51,14 +51,14 @@ export function Header() {
                 Free Listing
               </a>
               */}
-               <a href={`tel:${settings?.contactNumber ||'919953825382' }`} className="text-gray-700 hover:text-blue-600 font-bold transition-colors">
-               {settings?.contactNumber || "919953825382"}
+               <a href={`tel:${settings?.contactNumber ||'919953825382' }`} className="text-gray-700 hover:text-red-600 font-bold transition-colors">
+              <span className="mr-2 "><i className="fa-solid fa-phone mr-3"></i>Call</span> {settings?.contactNumber || "919953825382"}
               </a>
               <div className="flex items-center space-x-4">
                 {ShopToken && (
                   <a
                     href="/Shop-Dashboard"
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
+                    className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
                   >
                     Shop Dashboard
                   </a>

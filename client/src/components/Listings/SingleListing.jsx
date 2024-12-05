@@ -245,7 +245,8 @@ const SingleListing = () => {
                         {/* Business Hours */}
                         <div className="bg-white rounded-2xl shadow-sm border p-6">
                             <div className="flex items-center gap-2 mb-4">
-                                <Clock className="w-5 h-5 text-gray-400" />
+                              
+                                <i className="fa-regular fa-clock text-3xl text-gray-400"></i>
                                 <h3 className="text-lg font-semibold text-gray-900">Business Hours</h3>
                             </div>
                             <div className="space-y-2 text-sm">

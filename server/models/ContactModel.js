@@ -33,7 +33,7 @@ const ContactSchema = new mongoose.Schema({
         default: false
     }
 }, {
-    timestamps: true // Automatically adds createdAt and updatedAt fields
+    timestamps: true 
 });
 
 // Exporting the model

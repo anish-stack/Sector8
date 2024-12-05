@@ -15,6 +15,8 @@ const PostByCategories = () => {
 
     const query = new URLSearchParams(window.location.search);
     const categoryName = query.get('Name');
+    const title = query.get('title');
+
     const BackendUrl = import.meta.env.VITE_REACT_APP_BACKEND_URL;
 
     useEffect(() => {
@@ -67,7 +69,8 @@ const PostByCategories = () => {
         return (
             <div className="min-h-screen flex items-center justify-center p-6 bg-gray-100">
             <div className="text-center bg-white p-8 rounded-xl max-w-md w-full">
-              <AlertCircle className="w-16 h-16 text-red-500 mx-auto mb-6" />
+            <i className="fa-solid fa-circle-exclamation text-5xl text-red-500 mx-auto mb-6"></i>
+          
               <h2 className="text-3xl font-semibold text-gray-900 mb-4">{error}</h2>
               <div className="space-y-4">
                 <button
@@ -102,7 +105,7 @@ const PostByCategories = () => {
                         animate={{ y: 0, opacity: 1 }}
                         className="text-center"
                     >
-                        <h1 className="text-4xl font-bold mb-4">{categoryName}</h1>
+                        <h1 className="text-4xl font-bold mb-4">{title}</h1>
                         <p className="text-xl text-purple-100">
                             Discover amazing offers and deals
                         </p>

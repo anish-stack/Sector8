@@ -78,7 +78,7 @@ const Category = () => {
             className="relative group"
         >
             <div className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100">
-                <Link to={`/Post-by-categories?filter=Categories&Name=${category.CategoriesName}`} className="flex flex-col items-center space-y-4">
+                <Link to={`/Post-by-categories?filter=Categories&Name=${category._id}&title=${category.CategoriesName}`} className="flex flex-col items-center space-y-4">
                     <div className="p-4 bg-blue-50 rounded-xl group-hover:bg-blue-100 transition-colors duration-300">
                         <img
                             src={category.CategoriesImage.imageUrl}

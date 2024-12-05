@@ -22,7 +22,8 @@ const ShopProfile = () => {
             setError(null);
             const response = await axios.get(`${BackendUrl}/get-Listing`);
             const data = response.data.data;
-            const filteredShop = data?.find(item => item.shopDetails._id === id);
+            console.log(data)
+            const filteredShop = data?.find(item => item?.ShopId?._id === id);
             
             if (filteredShop) {
                 setShopDetails(filteredShop);
@@ -63,7 +64,7 @@ const ShopProfile = () => {
         );
     }
 
-    const { listing, shopDetails: shopInfo } = shopDetails;
+    const { listing,  ShopId } = shopDetails;
 
     return (
         <motion.div 
@@ -80,17 +81,17 @@ const ShopProfile = () => {
                         transition={{ delay: 0.2 }}
                         className="text-center"
                     >
-                        <h1 className="text-4xl md:text-5xl font-bold mb-4">{shopInfo.ShopName}</h1>
-                        <p className="text-xl text-purple-100">{shopInfo.ShopCategory}</p>
+                        <h1 className="text-4xl md:text-5xl font-bold mb-4">{ShopId?.ShopName}</h1>
+                        {/* <p className="text-xl text-purple-100">{ShopId?.ShopCategory}</p> */}
                         
                         <div className="flex items-center justify-center gap-6 mt-8">
                             <div className="flex items-center gap-2">
                                 <MapPin className="w-5 h-5" />
-                                <span>{shopInfo.ShopAddress.PinCode}</span>
+                                <span>{ShopId?.ShopAddress.PinCode}</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <Building2 className="w-5 h-5" />
-                                <span>{shopInfo.ListingPlan} Member</span>
+                                <span>{ShopId?.ListingPlan} Member</span>
                             </div>
                             <div className="flex items-center gap-2">
                                 <Star className="w-5 h-5 fill-current" />
@@ -118,7 +119,7 @@ const ShopProfile = () => {
                             </div>
                             <div>
                                 <h3 className="font-medium text-gray-900">Location</h3>
-                                <p className="text-gray-600">{shopInfo.ShopAddress.NearByLandMark}</p>
+                                <p className="text-gray-600">{ShopId?.ShopAddress.NearByLandMark}</p>
                             </div>
                         </div>
                         
@@ -128,7 +129,7 @@ const ShopProfile = () => {
                             </div>
                             <div>
                                 <h3 className="font-medium text-gray-900">Phone</h3>
-                                <p className="text-gray-600">{shopInfo.ContactNumber}</p>
+                                <p className="text-gray-600">{ShopId?.ContactNumber}</p>
                             </div>
                         </div>
                         
@@ -138,7 +139,7 @@ const ShopProfile = () => {
                             </div>
                             <div>
                                 <h3 className="font-medium text-gray-900">Email</h3>
-                                <p className="text-gray-600">{shopInfo.Email}</p>
+                                <p className="text-gray-600">{ShopId?.Email}</p>
                             </div>
                         </div>
                     </div>
@@ -156,7 +157,7 @@ const ShopProfile = () => {
                     
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         <AnimatePresence>
-                            {listing.Items.map((item, index) => (
+                            {shopDetails?.Items.map((item, index) => (
                                 <motion.div
                                     key={index}
                                     initial={{ opacity: 0, scale: 0.9 }}
@@ -166,7 +167,7 @@ const ShopProfile = () => {
                                 >
                                     <div className="relative aspect-[4/3]">
                                         <img
-                                            src={listing.Pictures[0]?.ImageUrl}
+                                            src={shopDetails?.Pictures[0]?.ImageUrl}
                                             alt={item.itemName}
                                             className="w-full h-full object-cover"
                                         />
@@ -185,7 +186,7 @@ const ShopProfile = () => {
                                                 <span className="text-gray-900 font-medium">₹{item.MrpPrice}</span>
                                             </div>
                                             <Link
-                                                to={`/Single-Listing/${listing._id}/${listing.Title.replace(/\s+/g, '-')}`}
+                                                to={`/Single-Listing/${shopDetails._id}/${shopDetails.Title.replace(/\s+/g, '-')}`}
                                                 className="text-purple-600 hover:text-purple-700 font-medium flex items-center gap-1"
                                             >
                                                 View Details

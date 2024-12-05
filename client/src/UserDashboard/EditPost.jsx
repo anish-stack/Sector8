@@ -144,198 +144,226 @@ const EditPost = () => {
     if (error) return <div>Error: {error}</div>;
 
     return (
-        <div className="max-w-2xl mx-auto p-4">
-            <h2 className="text-2xl font-bold mb-4">Edit Post</h2>
-            <form onSubmit={handleUpdate} className="space-y-4">
-                {/* Title input */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Title</label>
-                    <input
-                        type="text"
-                        name="Title"
-                        value={formData.Title}
-                        onChange={handleInputChange}
-                        className="mt-1 border px-2 py-2 border-black block w-full rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                        required
-                    />
-                </div>
+        <div className="min-h-screen  bg-gray-900 py-8">
+        <div className="max-w-4xl mx-auto bg-white rounded-xl shadow-lg p-8">
+            <div className="border-b pb-4 mb-8">
+                <h2 className="text-3xl font-bold text-gray-800">Edit Your Post</h2>
+                <p className="text-gray-600 mt-2">Update your post information and media</p>
+            </div>
 
-                {/* Details textarea */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Details</label>
-                    <textarea
-                        name="Details"
-                        value={formData.Details}
-                        onChange={handleInputChange}
-                        rows={4}
-                        className="mt-1 border px-2 py-2 border-black block w-full rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                        required
-                    />
-                </div>
-
-                {/* Items mapping */}
-                {formData.Items.map((item, itemIndex) => (
-                    <div key={itemIndex}>
-                        <h3 className="text-lg font-bold mb-2">Item {itemIndex + 1}</h3>
-                        {/* Item Name input */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">Item Name</label>
-                            <input
-                                type="text"
-                                name="itemName"
-                                value={item.itemName}
-                                onChange={(e) => handleItemChange(itemIndex, e)}
-                                className="mt-1 border px-2 py-2 border-black block w-full rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                required
-                            />
-                        </div>
-
-                        {/* Discount input */}
-                        <div>
-                            <label className="block text-sm font-medium text-gray-700">Discount</label>
-                            <input
-                                type="text"
-                                name="Discount"
-                                value={item.Discount}
-                                onChange={(e) => handleItemChange(itemIndex, e)}
-                                className="mt-1 border px-2 py-2 border-black block w-full rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                required
-                            />
-                        </div>
-
-                        <label className="block text-sm font-medium text-gray-700">Mrp Price</label>
-
+            <form onSubmit={handleUpdate} className="space-y-8">
+                {/* Title Section */}
+                <div className="bg-gray-50 p-6 rounded-lg">
+                    <label className="block text-lg font-semibold text-gray-800 mb-4">
+                        Post Title
                         <input
                             type="text"
-                            name="MrpPrice"
-                            placeholder="MrpPrice"
-                            value={item.MrpPrice}
-                            onChange={(e) => handleItemChange(itemIndex, e)}
-                            className="mt-1 border px-2 py-2 border-black block w-full rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                            name="Title"
+                            value={formData.Title}
+                            onChange={handleInputChange}
+                            className="mt-2 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                            placeholder="Enter post title"
                             required
                         />
-                        {/* Dish Images mapping */}
-                        {item.dishImages && item.dishImages.length > 0 ? (
-                            item.dishImages.map((dishImage, dishIndex) => (
-                                <div key={dishIndex} className="mt-4">
-                                    <label className="block text-sm font-medium text-gray-700">Dish Image {dishIndex + 1}</label>
-                                    <div className="flex items-center mt-1 space-x-4">
-                                        {/* Old image */}
-                                        <div className="grid grid-cols-2 gap-4">
-                                            {/* Display existing images */}
-                                            {dishImage.ImageUrl && (
-                                                <div className="flex items-center border p-2 rounded-md">
-                                                    <div className="relative">
+                    </label>
+                </div>
+
+                {/* Details Section */}
+                <div className="bg-gray-50 p-6 rounded-lg">
+                    <label className="block text-lg font-semibold text-gray-800 mb-4">
+                        Post Details
+                        <textarea
+                            name="Details"
+                            value={formData.Details}
+                            onChange={handleInputChange}
+                            rows={4}
+                            className="mt-2 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-200"
+                            placeholder="Enter post details"
+                            required
+                        />
+                    </label>
+                </div>
+
+                {/* Items Section */}
+                {formData.Items.map((item, itemIndex) => (
+                    <div key={itemIndex} className="bg-gray-50 p-6 rounded-lg">
+                        <div className="flex items-center mb-6">
+                            <h3 className="text-xl font-bold text-gray-800">Item {itemIndex + 1}</h3>
+                            <div className="ml-4 px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">
+                                Product Details
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <label className="block">
+                                <span className="text-gray-700 font-medium">Item Name</span>
+                                <input
+                                    type="text"
+                                    name="itemName"
+                                    value={item.itemName}
+                                    onChange={(e) => handleItemChange(itemIndex, e)}
+                                    className="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    required
+                                />
+                            </label>
+
+                            <label className="block">
+                                <span className="text-gray-700 font-medium">Discount</span>
+                                <input
+                                    type="text"
+                                    name="Discount"
+                                    value={item.Discount}
+                                    onChange={(e) => handleItemChange(itemIndex, e)}
+                                    className="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    required
+                                />
+                            </label>
+
+                            <label className="block">
+                                <span className="text-gray-700 font-medium">MRP Price</span>
+                                <input
+                                    type="text"
+                                    name="MrpPrice"
+                                    value={item.MrpPrice}
+                                    onChange={(e) => handleItemChange(itemIndex, e)}
+                                    className="mt-1 w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    required
+                                />
+                            </label>
+                        </div>
+
+                        {/* Dish Images */}
+                        <div className="mt-6">
+                            <h4 className="text-lg font-semibold text-gray-800 mb-4">Product Images</h4>
+                            {item.dishImages && item.dishImages.length > 0 ? (
+                                item.dishImages.map((dishImage, dishIndex) => (
+                                    <div key={dishIndex} className="mb-6 p-4 bg-white rounded-lg shadow-sm">
+                                        <div className="flex flex-wrap items-center gap-6">
+                                            <div className="space-y-4">
+                                                {dishImage.ImageUrl && (
+                                                    <div className="relative inline-block">
                                                         <img
                                                             src={dishImage.ImageUrl}
                                                             alt={`Dish ${dishIndex + 1}`}
-                                                            className="w-32 h-32 object-contain object-center rounded"
+                                                            className="w-32 h-32 object-cover rounded-lg border-2 border-gray-200"
                                                         />
-                                                        <span className="absolute bottom-0 right-0 bg-gray-700 text-white text-xs px-1 py-0.5 rounded">
-                                                            Old
+                                                        <span className="absolute bottom-2 right-2 bg-gray-800 text-white text-xs px-2 py-1 rounded-full">
+                                                            Current
                                                         </span>
                                                     </div>
-                                                </div>
-                                            )}
-
-                                            {/* Display new image previews */}
-                                            {imagePreviews[itemIndex * 10 + dishIndex] && (
-                                                <div className="flex items-center border p-2 rounded-md">
-                                                    <div className="relative">
+                                                )}
+                                                {imagePreviews[itemIndex * 10 + dishIndex] && (
+                                                    <div className="relative inline-block">
                                                         <img
                                                             src={imagePreviews[itemIndex * 10 + dishIndex]}
-                                                            alt={`Dish ${dishIndex + 1} New`}
-                                                            className="w-32 h-32 object-contain object-center rounded"
+                                                            alt={`New Preview ${dishIndex + 1}`}
+                                                            className="w-32 h-32 object-cover rounded-lg border-2 border-blue-400"
                                                         />
-                                                        <span className="absolute bottom-0 right-0 bg-gray-700 text-white text-xs px-1 py-0.5 rounded">
+                                                        <span className="absolute bottom-2 right-2 bg-blue-600 text-white text-xs px-2 py-1 rounded-full">
                                                             New
                                                         </span>
                                                     </div>
-                                                </div>
-                                            )}
+                                                )}
+                                            </div>
+                                            <div className="flex-grow">
+                                                <input
+                                                    type="file"
+                                                    onChange={(e) => handleDishImageChange(itemIndex, dishIndex, e)}
+                                                    className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                                />
+                                            </div>
                                         </div>
-
-                                        <input
-                                            type="file"
-                                            onChange={(e) => handleDishImageChange(itemIndex, dishIndex, e)}
-                                            className="ml-4"
-                                        />
                                     </div>
+                                ))
+                            ) : (
+                                <div className="mb-6">
+                                    <input
+                                        type="file"
+                                        onChange={(e) => handleDishImageChange(itemIndex, 0, e)}
+                                        className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                        required
+                                    />
                                 </div>
-                            ))
-                        ) : (
-                            <div className="mt-4">
-                                <label className="block text-sm font-medium text-gray-700">Upload Dish Images</label>
-                                <input
-                                    type="file"
-                                    onChange={(e) => handleDishImageChange(itemIndex, 0, e)}
-                                    className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                                    required
-                                />
-                            </div>
-                        )}
+                            )}
+                        </div>
                     </div>
                 ))}
 
-                {/* Images */}
-                <div>
-                    <label className="block text-sm font-medium text-gray-700">Upload Images</label>
-                    <div className="flex items-center mt-1 space-x-4">
+                {/* Main Images Section */}
+                <div className="bg-gray-50 p-6 rounded-lg">
+                    <h3 className="text-xl font-bold text-gray-800 mb-6">Post Images</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                         {images && images.map((image, index) => (
-                            <div key={index} className="grid grid-cols-2 gap-4">
-                                {/* Display existing images */}
-                                {image.ImageUrl && (
-                                    <div className="flex items-center border p-2 rounded-md">
-                                        <div className="relative">
-                                            <img
-                                                src={image.ImageUrl}
-                                                alt={`Image ${index + 1}`}
-                                                className="w-32 h-32 object-contain object-center rounded"
-                                            />
-                                            <span className="absolute bottom-0 right-0 bg-gray-700 text-white text-xs px-1 py-0.5 rounded">
-                                                Old
-                                            </span>
-                                        </div>
+                            <div key={index} className="bg-white p-4 rounded-lg shadow-sm">
+                                <div className="flex flex-wrap items-center gap-6">
+                                    <div className="space-y-4">
+                                        {image.ImageUrl && (
+                                            <div className="relative inline-block">
+                                                <img
+                                                    src={image.ImageUrl}
+                                                    alt={`Image ${index + 1}`}
+                                                    className="w-32 h-32 object-cover rounded-lg border-2 border-gray-200"
+                                                />
+                                                <span className="absolute bottom-2 right-2 bg-gray-800 text-white text-xs px-2 py-1 rounded-full">
+                                                    Current
+                                                </span>
+                                            </div>
+                                        )}
+                                        {imagePreviews[index] && (
+                                            <div className="relative inline-block">
+                                                <img
+                                                    src={imagePreviews[index]}
+                                                    alt={`New Preview ${index + 1}`}
+                                                    className="w-32 h-32 object-cover rounded-lg border-2 border-blue-400"
+                                                />
+                                                <span className="absolute bottom-2 right-2 bg-blue-600 text-white text-xs px-2 py-1 rounded-full">
+                                                    New
+                                                </span>
+                                            </div>
+                                        )}
                                     </div>
-                                )}
-
-                                {/* Display new image previews */}
-                                {imagePreviews[index] && (
-                                    <div className="flex items-center border p-2 rounded-md">
-                                        <div className="relative">
-                                            <img
-                                                src={imagePreviews[index]}
-                                                alt={`Image ${index + 1} New`}
-                                                className="w-32 h-32 object-contain object-center rounded"
-                                            />
-                                            <span className="absolute bottom-0 right-0 bg-gray-700 text-white text-xs px-1 py-0.5 rounded">
-                                                New
-                                            </span>
-                                        </div>
+                                    <div className="flex-grow">
+                                        <input
+                                            type="file"
+                                            onChange={(e) => handleImageChange(index, e)}
+                                            className="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
+                                        />
                                     </div>
-                                )}
-                                <input
-                                    type="file"
-                                    onChange={(e) => handleImageChange(index, e)}
-                                    className="ml-4"
-                                />
+                                </div>
                             </div>
                         ))}
                     </div>
                 </div>
 
-                {/* Submit button */}
-                <div className="mt-4">
+                {/* Submit Button */}
+                <div className="flex justify-end pt-6">
                     <button
                         type="submit"
-                        className={`px-4 py-2 rounded ${submitting ? 'bg-gray-500 cursor-not-allowed' : 'bg-blue-500 hover:bg-blue-700'} text-white`}
                         disabled={submitting}
+                        className={`
+                            px-8 py-3 rounded-lg text-white font-semibold text-lg
+                            ${submitting 
+                                ? 'bg-gray-400 cursor-not-allowed' 
+                                : 'bg-blue-600 hover:bg-blue-700 transform hover:-translate-y-0.5 transition-all duration-150'}
+                            shadow-lg hover:shadow-xl
+                        `}
                     >
-                        {submitting ? 'Updating...' : 'Update Post'}
+                        {submitting ? (
+                            <span className="flex items-center">
+                                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Updating...
+                            </span>
+                        ) : (
+                            'Update Post'
+                        )}
                     </button>
                 </div>
             </form>
         </div>
+    </div>
     );
 };
 

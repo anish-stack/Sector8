@@ -12,6 +12,7 @@ const xlsx = require('xlsx');
 const path = require('path')
 const axios = require('axios');
 const sendToken = require('./utils/SendToken');
+const OtherRoutes  = require('./routes/OtherRoutes')
 const filePath = path.resolve(__dirname, 'Services Name .xlsx');
 // Load environment variables from .env file
 // Read the Excel file
@@ -155,10 +156,12 @@ app.post('/Fetch-Current-Location', async (req, res) => {
 });
 
 
+
+
 app.post('/admin-login', (req, res) => {
     const { email, password } = req.body;
-    const defaultEmail = 'admin@gmail.com'
-    const defaultPassword = 'naideal@admin21';
+    const defaultEmail = process.env.ADMIN_EMAIL
+    const defaultPassword = process.env.ADMIN_PASSWORD;
 
     if (email === defaultEmail && password === defaultPassword) {
 
@@ -232,6 +235,8 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/v1', router);
+app.use('/api/v1/Other', OtherRoutes);
+
 
 // Error handling middleware
 app.use((err, req, res, next) => {
