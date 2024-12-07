@@ -162,7 +162,7 @@ const AllPost = () => {
                         {currentPosts.map((post) => (
                             <tr key={post._id} className="hover:bg-gray-50">
                                 <td className="px-6 py-4 whitespace-nowrap">
-                                    <div className="text-sm font-medium text-gray-900">{post.Title}</div>
+                                    <div className="text-sm w-32 truncate  font-medium text-gray-900">{post.Title}</div>
                                 </td>
                                 <td className="px-6 py-4 whitespace-nowrap">
                                     <ImageStack images={post.Pictures} />

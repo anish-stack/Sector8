@@ -7,9 +7,7 @@ if (result.error) {
     console.error(result.error);
     throw new Error('Failed to load environment variables');
 }
-console.log(process.env.CLOUD_NAME);
-console.log(process.env.CLOUDINARY_API_KEY);
-console.log(process.env.CLOUDINARY_SECRET_KEY);
+
 
 Cloudinary.config({
   cloud_name: process.env.CLOUD_NAME,

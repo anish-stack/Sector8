@@ -38,11 +38,11 @@ exports.ListUser = async (req, res) => {
                 .json({ success: false, errors: errors.array() });
         }
 
-    
+
         const {
             UserName, Email, ContactNumber, ShopName,
             ShopAddress, ShopCategory, ListingPlan,
-            HowMuchOfferPost, Password,LandMarkCoordinates
+            HowMuchOfferPost, Password, LandMarkCoordinates
         } = req.body;
 
         // console.log(req.body)
@@ -100,7 +100,7 @@ exports.ListUser = async (req, res) => {
             ShopCategory, ListingPlan,
             ProfilePic: `https://ui-avatars.com/api/?name=${UserName}&background=random`,
             HowMuchOfferPost,
-            PackagePlanIssued:plan.postsDone,
+            PackagePlanIssued: plan.postsDone,
             Password,
             PartnerId,
             LandMarkCoordinates,
@@ -249,7 +249,7 @@ exports.UpdateProfileDetails = async (req, res) => {
         if (ContactNumber && ContactNumber !== checkShop.ContactNumber) {
             updatedFields.ContactNumber = ContactNumber;
         }
-     
+
 
         // If no fields were updated, return a response
         if (Object.keys(updatedFields).length === 0) {
@@ -670,14 +670,14 @@ exports.CreatePost = async (req, res) => {
 
         const CheckMyShop = await ListingUser.findById(ShopId).select('-Password');
         if (!CheckMyShop) {
-            return res.status(404).json({ 
-                success: false, 
-                msg: "Shop not found" 
+            return res.status(404).json({
+                success: false,
+                msg: "Shop not found"
             });
         }
 
         const { ListingPlan, HowMuchOfferPost } = CheckMyShop;
-
+        console.log(ListingPlan, HowMuchOfferPost)
         const Plans = await Package.findOne({ packageName: ListingPlan });
         if (!Plans) {
             return res.status(404).json({
@@ -693,8 +693,8 @@ exports.CreatePost = async (req, res) => {
             });
         }
 
-        const { Title, Details, HtmlContent } = req.body;
-
+        const { Title, Details, HtmlContent, tags } = req.body;
+        console.log(req.body)
         const Items = [];
 
         // Process Items and their dishImages
@@ -741,11 +741,15 @@ exports.CreatePost = async (req, res) => {
         const uploadedGeneralImages = await Promise.all(req.files
             .filter(file => file.fieldname === 'images')
             .map(file => uploadToCloudinary(file)));
+            console.log(tags); // Logs the tags string, e.g., "#FoodInrohini, #ometotindia"
 
+            const splitTags = tags.split(',').map(tag => tag.trim());
+            console.log(splitTags);
         const newPost = await Listing.create({
             Title,
             Details,
             Items,
+            tags: splitTags,
             HtmlContent,
             Pictures: uploadedGeneralImages,
             ShopId,
@@ -753,13 +757,14 @@ exports.CreatePost = async (req, res) => {
 
         CheckMyShop.HowMuchOfferPost += 1;
         await CheckMyShop.save();
-        console.log(newPost)
+        // console.log(newPost)
         res.status(201).json({
             success: true,
             msg: "Post created successfully",
             post: newPost
         });
     } catch (error) {
+        console.log(error)
         res.status(500).json({
             success: false,
             msg: "Error creating post",
@@ -907,48 +912,48 @@ exports.getAllPostApprovedPost = async (req, res) => {
                 error: 'Invalid latitude or longitude provided.',
             });
         }
-        
+
         // Fetch listings within 2km of the provided coordinates, first checking ShopAddress.Location
-      listings = await Listing.aggregate([
+        listings = await Listing.aggregate([
             // Step 1: Populate ShopId first
             {
-              $lookup: {
-                from: 'shops',  // Replace 'shops' with the correct collection name for the shops
-                localField: 'ShopId',  // The field in your Listing collection
-                foreignField: '_id',  // The field in the Shop collection that matches ShopId
-                as: 'ShopDetails',  // The name of the new array field to hold populated data
-              },
+                $lookup: {
+                    from: 'shops',  // Replace 'shops' with the correct collection name for the shops
+                    localField: 'ShopId',  // The field in your Listing collection
+                    foreignField: '_id',  // The field in the Shop collection that matches ShopId
+                    as: 'ShopDetails',  // The name of the new array field to hold populated data
+                },
             },
-          
+
             // Step 2: Unwind the populated ShopDetails array
             {
-              $unwind: {
-                path: '$ShopDetails',
-                preserveNullAndEmptyArrays: true,  // Handle cases where there's no matching Shop
-              },
+                $unwind: {
+                    path: '$ShopDetails',
+                    preserveNullAndEmptyArrays: true,  // Handle cases where there's no matching Shop
+                },
             },
-          
+
             // Step 3: GeoNear query using populated ShopAddress.Location
             {
-              $geoNear: {
-                near: { type: 'Point', coordinates: coordinates },
-                distanceField: 'distance',
-                maxDistance: 2000,  // 2 km in meters
-                spherical: true,
-                query: { 'ShopDetails.ShopAddress.Location': { $exists: true } },  // Use the populated field
-              },
+                $geoNear: {
+                    near: { type: 'Point', coordinates: coordinates },
+                    distanceField: 'distance',
+                    maxDistance: 2000,  // 2 km in meters
+                    spherical: true,
+                    query: { 'ShopDetails.ShopAddress.Location': { $exists: true } },  // Use the populated field
+                },
             },
-          
+
             // Step 4: Apply any additional filtering like isApprovedByAdmin
             {
-              $match: {
-                isApprovedByAdmin: true,  // Filter for approved listings
-              },
+                $match: {
+                    isApprovedByAdmin: true,  // Filter for approved listings
+                },
             },
-          ]);
-          
-          console.log(listings);
-          
+        ]);
+
+        console.log(listings);
+
 
         // If no listings found based on ShopAddress.Location, check the LandMarkCoordinates field
         if (listings.length === 0) {
@@ -1093,7 +1098,7 @@ exports.getPostById = async (req, res) => {
 
 exports.getMyPostOnly = async (req, res) => {
     try {
-        const ShopId = req.user.id || req.query.id; 
+        const ShopId = req.user.id || req.query.id;
         const listings = await Listing.find({ ShopId });
 
         if (listings.length === 0) {
@@ -1121,7 +1126,7 @@ exports.getMyPostOnly = async (req, res) => {
 exports.getMyAllPost = async (req, res) => {
     try {
         // Extract ShopId from query parameters
-        const ShopId = req.query.id; 
+        const ShopId = req.query.id;
 
         // Query listings based on ShopId, or fetch all if no ShopId is provided
         const query = ShopId ? { ShopId } : {};

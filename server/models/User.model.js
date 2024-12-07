@@ -41,19 +41,19 @@ const ListingUserSchema = new mongoose.Schema({
         },
         Location: {
             type: {
-                type: String, // Must be "Point"
-                enum: ['Point'], // Restrict to "Point" only
+                type: String, 
+                enum: ['Point'], 
                 required: true
             },
             coordinates: {
-                type: [Number], // Array of numbers for [longitude, latitude]
+                type: [Number], 
                 required: true
             }
         }
     },
     ShopCategory: {
-        type: String,
-        required: [true, "Please provide Shop Category"]
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "Categories",
     },
     LandMarkCoordinates: {
         type: {

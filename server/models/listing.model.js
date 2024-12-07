@@ -28,7 +28,7 @@ const ListingData = new mongoose.Schema({
                 type: String,
                 trim: true
             },
-            MrpPrice:{
+            MrpPrice: {
                 type: String,
             },
             Discount: {
@@ -50,13 +50,14 @@ const ListingData = new mongoose.Schema({
             ]
         }
     ],
-    isApprovedByAdmin:{
-        type:Boolean,
-        default:false
+    isApprovedByAdmin: {
+        type: Boolean,
+        default: false
     },
-    HtmlContent:{
-        type:String,
+    HtmlContent: {
+        type: String,
     },
+    tags: [String],
     ShopId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "ShopUser",

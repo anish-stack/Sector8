@@ -11,6 +11,7 @@ const CreateListing = ({ isOpen, onClose }) => {
   const [formData, setFormData] = useState({
     Title: '',
     Details: '',
+    tags: "",
     Items: [{ itemName: '', Discount: '', dishImages: [], MrpPrice: '' }],
     Pictures: [],
     HtmlContent: ''
@@ -21,7 +22,7 @@ const CreateListing = ({ isOpen, onClose }) => {
   const config = useMemo(() => ({
     readonly: false,
   }), []);
-  
+
 
   useEffect(() => {
     const isFormIncomplete = !formData.Title || !formData.Details ||
@@ -29,11 +30,16 @@ const CreateListing = ({ isOpen, onClose }) => {
     const isImageLimitExceeded = formData.Pictures.length > 5;
     setIsSubmitDisabled(isFormIncomplete || isImageLimitExceeded);
   }, [formData]);
-  //   console.log(formData)
+
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    if (name === 'tags') {
+      const tags = value.split(',').map(tag => tag.trim());
+      setFormData({ ...formData, tags: tags });
+    } else {
+      setFormData({ ...formData, [name]: value });
+    }
   };
 
   const handleItemChange = (index, e) => {
@@ -102,11 +108,14 @@ const CreateListing = ({ isOpen, onClose }) => {
         } else if (key === 'HtmlContent') {
           console.log('Appending HtmlContent:', formData[key]); // Debugging log
           data.append(key, formData[key]); // Ensure it's included as plain text
+        } else if (key === 'tags') {
+          // Convert tags to a comma-separated string if your backend needs it that way
+          data.append('tags', formData.tags.join(', '));
         } else {
           data.append(key, formData[key]);
         }
       });
-      
+
 
       setBtnLoading(true);
       const token = localStorage.getItem('ShopToken');
@@ -180,12 +189,24 @@ const CreateListing = ({ isOpen, onClose }) => {
                 required
               />
             </div>
+            <div>
+              <label htmlFor="tags" className="block text-sm font-medium text-gray-700">Tags</label>
+              <input
+                type="text"
+                id="tags"
+                name="tags"
+                value={formData.tags}
+                onChange={handleInputChange}
 
+                placeholder="Enter tags separated by commas"
+                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+              />
+            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
                 Rich Content
               </label>
-              
+
               <JoditEditor
                 ref={editor}
                 value={formData.HtmlContent}

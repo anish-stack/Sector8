@@ -20,6 +20,7 @@ import AllPost from './pages/Post/AllPost';
 import EditPost from './pages/Post/EditPost';
 import CryptoJS from 'crypto-js';
 import ProtectedRoute from './ProtectedRoute';
+import AllContact from './pages/Contact/AllContact';
 
 const App = () => {
   // Retrieve and decrypt the session data
@@ -63,6 +64,10 @@ const App = () => {
           <Route path="/All-City" element={<ProtectedRoute><AllCity /></ProtectedRoute>} />
           <Route path="/All-Post" element={<ProtectedRoute><AllPost /></ProtectedRoute>} />
           <Route path="/edit-post" element={<ProtectedRoute><EditPost /></ProtectedRoute>} />
+          <Route path="/All-Contacts" element={<ProtectedRoute><AllContact /></ProtectedRoute>} />
+
+
+          
         </Route>
 
         {/* Catch-all route for undefined paths */}

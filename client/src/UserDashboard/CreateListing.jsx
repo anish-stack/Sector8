@@ -7,6 +7,7 @@ const CreateListing = ({ isOpen, onClose, fetchMyShopDetails }) => {
     const [formData, setFormData] = useState({
         Title: '',
         Details: '',
+        tags: "",
         Items: [{ itemName: '', Discount: '', dishImages: [], MrpPrice: '' }],
         Pictures: []
     });
@@ -21,7 +22,12 @@ const CreateListing = ({ isOpen, onClose, fetchMyShopDetails }) => {
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
-        setFormData({ ...formData, [name]: value });
+        if (name === 'tags') {
+            const tags = value.split(',').map(tag => tag.trim());
+            setFormData({ ...formData, tags: tags });
+        } else {
+            setFormData({ ...formData, [name]: value });
+        }
     };
 
     const handleItemChange = (index, e) => {
@@ -35,15 +41,7 @@ const CreateListing = ({ isOpen, onClose, fetchMyShopDetails }) => {
         setFormData({ ...formData, Items: items });
     };
 
-    const handleAddItem = () => {
-        setFormData({ ...formData, Items: [...formData.Items, { itemName: '', Discount: '', MrpPrice: '', dishImages: [] }] });
-    };
 
-    const handleRemoveItem = (index) => {
-        const items = [...formData.Items];
-        items.splice(index, 1);
-        setFormData({ ...formData, Items: items });
-    };
 
     const handleImageChange = (e) => {
         const files = Array.from(e.target.files);
@@ -81,7 +79,6 @@ const CreateListing = ({ isOpen, onClose, fetchMyShopDetails }) => {
                         data.append(`Items[${index}].itemName`, item.itemName);
                         data.append(`Items[${index}].Discount`, item.Discount);
                         data.append(`Items[${index}].MrpPrice`, item.MrpPrice);
-
                         item.dishImages.forEach((file, fileIndex) => {
                             data.append(`Items[${index}].dishImages[${fileIndex}]`, file);
                         });
@@ -90,28 +87,31 @@ const CreateListing = ({ isOpen, onClose, fetchMyShopDetails }) => {
                     formData.Pictures.forEach(file => {
                         data.append('images', file);
                     });
+                } else if (key === 'tags') {
+                    // Convert tags to a comma-separated string if your backend needs it that way
+                    data.append('tags', formData.tags.join(', '));
                 } else {
                     data.append(key, formData[key]);
                 }
             });
-            setBtnLoading(true);
 
+            setBtnLoading(true);
             const response = await axios.post(`${BackendUrl}/Create-Post`, data, {
                 headers: {
-                    Authorization: `Bearer ${token}`
-                }
+                    Authorization: `Bearer ${token}`,
+                },
             });
             toast.success(response.data.msg);
-
             onClose();
             window.location.reload();
         } catch (error) {
             console.log(error);
-            toast.error(error.response.data.msg);
+            toast.error(error.response?.data?.msg || 'Something went wrong.');
         } finally {
             setBtnLoading(false);
         }
     };
+
 
     if (!isOpen) return null;
 
@@ -228,7 +228,19 @@ const CreateListing = ({ isOpen, onClose, fetchMyShopDetails }) => {
                             </div>
                         ))}
                     </div>
+                    <div>
+                        <label htmlFor="tags" className="block text-sm font-medium text-gray-700">Tags</label>
+                        <input
+                            type="text"
+                            id="tags"
+                            name="tags"
+                            value={formData.tags}
+                            onChange={handleInputChange}
 
+                            placeholder="Enter tags separated by commas"
+                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+                        />
+                    </div>
                     <button
                         type="submit"
                         disabled={isSubmitDisabled}
