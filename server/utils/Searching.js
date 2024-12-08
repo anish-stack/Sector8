@@ -24,7 +24,7 @@ exports.SearchByAnyThing = async (req, res) => {
                     path: 'ShopCategory',
                     model: CategoreiesModel
                 }
-            });
+            }).sort({createdAt:-1});
 
         let searchSource = 'search query';
 

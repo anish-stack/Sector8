@@ -47,7 +47,7 @@ router.post('/Upload-Profile-Details',protect, UpdateProfileDetails)
 
 
 router.post('/Search', SearchByPinCodeCityAndWhatYouWant);
-router.put('/My-Shop-Edit-post/:id', protect, upload.any(), UpdateListing)
+router.put('/My-Shop-Edit-post/:id', protect, upload.array('dishImage'), UpdateListing)
 router.put('/admin-Shop-Edit-post', upload.fields([
     { name: 'MainImage', maxCount: 1 },
     { name: 'dishImage', maxCount: 10 },

@@ -6,7 +6,7 @@ import { Eye, EyeOff, Store, AlertCircle, Loader2 } from 'lucide-react';
 
 const ShopLogin = () => {
   const [formData, setFormData] = useState({
-    Email: "",
+    any: "",
     Password: ""
   });
   const [showPassword, setShowPassword] = useState(false);
@@ -24,14 +24,11 @@ const ShopLogin = () => {
   };
 
   const validateForm = () => {
-    if (!formData.Email || !formData.Password) {
+    if (!formData.any || !formData.Password) {
       setError("All fields are required");
       return false;
     }
-    if (!/\S+@\S+\.\S+/.test(formData.Email)) {
-      setError("Please enter a valid email address");
-      return false;
-    }
+
     if (formData.Password.length < 6) {
       setError("Password must be at least 6 characters long");
       return false;
@@ -146,16 +143,16 @@ const ShopLogin = () => {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
                     <label htmlFor="Email" className="block text-sm font-medium text-gray-700">
-                      Email address
+                    Username, Phone Number, or Email Address
                     </label>
                     <div className="mt-1">
                       <input
                         id="Email"
-                        name="Email"
-                        type="email"
-                        autoComplete="email"
+                        name="any"
+                        type="text"
+                        autoComplete="any"
                         required
-                        value={formData.Email}
+                        value={formData.any}
                         onChange={handleChange}
                         className="block w-full px-3 py-2 rounded-lg border border-gray-300 shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors duration-200"
                         placeholder="your@email.com"

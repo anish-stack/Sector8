@@ -345,18 +345,22 @@ exports.paymentVerification = async (req, res) => {
 // Login a ListingUser
 exports.LoginListUser = async (req, res) => {
     try {
-        console.log(req.body);
-        const { Email, UserName, Password } = req.body;
+        console.log("i am")
+        const { any, Password } = req.body;
+        console.log(req.body)
 
-        // Find user by Email or UserName
-        let user;
-        if (UserName) {
-            user = await ListingUser.findOne({ UserName });
-        } else if (Email) {
-            user = await ListingUser.findOne({ Email });
-        } else {
-            return res.status(400).json({ message: 'Email or UserName is required' });
+        if (!any || !Password) {
+            return res.status(400).json({ message: 'Both "any" and "Password" are required' });
         }
+
+        // Find user by Email, UserName, or ContactNumber
+        const user = await ListingUser.findOne({
+            $or: [
+                { Email: any },
+                { UserName: any },
+                { ContactNumber: any }
+            ]
+        });
 
         if (!user) {
             return res.status(404).json({ message: 'User not found' });
@@ -369,13 +373,14 @@ exports.LoginListUser = async (req, res) => {
         }
 
         // Generate and send token
-        await sendToken(user, res, 201);
+        await sendToken(user, res, 200);
 
     } catch (error) {
         console.error('Error logging in user:', error);
         res.status(500).json({ message: 'Internal server error' });
     }
 };
+
 
 
 exports.CreateForgetPasswordRequest = async (req, res) => {
@@ -741,10 +746,10 @@ exports.CreatePost = async (req, res) => {
         const uploadedGeneralImages = await Promise.all(req.files
             .filter(file => file.fieldname === 'images')
             .map(file => uploadToCloudinary(file)));
-            console.log(tags); // Logs the tags string, e.g., "#FoodInrohini, #ometotindia"
+        console.log(tags); // Logs the tags string, e.g., "#FoodInrohini, #ometotindia"
 
-            const splitTags = tags.split(',').map(tag => tag.trim());
-            console.log(splitTags);
+        const splitTags = tags.split(',').map(tag => tag.trim());
+        console.log(splitTags);
         const newPost = await Listing.create({
             Title,
             Details,

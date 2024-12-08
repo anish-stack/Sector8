@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Menu, X } from 'lucide-react';
 import axios from 'axios'
+import anm from './Animation - 1733596519295.gif'
 import { useEffect } from 'react';
 export function Header() {
   const [settings,setSettings] = useState({})
@@ -13,7 +14,7 @@ export function Header() {
     useEffect(() => {
       const fetchSettings = async () => {
         try {
-          const response = await axios.get('http://localhost:7485/api/v1/get-setting');
+          const response = await axios.get('https://api.naideal.com/api/v1/get-setting');
           if (response.data.success) {
             setSettings(response.data.data);
             console.log(response.data.data)
@@ -27,7 +28,7 @@ export function Header() {
       fetchSettings();
     }, []);
   
-
+ 
 
 
     return (
@@ -91,7 +92,6 @@ export function Header() {
               {isMenuOpen ? <X className="w-6 h-6 text-gray-700" /> : <Menu className="w-6 h-6 text-gray-700" />}
             </button> */}
           </div>
-  
           {/* Mobile Navigation */}
           {/* {isMenuOpen && (
             <nav className="md:hidden py-4 space-y-3 border-t">

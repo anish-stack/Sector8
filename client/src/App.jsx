@@ -22,7 +22,7 @@ import SearchProduct from './pages/Search/SearchProduct';
 import ShopProfile from './pages/ShopProfiles/ShopProfile';
 import UpgradePackage from './pages/Packages/UpgradePackage';
 import ParentComponent from './pages/Packages/ParentComponent';
-import EditPost from './UserDashboard/EditPost';
+import EditPost from './Shop/editor/EditPost';
 import Success from './components/Payment/Success';
 import Failed from './components/Payment/Failed';
 import PostByCategories from './components/Category/PostByCategories';
@@ -37,6 +37,7 @@ import { Header } from './pages/Hero/Header';
 import Services from './pages/services/Services';
 import UserRegister from './UserDashboard/UserRegister';
 import AllListing from './pages/Listings/AllListing';
+import SearchItem from './components/SearchItems/SearchItem';
 function App() {
   const [locationDetails, setLocationDetails] = useState(null);
   const [locationPopup, setLocationPopup] = useState(false);
@@ -155,6 +156,7 @@ function App() {
         <Route path='/paymentsuccess' element={<Success />} />
         <Route path='/payment-failed' element={<Failed />} />
 
+        <Route path='/search-offer' element={<SearchItem />} />
 
 
 

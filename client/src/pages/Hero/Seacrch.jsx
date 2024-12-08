@@ -6,8 +6,7 @@ export function SearchBar() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Handle search logic here
-    console.log('Search query:', query);
+    window.location.href=`/search-offer?q=${query}`
   };
 
   return (
@@ -19,8 +18,8 @@ export function SearchBar() {
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search for anything..."
           className="w-full px-6 py-4 text-lg rounded-full border-2 border-green-500 
-          bg-red-500/10 backdrop-blur-md text-green-500 placeholder-white/70
-          focus:outline-none focus:border-red-500 focus:bg-red-500/20 transition-all
+          bg-red-500/10 backdrop-blur-md text-white placeholder-white/70
+          focus:outline-none focus:border-white focus:bg-red-500/20 transition-all
           shadow-lg"
 
 

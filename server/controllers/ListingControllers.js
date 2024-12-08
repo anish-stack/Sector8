@@ -17,7 +17,7 @@ exports.CreateListing = async (req, res) => {
     try {
 
         const ShopId = req.user.id;
-   
+
 
         if (!ShopId) {
             return res.status(401).json({
@@ -41,15 +41,15 @@ exports.CreateListing = async (req, res) => {
         }
 
 
-        const { Title, Details ,HtmlContent} = req.body;
-      
+        const { Title, Details, HtmlContent } = req.body;
+
 
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ success: false, errors: errors.array() });
         }
 
-      
+
         const Items = [];
 
         // Process Items and their dishImages
@@ -231,6 +231,8 @@ exports.UpdateListing = async (req, res) => {
             });
         }
 
+        console.log(req.body);
+
         const CheckMyShop = await ListingUser.findById(ShopId).select('-Password');
         if (!CheckMyShop) {
             return res.status(404).json({
@@ -239,7 +241,7 @@ exports.UpdateListing = async (req, res) => {
             });
         }
 
-        const { Title, Details } = req.body;
+        const { Title, Details, HtmlContent, tags } = req.body;
 
         const listing = await Listing.findById(ListingId);
         if (!listing) {
@@ -256,76 +258,62 @@ exports.UpdateListing = async (req, res) => {
             });
         }
 
+        // Initialize the Items array
         const Items = [];
         for (let i = 0; req.body[`Items[${i}].itemName`] !== undefined; i++) {
             Items.push({
                 itemName: req.body[`Items[${i}].itemName`],
                 MrpPrice: req.body[`Items[${i}].MrpPrice`],
                 Discount: req.body[`Items[${i}].Discount`],
-                dishImages: []
+                dishImages: []  // Initialize an empty array for dish images
             });
         }
 
-        console.log('Items before adding images:', Items);
+        console.log('Items before adding images:', req.files);
 
+        // Validate the request body
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ success: false, errors: errors.array() });
         }
 
-        const images = req.files['images'] || [];
-        const dishImagesUrl = req.files.map(file => file);
-
-        console.log('dishImagesUrl:', dishImagesUrl);
-
-        const uploadedDishImages = await Promise.all(dishImagesUrl.map(file => uploadImage(file)));
-
-        console.log('uploadedDishImages:', uploadedDishImages);
-
-        uploadedDishImages.forEach((upload, index) => {
-            if (Items[index]) {
-                Items[index].dishImages.push({
-                    public_id: upload.public_id,
-                    ImageUrl: upload.ImageUrl
-                });
-            }
-        });
-
-        const uploadedImages = await Promise.all(images.map(file => uploadImage(file)));
-
-        console.log('uploadedImages:', uploadedImages);
-
-        if (Title) listing.Title = Title;
-        if (Details) listing.Details = Details;
-        if (Items.length) listing.Items = Items;
-
-        if (uploadedImages.length) {
-            const updatedPictures = [...listing.Pictures];
-
-            uploadedImages.forEach(upload => {
-                const existingImageIndex = updatedPictures.findIndex(picture => picture.public_id === upload.public_id);
-                if (existingImageIndex !== -1) {
-                    updatedPictures[existingImageIndex] = upload;
-                } else {
-                    updatedPictures.push({
+        // Handle image upload (for multiple files)
+        if (req.files && req.files.length > 0) {
+            // Assuming `req.files` is an array of uploaded images
+            let imageIndex = 0; // Track the image index for matching images to items
+            const uploadedDishImages = await Promise.all(req.files.map(upload => uploadImage(upload))); 
+            
+            uploadedDishImages.forEach((upload, index) => {
+                // Ensure that image is added to the corresponding item
+                if (Items[imageIndex]) {
+                    Items[imageIndex].dishImages.push({
                         public_id: upload.public_id,
                         ImageUrl: upload.ImageUrl
                     });
                 }
+                imageIndex++; // Increment to the next item
             });
-
-            listing.Pictures = updatedPictures;
-
-            console.log('Updated Pictures:', updatedPictures);
         }
+        const splitTags = tags.split(',').map(tag => tag.trim());
+        console.log(splitTags);
+        // Update the listing with new data
+        if (Title) listing.Title = Title;
+        if (Details) listing.Details = Details;
+        if (HtmlContent) listing.HtmlContent = HtmlContent; // Update HtmlContent if it exists
+        if (splitTags) listing.tags = splitTags; // Update tags if it exists
+        if (Items.length) listing.Items = Items;
 
+        console.log(Items);
+        // Save the updated listing
         await listing.save();
 
+        // Send success response
         res.status(200).json({
             success: true,
             msg: "Listing updated successfully",
             listing
         });
+
     } catch (error) {
         console.log(error);
         res.status(500).json({
@@ -335,6 +323,56 @@ exports.UpdateListing = async (req, res) => {
         });
     }
 };
+
+
+exports.updateImage = async (req, res) => {
+    try {
+        const { publicId } = req.query; // Get publicId of the image to replace
+        const imageFile = req.file; // New image file from the request
+
+        // Validate inputs
+        if (!publicId || !imageFile) {
+            return res.status(400).json({ error: 'Missing required parameters: publicId or image file.' });
+        }
+
+        // Find the listing containing the old image
+        const listing = await Listing.findOne({ 
+            Pictures: { $elemMatch: { public_id: publicId } }
+        });
+
+        if (!listing) {
+            return res.status(404).json({ error: 'Image not found in the database.' });
+        }
+
+        // Delete old image from Cloudinary
+        await Cloudinary.uploader.destroy(publicId, (error, result) => {
+            if (error) {
+                throw new Error('Failed to delete old image from Cloudinary.');
+            }
+        });
+
+        // Upload new image to Cloudinary
+        const newImage = await uploadImage(imageFile);
+
+        // Update the image details in the database
+        const updatedPictures = listing.Pictures.map((picture) =>
+            picture.public_id === publicId ? newImage : picture
+        );
+
+        listing.Pictures = updatedPictures;
+        await listing.save();
+
+        res.status(200).json({
+            message: 'Image updated successfully!',
+            listing,
+        });
+    } catch (error) {
+        console.error('Error updating image:', error.message);
+        res.status(500).json({ error: 'An error occurred while updating the image.' });
+    }
+};
+
+
 
 exports.UpdateListingAdmin = async (req, res) => {
     try {

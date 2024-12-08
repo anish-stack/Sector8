@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Award, Building, MapPin, Star, Users } from 'lucide-react';
+import anm from './Animation - 1733596519295.gif'
+import gnm from './gnm.gif'
+
 
 import Categorey from '../../components/Category/Categorey';
 import MCategorey from '../../components/Category/Mobile';
@@ -103,6 +106,11 @@ const Home = () => {
 
   return (
     <div>
+      <div className=''>
+        <img className='fixed hidden md:block z-50 w-32 left-0 top-12' src={gnm} alt="" />
+        <img className='fixed  hidden md:block  z-50 w-32 right-0 top-12' src={gnm} alt="" />
+      </div>
+
       <Hero />
       <div className='hidden lg:block'>
         <Categorey />
@@ -110,23 +118,27 @@ const Home = () => {
       <div className='block lg:hidden'>
         <MCategorey />
       </div>
-      <AllListing/>
+      <AllListing />
       {/* <AllListings /> */}
       <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Services</h2>
-            <p className="text-gray-600 max-w-2xl mx-auto">
-              Comprehensive solutions designed to help your business thrive in the digital age
-            </p>
-          </div>
-          
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Services</h2>
+        <p className="text-gray-600 max-w-2xl mx-auto">
+          Comprehensive solutions designed to help your business thrive in the digital age
+        </p>
+      </div>
+
       <div className="grid max-w-screen-xl mx-auto grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {services.map((service, index) => (
-              <ServiceCard key={index} {...service} />
-            ))}
-          </div>
-          <StatsSection />
+        {services.map((service, index) => (
+          <ServiceCard key={index} {...service} />
+        ))}
+      </div>
+      <StatsSection />
 
       <Newsletter />
+      <img className='fixed z-50 w-32 bottom-0' src={anm} alt="" />
+      <img className='fixed z-50 right-0 w-32 bottom-0' src={anm} alt="" />
+
+
     </div>
   );
 };
