@@ -7,50 +7,25 @@ const cors = require('cors');
 const ConnectDb = require('./database/Database');
 const router = require('./routes/Routes');
 const PORT = process.env.PORT || 4255;
-const fs = require('fs')
-const xlsx = require('xlsx');
-const path = require('path')
+
 const axios = require('axios');
 const sendToken = require('./utils/SendToken');
 const OtherRoutes  = require('./routes/OtherRoutes')
-const filePath = path.resolve(__dirname, 'Services Name .xlsx');
-// Load environment variables from .env file
-// Read the Excel file
-const workbook = xlsx.readFile(filePath);
 
-// Get the first sheet name
-const sheetName = workbook.SheetNames[0];
 
-// Get the first sheet
-const sheet = workbook.Sheets[sheetName];
+// cors option
+const corsOption = {
+    origin: [
+        "http://localhost:3000",
+        "http://localhost:5173",
+        "https://naidealhai.vercel.app",
+        "https://www.naidealhai.vercel.app"
+    ],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+};
 
-const jsonData = xlsx.utils.sheet_to_json(sheet, { header: 1 });
-
-// Function to format the data
-function formatData(data) {
-    const formattedData = [];
-
-    data.forEach((row, index) => {
-        if (index === 0) return; // Skip header row
-
-        if (row.length === 3) {
-            const srNo = row[0];
-            const testName = row[1];
-            const price = row[2];
-
-            formattedData.push({
-                SrNo: srNo,
-                TestName: testName,
-                Price: price
-            });
-        }
-    });
-
-    return formattedData;
-}
-
-// Format the data
-const formattedData = formatData(jsonData);
 // Connect to database
 ConnectDb();
 
@@ -58,16 +33,14 @@ ConnectDb();
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+
+app.use(cors(corsOption));
 
 // Health check route
 app.get('/health', (req, res) => {
     res.json({ status: 'UP' });
 });
 
-app.get('/sheet-data', (req, res) => {
-    res.json({ data: formattedData });
-});
 
 app.post('/Fetch-Current-Location', async (req, res) => {
     const { lat, lng } = req.body;
