@@ -19,7 +19,9 @@ const corsOption = {
         "http://localhost:3000",
         "http://localhost:5173",
         "https://naidealhai.vercel.app",
-        "https://www.naidealhai.vercel.app"
+        "https://www.naidealhai.vercel.app",
+        "https://naiadmindeal.vercel.app",
+        "https://www.naiadmindeal.vercel.app"
     ],
     credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE"],
