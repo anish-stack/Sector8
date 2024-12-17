@@ -38,6 +38,9 @@ import Services from './pages/services/Services';
 import UserRegister from './UserDashboard/UserRegister';
 import AllListing from './pages/Listings/AllListing';
 import SearchItem from './components/SearchItems/SearchItem';
+import CustomerFaq from './components/CFaq/CustomerFaq';
+import Pfaq from './components/PFaq/PFaq';
+import Copywrite from './pages/ReturnAndRefundPolicy/Copywrite';
 function App() {
   const [locationDetails, setLocationDetails] = useState(null);
   const [locationPopup, setLocationPopup] = useState(false);
@@ -129,6 +132,13 @@ function App() {
         <Route path='/terms-and-conditions' element={<TermsAndConditions />} />
         <Route path='/return-refund' element={<ReturnAndRefundPolicy />} />
         <Route path='/services' element={<Services />} />
+
+{/* Faq */}
+<Route path='/Customer-faq' element={<CustomerFaq />} />
+<Route path='/partner-faq' element={<Pfaq />} />
+<Route path='/copyright' element={<Copywrite />} />
+
+
 
         {/* ---- Partner ----  */}
         <Route path='/Partner-Login' element={<Login />} />

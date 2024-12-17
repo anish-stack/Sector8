@@ -87,7 +87,7 @@ const Category = () => {
                             loading="lazy"
                         />
                     </div>
-                    <h3 className="text-sm font-semibold text-gray-700 group-hover:text-blue-600 transition-colors duration-300 text-center">
+                    <h3 className="text-sm font-semibold text-gray-700 group-hover:text-blue-400 transition-colors duration-300 text-center">
                         {category.CategoriesName}
                     </h3>
                 </Link>
@@ -121,7 +121,7 @@ const Category = () => {
                         <motion.button
                             // whileHover={{ scale: 1.1 }}
                             // whileTap={{ scale: 0.9 }}
-                            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 p-2 rounded-full bg-white shadow-lg text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors duration-300 hidden sm:block"
+                            className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 p-2 rounded-full bg-white shadow-lg text-gray-700 hover:bg-gray-50 hover:text-blue-400 transition-colors duration-300 hidden sm:block"
                             onClick={prevPage}
                             aria-label="Previous page"
                         >
@@ -131,7 +131,7 @@ const Category = () => {
                         <motion.button
                             // whileHover={{ scale: 1.1 }}
                             // whileTap={{ scale: 0.9 }}
-                            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 p-2 rounded-full bg-white shadow-lg text-gray-700 hover:bg-gray-50 hover:text-blue-600 transition-colors duration-300 hidden sm:block"
+                            className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 p-2 rounded-full bg-white shadow-lg text-gray-700 hover:bg-gray-50 hover:text-blue-400 transition-colors duration-300 hidden sm:block"
                             onClick={nextPage}
                             aria-label="Next page"
                         >

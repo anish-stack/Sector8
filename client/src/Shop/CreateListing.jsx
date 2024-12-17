@@ -240,7 +240,7 @@ const CreateListing = ({ isOpen, onClose }) => {
                 <button
                   type="button"
                   onClick={handleAddItem}
-                  className="flex items-center gap-2 text-blue-500 hover:text-blue-600"
+                  className="flex items-center gap-2 text-blue-500 hover:text-blue-400"
                 >
                   <Plus className="w-4 h-4" />
                   Add Item

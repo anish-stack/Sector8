@@ -10,7 +10,7 @@ const PORT = process.env.PORT || 4255;
 
 const axios = require('axios');
 const sendToken = require('./utils/SendToken');
-const OtherRoutes  = require('./routes/OtherRoutes')
+const OtherRoutes = require('./routes/OtherRoutes')
 
 
 // cors option
@@ -24,7 +24,7 @@ const corsOption = {
         "https://www.naiadmindeal.vercel.app"
     ],
     credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
 };
 

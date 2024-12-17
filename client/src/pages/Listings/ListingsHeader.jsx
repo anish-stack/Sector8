@@ -13,7 +13,7 @@ const ListingsHeader = ({ total,
       <p className="text-gray-600 mt-1">Discover {total} amazing businesses</p>
     </div>
 
-    <div className="flex items-center gap-4">
+    {/* <div className="flex items-center gap-4">
       <div className="flex items-center gap-2">
         <SortAsc className="w-5 h-5 text-gray-500" />
         <select
@@ -37,7 +37,7 @@ const ListingsHeader = ({ total,
         <ListFilter className="w-4 h-4" />
         Verified Only
       </button>
-    </div>
+    </div> */}
   </div>
 
   )

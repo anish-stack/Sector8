@@ -1353,6 +1353,8 @@ exports.allPayments = async (req, res) => {
         // Function to fetch order details with retry logic
         const fetchOrderDetailsWithRetry = async (orderId, retries = 0) => {
             try {
+//                 RAZORPAY_APT_SECRET=seWgj8epMRq7Oeb7bvC3IZCe
+// RAZORPAY_KEY_ID=rzp_test_gQGRDFaoEskOdr
                 const response = await axios({
                     method: 'get',
                     url: `https://api.razorpay.com/v1/orders/${orderId}`,
@@ -1372,6 +1374,7 @@ exports.allPayments = async (req, res) => {
                     await new Promise(resolve => setTimeout(resolve, Math.pow(2, retries) * RETRY_DELAY));
                     return fetchOrderDetailsWithRetry(orderId, retries + 1);
                 } else {
+                    console.log(error)
                     throw error; // Throw error if retries exceed or different error encountered
                 }
             }

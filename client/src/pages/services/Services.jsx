@@ -4,33 +4,29 @@ import { Award, Building, MapPin, Star, Users } from "lucide-react";
 import { ServiceCard } from "../About/ServiceCard";
 import { StatsSection } from "../About/StatsSection";
 import { ContactForm } from "../Contact/Contact";
-const servicesData = [
+const services = [
   {
     icon: Building,
-    title: "Business Listing Services",
-    description:
-      "Create detailed business profiles with comprehensive information, photos, and customer reviews.",
+    title: "Post Listing Services",
+    description: "We provide a platform where businesses can list their products, services, or promotions to reach a wider audience. Whether you are launching a new product or sharing a limited-time offer, Naideal is the ideal space to showcase what your business has to offer",
     iconColor: "bg-blue-600",
   },
   {
     icon: Star,
-    title: "Promotions and Deals",
-    description:
-      "Post exclusive offers and promotions to attract new customers and grow your business.",
+    title: "Product and Business Promotion",
+    description: "Our platform is designed to support your business promotion needs. Whether you're an established brand or a small startup, we offer tailored solutions to promote your products and services effectively. We help you get the word out, connect with the right audience, and grow your customer base",
     iconColor: "bg-yellow-500",
   },
   {
     icon: Users,
-    title: "Event Management",
-    description:
-      "Participate in networking events, workshops, and promotional campaigns to expand your reach.",
+    title: "Offers and Deals",
+    description: "At Naideal, we bring great deals and exclusive offers from various businesses together in one place. By partnering with us, businesses can provide discounts, offers, and promotions that entice potential customers to take action, increasing your sales and customer engagement.",
     iconColor: "bg-green-600",
   },
   {
     icon: MapPin,
-    title: "Premium Membership",
-    description:
-      "Get premium features including top placement in search results and targeted marketing campaigns.",
+    title: "Brand Building",
+    description: "Every business deserves a strong, recognizable brand. We help you build and strengthen your brand identity through effective strategies, ensuring your business stands out in the crowded marketplace.",
     iconColor: "bg-red-500",
   },
 ];
@@ -49,7 +45,7 @@ const Services = () => {
         </div>
 
         <div className="grid max-w-7xl mx-auto grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {servicesData.map((service, index) => (
+          {services.map((service, index) => (
             <ServiceCard key={index} {...service} />
           ))}
         </div>

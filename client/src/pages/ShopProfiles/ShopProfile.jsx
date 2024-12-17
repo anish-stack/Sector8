@@ -129,7 +129,7 @@ const ShopProfile = () => {
                             </div>
                             <div>
                                 <h3 className="font-medium text-gray-900">Phone</h3>
-                                <p className="text-gray-600">{ShopId?.ContactNumber}</p>
+                                <a href={`tel:${ShopId?.ContactNumber}`} className="text-gray-600">{ShopId?.ContactNumber}</a>
                             </div>
                         </div>
                         
@@ -139,7 +139,8 @@ const ShopProfile = () => {
                             </div>
                             <div>
                                 <h3 className="font-medium text-gray-900">Email</h3>
-                                <p className="text-gray-600">{ShopId?.Email}</p>
+                                <a href={`mailto:${ShopId?.Email}`} className="text-gray-600">{ShopId?.Email}</a>
+
                             </div>
                         </div>
                     </div>

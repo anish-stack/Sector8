@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { toast } from 'react-hot-toast';
-import { Eye, EyeOff, Building2, AlertCircle, Phone, Mail, User } from 'lucide-react';
+import { Eye, EyeOff, Building2, Phone, Mail, User } from 'lucide-react';
 
 const PartnerRegister = () => {
     const [formData, setFormData] = useState({
@@ -18,10 +18,11 @@ const PartnerRegister = () => {
 
     const handleChange = (e) => {
         const { name, value } = e.target;
-        setFormData(prevState => ({
-            ...prevState,
-            [name]: value
-        }));
+        setFormData(prevState => {
+            const updatedData = { ...prevState, [name]: value };
+            console.log('Updated FormData:', updatedData); // Log to see the changes
+            return updatedData;
+        });
         setErrors(prev => ({ ...prev, [name]: '' }));
     };
 
@@ -70,55 +71,6 @@ const PartnerRegister = () => {
         }
     };
 
-    const InputField = ({ name, label, type, icon: Icon, placeholder }) => (
-        <div>
-            <label htmlFor={name} className="block text-sm font-medium text-gray-700 mb-1">
-                {label}
-            </label>
-            <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                    <Icon className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                    id={name}
-                    name={name}
-                    type={name === 'Password' ? (showPassword ? 'text' : 'password') : type}
-                    value={formData[name]}
-                    onChange={handleChange}
-                    className={`block w-full pl-10 pr-3 py-2.5 rounded-xl border ${
-                        errors[name] ? 'border-red-300' : 'border-gray-300'
-                    } shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200`}
-                    placeholder={placeholder}
-                />
-                {name === 'Password' && (
-                    <button
-                        type="button"
-                        onClick={() => setShowPassword(!showPassword)}
-                        className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                    >
-                        {showPassword ? (
-                            <EyeOff className="h-5 w-5 text-gray-400" />
-                        ) : (
-                            <Eye className="h-5 w-5 text-gray-400" />
-                        )}
-                    </button>
-                )}
-            </div>
-            <AnimatePresence mode="wait">
-                {errors[name] && (
-                    <motion.p
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        className="mt-1 text-sm text-red-600"
-                    >
-                        {errors[name]}
-                    </motion.p>
-                )}
-            </AnimatePresence>
-        </div>
-    );
-
     return (
         <motion.div
             initial={{ opacity: 0 }}
@@ -151,62 +103,127 @@ const PartnerRegister = () => {
                     className="bg-white py-8 px-4 shadow-2xl sm:rounded-2xl sm:px-10 border border-gray-100"
                 >
                     <form onSubmit={handleSubmit} className="space-y-6">
-                        <InputField
-                            name="PartnerName"
-                            label="Partner Name"
-                            type="text"
-                            icon={User}
-                            placeholder="Enter your name"
-                        />
-                        <InputField
-                            name="PartnerEmail"
-                            label="Email Address"
-                            type="email"
-                            icon={Mail}
-                            placeholder="you@example.com"
-                        />
-                        <InputField
-                            name="PartnerContactDetails"
-                            label="Contact Number"
-                            type="tel"
-                            icon={Phone}
-                            placeholder="10-digit mobile number"
-                        />
-                        <InputField
-                            name="Password"
-                            label="Password"
-                            type="password"
-                            icon={Eye}
-                            placeholder="Create a strong password"
-                        />
-
-                        <motion.button
-                            whileHover={{ scale: 1.01 }}
-                            whileTap={{ scale: 0.99 }}
-                            type="submit"
-                            disabled={isLoading}
-                            className={`w-full flex justify-center items-center py-3 px-4 rounded-xl text-white font-medium transition-all duration-200 
-                                ${isLoading 
-                                    ? 'bg-indigo-400 cursor-not-allowed' 
-                                    : 'bg-indigo-600 hover:bg-indigo-700 hover:shadow-lg'}`}
-                        >
-                            {isLoading ? (
-                                <span className="inline-flex items-center">
-                                    <span className="w-5 h-5 border-t-2 border-r-2 border-white rounded-full animate-spin mr-2" />
-                                    Registering...
-                                </span>
-                            ) : (
-                                'Register'
+                        <div>
+                            <label htmlFor="PartnerName" className="block text-sm font-medium text-gray-700 mb-1">
+                                Partner Name
+                            </label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <User className="h-5 w-5 text-gray-400" />
+                                </div>
+                                <input
+                                    id="PartnerName"
+                                    name="PartnerName"
+                                    type="text"
+                                    value={formData.PartnerName || ''}
+                                    onChange={handleChange}
+                                    className={`block w-full pl-10 pr-3 py-2.5 rounded-xl border ${
+                                        errors.PartnerName ? 'border-red-300' : 'border-gray-300'
+                                    } shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200`}
+                                    placeholder="Enter your name"
+                                />
+                            </div>
+                            {errors.PartnerName && (
+                                <p className="mt-1 text-sm text-red-600">{errors.PartnerName}</p>
                             )}
-                        </motion.button>
-                    </form>
+                        </div>
 
-                    <p className="mt-6 text-center text-sm text-gray-600">
-                        Already registered?{' '}
-                        <a href="/login" className="font-medium text-indigo-600 hover:text-indigo-500 transition-colors duration-200">
-                            Sign in to your account
-                        </a>
-                    </p>
+                        <div>
+                            <label htmlFor="PartnerEmail" className="block text-sm font-medium text-gray-700 mb-1">
+                                Email Address
+                            </label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <Mail className="h-5 w-5 text-gray-400" />
+                                </div>
+                                <input
+                                    id="PartnerEmail"
+                                    name="PartnerEmail"
+                                    type="email"
+                                    value={formData.PartnerEmail || ''}
+                                    onChange={handleChange}
+                                    className={`block w-full pl-10 pr-3 py-2.5 rounded-xl border ${
+                                        errors.PartnerEmail ? 'border-red-300' : 'border-gray-300'
+                                    } shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200`}
+                                    placeholder="you@example.com"
+                                />
+                            </div>
+                            {errors.PartnerEmail && (
+                                <p className="mt-1 text-sm text-red-600">{errors.PartnerEmail}</p>
+                            )}
+                        </div>
+
+                        <div>
+                            <label htmlFor="PartnerContactDetails" className="block text-sm font-medium text-gray-700 mb-1">
+                                Contact Number
+                            </label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <Phone className="h-5 w-5 text-gray-400" />
+                                </div>
+                                <input
+                                    id="PartnerContactDetails"
+                                    name="PartnerContactDetails"
+                                    type="tel"
+                                    value={formData.PartnerContactDetails || ''}
+                                    onChange={handleChange}
+                                    className={`block w-full pl-10 pr-3 py-2.5 rounded-xl border ${
+                                        errors.PartnerContactDetails ? 'border-red-300' : 'border-gray-300'
+                                    } shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200`}
+                                    placeholder="10-digit mobile number"
+                                />
+                            </div>
+                            {errors.PartnerContactDetails && (
+                                <p className="mt-1 text-sm text-red-600">{errors.PartnerContactDetails}</p>
+                            )}
+                        </div>
+
+                        <div>
+                            <label htmlFor="Password" className="block text-sm font-medium text-gray-700 mb-1">
+                                Password
+                            </label>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <Eye className="h-5 w-5 text-gray-400" />
+                                </div>
+                                <input
+                                    id="Password"
+                                    name="Password"
+                                    type={showPassword ? 'text' : 'password'}
+                                    value={formData.Password || ''}
+                                    onChange={handleChange}
+                                    className={`block w-full pl-10 pr-3 py-2.5 rounded-xl border ${
+                                        errors.Password ? 'border-red-300' : 'border-gray-300'
+                                    } shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200`}
+                                    placeholder="Create a strong password"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                                >
+                                    {showPassword ? (
+                                        <EyeOff className="h-5 w-5 text-gray-400" />
+                                    ) : (
+                                        <Eye className="h-5 w-5 text-gray-400" />
+                                    )}
+                                </button>
+                            </div>
+                            {errors.Password && (
+                                <p className="mt-1 text-sm text-red-600">{errors.Password}</p>
+                            )}
+                        </div>
+
+                        <div>
+                            <button
+                                type="submit"
+                                disabled={isLoading}
+                                className="w-full bg-indigo-600 text-white py-2.5 px-4 rounded-lg text-sm font-semibold disabled:bg-indigo-300"
+                            >
+                                {isLoading ? 'Registering...' : 'Register'}
+                            </button>
+                        </div>
+                    </form>
                 </motion.div>
             </div>
         </motion.div>

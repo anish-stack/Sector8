@@ -12,7 +12,7 @@ const Footer = () => {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const response = await axios.get('https://api.naideal.com/api/v1/get-setting');
+        const response = await axios.get('http://localhost:7485/api/v1/get-setting');
         if (response.data.success) {
           setSettings(response.data.data);
           console.log(response.data.data)
@@ -39,9 +39,8 @@ const Footer = () => {
 
             </div>
             <p className="text-gray-300">
-            {settings?.BioFooter}
+              {settings?.BioFooter}
             </p>
-            <SocialLinks data={settings?.links} />
           </div>
 
           {/* Quick Links */}
@@ -55,12 +54,15 @@ const Footer = () => {
           </div>
         </div>
       </div>
+      <div className='container mb-2 '>
+        <SocialLinks data={settings?.links} />
 
+      </div>
       {/* Bottom Footer */}
       <div className="border-t border-gray-800">
         <div className="container mx-auto px-4 py-6">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <p className="text-gray-400 text-sm">
+          <div className="flex flex-col md:flex-row justify-center items-center gap-4">
+            <p className="text-gray-400  text-center text-sm">
               &copy; {new Date().getFullYear()} Naideal. All Rights Reserved.
             </p>
             <p className="text-gray-400 text-sm flex items-center gap-1">

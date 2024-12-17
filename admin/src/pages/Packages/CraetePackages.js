@@ -22,6 +22,7 @@ const CreatePackage = () => {
             const response = await axios.post(`${process.env.REACT_APP_BACKEND_URL}/admin-create-packages`, packageDetails);
             console.log('Package created:', response.data);
             toast.success("Package created")
+            window.location.href=`/All-Packages`
             // Optionally, reset form state or show success message
         } catch (error) {
             console.error('Error creating package:', error);

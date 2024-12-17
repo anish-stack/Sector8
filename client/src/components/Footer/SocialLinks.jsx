@@ -16,12 +16,12 @@ const SocialLinks = ({ data = [] }) => {
 
   return (
     <div>
-      <div className="space-y-4">
+      <div className="space-y-4 text-center">
         {/* Section Header */}
         <h3 className="text-lg font-bold text-white">Follow Us</h3>
 
         {/* Social Media Links */}
-        <div className="flex gap-4">
+        <div className="flex items-center justify-center gap-4">
           {linksToRender.map(({ appName, appLink, _id }) => (
             <a
               key={_id || appName} // Use _id if available, otherwise use appName

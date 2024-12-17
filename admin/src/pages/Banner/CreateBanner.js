@@ -30,7 +30,7 @@ const CreateBanner = () => {
       setLoading(true);
 
       const response = await axios.post(
-        'https://api.naideal.com/api/v1/create-banner',
+        'http://localhost:7485/api/v1/create-banner',
         formData,
         {
           headers: {

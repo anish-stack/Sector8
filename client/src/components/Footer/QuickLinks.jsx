@@ -8,14 +8,20 @@ const links = [
       { label: 'About Us', path: '/about' },
       { label: 'Contact Us', path: '/contact' },
       { label: 'Our Services', path: '/services' },
+      { label: 'Advertise With Us', path: '/Advertise-With-us' },
+      { label: 'Customer-faq', path: '/Customer-faq' },
+
+      
     ]
   },
   {
     title: 'For Partners',
     items: [
       { label: 'Partner Login', path: '/partner-login' },
-      { label: 'Become A Partner', path: '/partner-login' },
+      { label: 'Become A Partner', path: '/Register-Partner' },
       { label: 'Partner Support', path: '/partner-support' },
+      { label: 'Partner-faq', path: '/partner-faq' },
+
     ]
   },
   {
@@ -24,6 +30,8 @@ const links = [
       { label: 'Privacy Policy', path: '/privacy-policy' },
       { label: 'Terms & Conditions', path: '/terms-and-conditions' },
       { label: 'Return & Refund', path: '/return-refund' },
+      { label: 'Brand Trademark & Copyright Disclaimer', path: '/copyright' },
+
     ]
   }
 ];

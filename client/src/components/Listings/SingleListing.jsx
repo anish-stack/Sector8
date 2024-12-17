@@ -136,7 +136,7 @@ const SingleListing = () => {
 
                     {/* Business Details */}
                     <div className="bg-white rounded-2xl shadow-sm border p-6 mb-8">
-                        <div className="flex items-center gap-4 mb-6">
+                        <a href={`/View-More-Offers/Shop-profile/${listing?.shopDetails?._id}/${listing?.shopDetails?.ShopName}`} className="flex items-center gap-4 mb-6">
                             <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center text-white text-2xl font-bold">
                                <a href={`/View-More-Offers/Shop-profile/${listing?.shopDetails?._id}/${listing?.shopDetails?.ShopName}`}> {listing.shopDetails?.ShopName?.[0] || 'N'}</a>
                             </div>
@@ -149,7 +149,7 @@ const SingleListing = () => {
                                 </h2>
                                 <p className="text-gray-600">{listing.shopDetails?.ShopCategory}</p>
                             </div>
-                        </div>
+                        </a>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div className="space-y-4">

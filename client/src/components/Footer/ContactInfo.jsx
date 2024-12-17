@@ -8,7 +8,8 @@ const ContactInfo = ({data}) => {
       <h3 className="text-lg font-bold text-white">Contact</h3>
       <div className="space-y-3">
         <div className="flex items-start gap-3">
-          <MapPin className="w-5 h-5 text-purple-400 mt-1 flex-shrink-0" />
+        <i className="fa-solid fa-location-dot w-5 h-5 text-purple-400 mt-1 flex-shrink-0"></i>
+         
           <p className="text-gray-300">
           {data?.officeAddress}
           </p>

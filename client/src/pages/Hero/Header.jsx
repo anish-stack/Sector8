@@ -40,19 +40,18 @@ export function Header() {
               <img src={settings?.logo || "https://placehold.co/60x40"} alt="Logo" className=" h-8 md:h-10" />
             </a>
   
-            {/* Desktop Navigation */}
             <nav className=" md:flex items-center space-x-8">
-              {/* <a href="#" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+              {/* <a href="#" className="text-gray-700 hover:text-blue-400 font-medium transition-colors">
                 Home
               </a>
-              <a href="/Advertise-With-us" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+              <a href="/Advertise-With-us" className="text-gray-700 hover:text-blue-400 font-medium transition-colors">
                 Advertise
               </a>
-              <a href="/Free-Listing" className="text-gray-700 hover:text-blue-600 font-medium transition-colors">
+              <a href="/Free-Listing" className="text-gray-700 hover:text-blue-400 font-medium transition-colors">
                 Free Listing
               </a>
               */}
-               <a href={`tel:${settings?.contactNumber ||'919953825382' }`} className="text-gray-700 hover:text-red-600 font-bold transition-colors">
+               <a href={`tel:${settings?.contactNumber ||'919953825382' }`} className="text-gray-700 hover:text-blue-600 font-bold transition-colors">
               <span className="mr-2 "><i className="fa-solid fa-phone mr-3"></i>Call</span> {settings?.contactNumber || "919953825382"}
               </a>
               <div className="flex items-center space-x-4">
@@ -77,53 +76,15 @@ export function Header() {
                     href="/Shop-login"
                     className="px-6 py-2.5 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-all duration-200 font-medium shadow-lg hover:shadow-blue-200"
                   >
-                    Shop Login
+                    Login
                   </a>
                 )}
               </div>
             </nav>
   
-            {/* Mobile Menu Button */}
-            {/* <button
-              className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              aria-label="Toggle menu"
-            >
-              {isMenuOpen ? <X className="w-6 h-6 text-gray-700" /> : <Menu className="w-6 h-6 text-gray-700" />}
-            </button> */}
+       
           </div>
-          {/* Mobile Navigation */}
-          {/* {isMenuOpen && (
-            <nav className="md:hidden py-4 space-y-3 border-t">
-              <a href="#" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
-                Home
-              </a>
-              <a href="#" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
-                Advertise
-              </a>
-              <a href="#" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
-                Free Listing
-              </a>
-              <a href="tel:+919953825382" className="block px-4 py-2 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors">
-                +91 99-5382-5382
-              </a>
-              {ShopToken && (
-                <a href="/Shop-Dashboard" className="block px-4 py-2 text-blue-600 font-medium hover:bg-blue-50 rounded-lg transition-colors">
-                  Shop Dashboard
-                </a>
-              )}
-              {PartnerToken && (
-                <a href="/Partner-Dashboard" className="block px-4 py-2 text-blue-600 font-medium hover:bg-blue-50 rounded-lg transition-colors">
-                  Partner Dashboard
-                </a>
-              )}
-              {!ShopToken && !PartnerToken && (
-                <a href="/Shop-login" className="block mx-4 px-4 py-2 bg-blue-600 text-white text-center rounded-lg hover:bg-blue-700 transition-colors">
-                  Shop Login
-                </a>
-              )}
-            </nav>
-          )} */}
+      
         </div>
       </header>
     );

@@ -13,6 +13,7 @@ import Hero from '../Hero/Hero';
 import { ServiceCard } from '../About/ServiceCard';
 import { StatsSection } from '../About/StatsSection';
 import AllListing from '../Listings/AllListing';
+import CustomerFaq from '../../components/CFaq/CustomerFaq';
 const services = [
   {
     icon: Building,

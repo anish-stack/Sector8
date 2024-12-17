@@ -14,7 +14,7 @@ const AllBanner = () => {
   const fetchBanners = async () => {
     setLoading(true);
     try {
-      const response = await axios.get("https://api.naideal.com/api/v1/get-banner");
+      const response = await axios.get("http://localhost:7485/api/v1/get-banner");
       const { data } = response.data;
       setBanners(data);
       setLoading(false);
@@ -27,7 +27,7 @@ const AllBanner = () => {
   // Delete banner
   const handleDelete = async (id, publicId) => {
     try {
-      await axios.delete(`https://api.naideal.com/api/v1/delete-banner/${id}`, {
+      await axios.delete(`http://localhost:7485/api/v1/delete-banner/${id}`, {
         data: { public_id: publicId }, // Pass the Cloudinary public_id for deletion
       });
       toast.success("Banner deleted successfully");
@@ -60,7 +60,7 @@ const AllBanner = () => {
 
     try {
       await axios.post(
-        `https://api.naideal.com/api/v1/update-banner/${selectedBanner._id}`,
+        `http://localhost:7485/api/v1/update-banner/${selectedBanner._id}`,
         formData,
         { headers: { "Content-Type": "multipart/form-data" } }
       );

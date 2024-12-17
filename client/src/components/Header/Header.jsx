@@ -90,7 +90,7 @@ const Header = ({ locationDetails }) => {
                         ) : null}
                         {
                             ShopToken || PartnerToken ? (null) : (
-                                <li> <Link className='text-slate-900 space-x-3 font-bold text-lg' to="/Shop-login">Shop Login</Link></li>
+                                <li> <Link className='text-slate-900 space-x-3 font-bold text-lg' to="/Shop-login">Login</Link></li>
 
                             )
                         }                    </ul>

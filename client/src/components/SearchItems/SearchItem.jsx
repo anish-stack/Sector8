@@ -31,7 +31,7 @@ const SearchItem = () => {
       });
       
       const { data: response } = await axios.get(
-        `https://api.naideal.com/api/v1/Other/search_min?${params.toString()}`
+        `http://localhost:7485/api/v1/Other/search_min?${params.toString()}`
       );
       
       if (response.data.length > 0) {

@@ -37,7 +37,7 @@ const ListingCard = ({ item, index }) => {
           {/* Details Section */}
           <div className="p-4">
             <h3 className="text-lg font-semibold text-gray-900 mb-2 line-clamp-1">
-              {item.Title}
+              {item.Title} 
             </h3>
 
             <p className="text-sm text-gray-600 mb-3 line-clamp-2">
@@ -46,7 +46,7 @@ const ListingCard = ({ item, index }) => {
 
             {item.Items.length > 0 && (
               <div className="flex items-center gap-2">
-                <span className="bg-green-100 text-green-700 py-1 px-2 rounded-full text-sm font-medium">
+                <span className="bg-green-100 whitespace-nowrap text-green-700 py-1 px-2 rounded-full text-sm font-medium">
                   {item.Items[0].Discount}% Off
                 </span>
                 <span className="text-sm text-gray-600 truncate">

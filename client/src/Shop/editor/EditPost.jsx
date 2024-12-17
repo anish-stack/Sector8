@@ -32,11 +32,12 @@ const EditPost = () => {
     const loadPost = async () => {
       try {
         const post = await fetchPost(id);
+        console.log(post)
         if (post) {
           setFormData({
             Title: post.Title,
             Details: post.Details,
-            HtmlContent:post.HtmlContent,
+            HtmlContent: post.HtmlContent,
             tags: post.tags || [],
             Items: post.Items || []
           });
@@ -94,46 +95,46 @@ const EditPost = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     const errors = validateForm(formData);
-  
+
     if (Object.keys(errors).length > 0) {
       setFormErrors(errors);
       return;
     }
-  
+
     setSubmitting(true);
     const formDataToSubmit = new FormData();
-  
+
     // Append basic fields
     formDataToSubmit.append('Title', formData.Title);
     formDataToSubmit.append('Details', formData.Details);
-  
+
     // Append items and their images
     formData.Items.forEach((item, index) => {
       formDataToSubmit.append(`Items[${index}].itemName`, item.itemName);
       formDataToSubmit.append(`Items[${index}].Discount`, item.Discount);
       formDataToSubmit.append(`Items[${index}].MrpPrice`, item.MrpPrice);
-  
+
       if (item.public_id) {
         formDataToSubmit.append(`Items[${index}].public_id`, item.public_id);
       }
-  
+
       item.dishImages.forEach((dishImage) => {
         if (dishImage.file) {
           formDataToSubmit.append('dishImage', dishImage.file);
         }
       });
     });
-  
+
     // Check if tags exist and append them
     if (formData.tags && formData.tags.length > 0) {
       formDataToSubmit.append('tags', formData.tags.join(', '));
     }
-  
+
     // Check if HtmlContent exists and append it
     if (formData.HtmlContent) {
       formDataToSubmit.append('HtmlContent', formData.HtmlContent);
     }
-  
+
     try {
       const data = await updatePost(id, formDataToSubmit);
       // console.log(data); // Optional, remove if no longer needed
@@ -146,7 +147,7 @@ const EditPost = () => {
       setSubmitting(false);
     }
   };
-  
+
 
 
   if (loading) return (
@@ -222,15 +223,15 @@ const EditPost = () => {
                     className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
                   />
                 </div>
-                
-              <JoditEditor
-                ref={editor}
-                value={formData.HtmlContent}
-                config={config}
-                tabIndex={1}
-                onBlur={newContent => setFormData(prev => ({ ...prev, HtmlContent: newContent }))}
-                onChange={(content) => setFormData(prev => ({ ...prev, HtmlContent: content }))}
-              />
+
+                <JoditEditor
+                  ref={editor}
+                  value={formData.HtmlContent}
+                  config={config}
+                  tabIndex={1}
+                  onBlur={newContent => setFormData(prev => ({ ...prev, HtmlContent: newContent }))}
+                  onChange={(content) => setFormData(prev => ({ ...prev, HtmlContent: content }))}
+                />
                 {/* Items Section */}
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
@@ -304,6 +305,7 @@ const EditPost = () => {
                           />
                         </label>
                       </div>
+
                     </div>
                   ))}
                 </div>

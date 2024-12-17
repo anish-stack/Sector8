@@ -55,7 +55,7 @@ const ChangeImages = ({ data, onClose }) => {
 
     try {
       await axios.post(
-        `https://api.naideal.com/api/v1/Other/update_img?publicId=${publicId}`,
+        `http://localhost:7485/api/v1/Other/update_img?publicId=${publicId}`,
         formData,
         {
           headers: { 'Content-Type': 'multipart/form-data' },
@@ -115,10 +115,10 @@ const ChangeImages = ({ data, onClose }) => {
         </div>
 
         {/* Image Grid */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
+        <div className="grid overflow-auto grid-cols-2 sm:grid-cols-3 gap-4 mb-6">
           {data.map((image, index) => (
             <div key={image._id} className="relative group">
-              <div className="aspect-square rounded-lg overflow-hidden border-2 border-gray-200 relative">
+              <div className="aspect-square h-44 rounded-lg overflow-hidden border-2 border-gray-200 relative">
                 {/* Current Image */}
                 <img
                   src={image.ImageUrl}

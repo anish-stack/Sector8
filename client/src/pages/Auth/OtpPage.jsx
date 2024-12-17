@@ -107,7 +107,7 @@ const OtpPage = () => {
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <img
           className="mx-auto h-12 w-auto"
-          src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
+          src="https://res.cloudinary.com/dglihfwse/image/upload/c_thumb,w_200,g_face/v1733212496/naideal-logo_fajvxe.png"
           alt="Your Company"
         />
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">

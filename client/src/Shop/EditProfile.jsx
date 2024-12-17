@@ -46,7 +46,7 @@ const EditProfile = ({ profile, isOpen, OnClose }) => {
         setIsLoading(true);  // Start loading
 
         try {
-            const res = await axios.post('https://api.naideal.com/api/v1/Upload-Profile-Details', updateData, {
+            const res = await axios.post('http://localhost:7485/api/v1/Upload-Profile-Details', updateData, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`,

@@ -281,8 +281,8 @@ exports.UpdateListing = async (req, res) => {
         if (req.files && req.files.length > 0) {
             // Assuming `req.files` is an array of uploaded images
             let imageIndex = 0; // Track the image index for matching images to items
-            const uploadedDishImages = await Promise.all(req.files.map(upload => uploadImage(upload))); 
-            
+            const uploadedDishImages = await Promise.all(req.files.map(upload => uploadImage(upload)));
+
             uploadedDishImages.forEach((upload, index) => {
                 // Ensure that image is added to the corresponding item
                 if (Items[imageIndex]) {
@@ -303,8 +303,8 @@ exports.UpdateListing = async (req, res) => {
         if (splitTags) listing.tags = splitTags; // Update tags if it exists
         if (Items.length) listing.Items = Items;
 
-        console.log(Items);
-        // Save the updated listing
+        listing.isApprovedByAdmin = false
+
         await listing.save();
 
         // Send success response
@@ -336,7 +336,7 @@ exports.updateImage = async (req, res) => {
         }
 
         // Find the listing containing the old image
-        const listing = await Listing.findOne({ 
+        const listing = await Listing.findOne({
             Pictures: { $elemMatch: { public_id: publicId } }
         });
 
@@ -360,6 +360,7 @@ exports.updateImage = async (req, res) => {
         );
 
         listing.Pictures = updatedPictures;
+        listing.isApprovedByAdmin = false
         await listing.save();
 
         res.status(200).json({

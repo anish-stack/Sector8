@@ -13,7 +13,6 @@ const Payments = () => {
                 setPayments(response.data.payments);
             } catch (error) {
                 console.error('Error fetching payments:', error);
-                // Handle error fetching payments
             }
         };
 
@@ -26,7 +25,7 @@ const Payments = () => {
     const currentPayments = payments.slice(indexOfFirstPayment, indexOfLastPayment);
 
     // Change page
-    const paginate = pageNumber => setCurrentPage(pageNumber);
+    const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     return (
         <div className="container mx-auto px-4 py-8">
@@ -45,16 +44,25 @@ const Payments = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {currentPayments.reverse().map(payment => (
-                            <tr key={payment._id}>
-                                <td className="border border-gray-300 px-4 py-2">{payment.orderDetails.id}</td>
-                                <td className="border border-gray-300 px-4 py-2">{payment.razorpay_payment_id}</td>
-                                <td className="border border-gray-300 px-4 py-2">{payment.orderDetails.amount / 100}</td>
-                                <td className="border border-gray-300 px-4 py-2">{payment.orderDetails.status}</td>
-                                <td className="border border-gray-300 px-4 py-2">{payment.orderDetails.receipt}</td>
-                                <td className="border border-gray-300 px-4 py-2">{new Date(payment.orderDetails.created_at * 1000).toLocaleString()}</td>
-                            </tr>
-                        ))}
+                        {currentPayments.reverse().map((payment) => {
+                            // Check if orderDetails is defined and has the required properties
+                            const orderDetails = payment.orderDetails || {};
+
+                            return (
+                                <tr key={payment._id}>
+                                    <td className="border border-gray-300 px-4 py-2">{orderDetails.id || 'N/A'}</td>
+                                    <td className="border border-gray-300 px-4 py-2">{payment.razorpay_payment_id}</td>
+                                    <td className="border border-gray-300 px-4 py-2">{orderDetails.amount / 100 || 'N/A'}</td>
+                                    <td className="border border-gray-300 px-4 py-2">{orderDetails.status || 'N/A'}</td>
+                                    <td className="border border-gray-300 px-4 py-2">{orderDetails.receipt || 'N/A'}</td>
+                                    <td className="border border-gray-300 px-4 py-2">
+                                        {orderDetails.created_at
+                                            ? new Date(orderDetails.created_at * 1000).toLocaleString()
+                                            : 'N/A'}
+                                    </td>
+                                </tr>
+                            );
+                        })}
                     </tbody>
                 </table>
             </div>
