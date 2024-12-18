@@ -10,6 +10,8 @@ const links = [
       { label: 'Our Services', path: '/services' },
       { label: 'Advertise With Us', path: '/Advertise-With-us' },
       { label: 'Customer-faq', path: '/Customer-faq' },
+      { label: 'Our Plans', path: '/upgrade-package/plans' },
+
 
       
     ]

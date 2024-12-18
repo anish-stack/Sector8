@@ -1,5 +1,5 @@
 import './App.css';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, useLocation, useSearchParams } from 'react-router-dom';
 import Home from './pages/Home/Home';
 
 import Footer from './components/Footer/Footer';
@@ -41,7 +41,23 @@ import SearchItem from './components/SearchItems/SearchItem';
 import CustomerFaq from './components/CFaq/CustomerFaq';
 import Pfaq from './components/PFaq/PFaq';
 import Copywrite from './pages/ReturnAndRefundPolicy/Copywrite';
+
+
+const ScrollToTop = () => {
+  const location = useLocation();
+
+  useEffect(() => {
+
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }, [location.pathname]);
+
+  return null;
+};
+
 function App() {
+
+
+
   const [locationDetails, setLocationDetails] = useState(null);
   const [locationPopup, setLocationPopup] = useState(false);
 
@@ -108,19 +124,15 @@ function App() {
   };
 
   useEffect(() => {
-
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    })
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 
     checkLocationAccess();
-  }, [window.location.pathname]);
+  }, []);
   return (
     <BrowserRouter>
-    <Header/>
-      {/* <Header locationDetails={locationDetails}  /> */}
-      {/* <Hero /> */}
+      <ScrollToTop />
+      <Header />
+
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/About' element={<About />} />
@@ -133,10 +145,10 @@ function App() {
         <Route path='/return-refund' element={<ReturnAndRefundPolicy />} />
         <Route path='/services' element={<Services />} />
 
-{/* Faq */}
-<Route path='/Customer-faq' element={<CustomerFaq />} />
-<Route path='/partner-faq' element={<Pfaq />} />
-<Route path='/copyright' element={<Copywrite />} />
+        {/* Faq */}
+        <Route path='/Customer-faq' element={<CustomerFaq />} />
+        <Route path='/partner-faq' element={<Pfaq />} />
+        <Route path='/copyright' element={<Copywrite />} />
 
 
 

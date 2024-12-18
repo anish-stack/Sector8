@@ -62,7 +62,7 @@ const UpgradePackage = ({ selectedPlan }) => {
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    // Trigger animation after a small delay
+  
     setTimeout(() => setAnimateCards(true), 100);
   }, []);
 
