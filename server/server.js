@@ -21,6 +21,7 @@ const corsOption = {
         "https://naidealhai.vercel.app",
         "https://www.naidealhai.vercel.app",
         "https://naiadmindeal.vercel.app",
+        
         "https://www.naiadmindeal.vercel.app"
     ],
     credentials: true,
@@ -36,7 +37,7 @@ app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use(cors(corsOption));
+app.use(cors());
 
 // Health check route
 app.get('/health', (req, res) => {
