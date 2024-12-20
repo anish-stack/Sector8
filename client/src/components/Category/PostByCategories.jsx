@@ -28,7 +28,7 @@ const PostByCategories = () => {
             setLoading(true);
             setError(null);
             const { data } = await axios.get(`${BackendUrl}/Post-by-categories/${categoryName}`);
-            console.log(data)
+
             setPosts(data);
         } catch (error) {
             if (error?.response?.status === 404) {
@@ -65,29 +65,29 @@ const PostByCategories = () => {
         );
     }
 
-    if (error) {
+    if (error || posts.length === 0) {
         return (
             <div className="min-h-screen flex items-center justify-center p-6 bg-gray-100">
-            <div className="text-center bg-white p-8 rounded-xl max-w-md w-full">
-            <i className="fa-solid fa-circle-exclamation text-5xl text-red-500 mx-auto mb-6"></i>
-          
-              <h2 className="text-3xl font-semibold text-gray-900 mb-4">{error}</h2>
-              <div className="space-y-4">
-                <button
-                  onClick={fetchPosts}
-                  className="w-full px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
-                >
-                  Try Again
-                </button>
-                <button
-                  onClick={() => window.location.href = "/listings"}
-                  className="w-full px-6 py-3 bg-gray-300 text-gray-900 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 transition duration-200"
-                >
-                  Explore Other Offers
-                </button>
-              </div>
+                <div className="text-center bg-white p-8 rounded-xl max-w-md w-full">
+                    <i className="fa-solid fa-circle-exclamation text-5xl text-red-500 mx-auto mb-6"></i>
+
+                    <h2 className="text-3xl font-semibold text-gray-900 mb-4">{error}</h2>
+                    <div className="space-y-4">
+                        <button
+                            onClick={fetchPosts}
+                            className="w-full px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition duration-200"
+                        >
+                            Try Again
+                        </button>
+                        <button
+                            onClick={() => window.location.href = "/listings"}
+                            className="w-full px-6 py-3 bg-gray-300 text-gray-900 rounded-lg hover:bg-gray-400 focus:outline-none focus:ring-2 focus:ring-gray-500 transition duration-200"
+                        >
+                            Explore Other Offers
+                        </button>
+                    </div>
+                </div>
             </div>
-          </div>
         );
     }
 

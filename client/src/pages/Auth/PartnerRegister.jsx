@@ -109,7 +109,8 @@ const PartnerRegister = () => {
                             </label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <User className="h-5 w-5 text-gray-400" />
+                                    <i className="fa-solid fa-user  text-gray-400"></i>
+                                    {/* <User className="h-5 w-5" /> */}
                                 </div>
                                 <input
                                     id="PartnerName"
@@ -117,9 +118,8 @@ const PartnerRegister = () => {
                                     type="text"
                                     value={formData.PartnerName || ''}
                                     onChange={handleChange}
-                                    className={`block w-full pl-10 pr-3 py-2.5 rounded-xl border ${
-                                        errors.PartnerName ? 'border-red-300' : 'border-gray-300'
-                                    } shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200`}
+                                    className={`block w-full pl-10 pr-3 py-2.5 rounded-xl border ${errors.PartnerName ? 'border-red-300' : 'border-gray-300'
+                                        } shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200`}
                                     placeholder="Enter your name"
                                 />
                             </div>
@@ -142,9 +142,8 @@ const PartnerRegister = () => {
                                     type="email"
                                     value={formData.PartnerEmail || ''}
                                     onChange={handleChange}
-                                    className={`block w-full pl-10 pr-3 py-2.5 rounded-xl border ${
-                                        errors.PartnerEmail ? 'border-red-300' : 'border-gray-300'
-                                    } shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200`}
+                                    className={`block w-full pl-10 pr-3 py-2.5 rounded-xl border ${errors.PartnerEmail ? 'border-red-300' : 'border-gray-300'
+                                        } shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200`}
                                     placeholder="you@example.com"
                                 />
                             </div>
@@ -167,9 +166,8 @@ const PartnerRegister = () => {
                                     type="tel"
                                     value={formData.PartnerContactDetails || ''}
                                     onChange={handleChange}
-                                    className={`block w-full pl-10 pr-3 py-2.5 rounded-xl border ${
-                                        errors.PartnerContactDetails ? 'border-red-300' : 'border-gray-300'
-                                    } shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200`}
+                                    className={`block w-full pl-10 pr-3 py-2.5 rounded-xl border ${errors.PartnerContactDetails ? 'border-red-300' : 'border-gray-300'
+                                        } shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200`}
                                     placeholder="10-digit mobile number"
                                 />
                             </div>
@@ -184,7 +182,8 @@ const PartnerRegister = () => {
                             </label>
                             <div className="relative">
                                 <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <Eye className="h-5 w-5 text-gray-400" />
+                                    <i className="fa-regular fa-eye text-gray-400"></i>
+                                    {/* <Eye className="h-5 w-5 " /> */}
                                 </div>
                                 <input
                                     id="Password"
@@ -192,9 +191,8 @@ const PartnerRegister = () => {
                                     type={showPassword ? 'text' : 'password'}
                                     value={formData.Password || ''}
                                     onChange={handleChange}
-                                    className={`block w-full pl-10 pr-3 py-2.5 rounded-xl border ${
-                                        errors.Password ? 'border-red-300' : 'border-gray-300'
-                                    } shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200`}
+                                    className={`block w-full pl-10 pr-3 py-2.5 rounded-xl border ${errors.Password ? 'border-red-300' : 'border-gray-300'
+                                        } shadow-sm focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-all duration-200`}
                                     placeholder="Create a strong password"
                                 />
                                 <button
@@ -203,9 +201,10 @@ const PartnerRegister = () => {
                                     className="absolute inset-y-0 right-0 pr-3 flex items-center"
                                 >
                                     {showPassword ? (
-                                        <EyeOff className="h-5 w-5 text-gray-400" />
+                                        <i className="fa-regular fa-eye-slash text-gray-400"></i>
+                                        // <EyeOff className="h-5 w-5 " />
                                     ) : (
-                                        <Eye className="h-5 w-5 text-gray-400" />
+                                        <i className="fa-regular fa-eye text-gray-400"></i>
                                     )}
                                 </button>
                             </div>

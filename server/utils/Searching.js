@@ -24,7 +24,7 @@ exports.SearchByAnyThing = async (req, res) => {
                     path: 'ShopCategory',
                     model: CategoreiesModel
                 }
-            }).sort({createdAt:-1});
+            }).sort({ createdAt: -1 });
 
         let searchSource = 'search query';
 
@@ -80,13 +80,24 @@ exports.SearchByAnyThing = async (req, res) => {
             }
         }
 
+        const fallbackListings = await listing
+            .find()
+            .populate({
+                path: 'ShopId',
+                populate: {
+                    path: 'ShopCategory',
+                    model: CategoreiesModel
+                }
+            }).sort({ createdAt: -1 });
         // If no data found after fallback
         if (!listingData || listingData.length === 0) {
-            return res.status(404).json({
-                success: false,
-                count: 0,
-                message: `Looks like there are no offers available right now. But don't worry, we'll notify you as soon as something exciting comes up!`,
-                searchSource: searchSource,  // Provide the search source info
+            return res.status(200).json({
+                success: true,
+                show:true,
+                count: fallbackListings.length,
+                message: `Looks like there are no offers available right now. But don't worry, we'll notify you as soon as something exciting comes up! These Offers are available right now !!`,
+                searchSource: searchSource,
+                data: fallbackListings
             });
         }
 

@@ -132,7 +132,7 @@ const UserRegister = () => {
             } else {
                 const order = response.data.order;
                 const options = {
-                    key: "rzp_test_gQGRDFaoEskOdr",
+                    key: "rzp_test_cz0vBQnDwFMthJ",
                     amount: order?.amount,
                     currency: "INR",
                     name: "Nai Deal",
@@ -167,7 +167,7 @@ const UserRegister = () => {
         <>
 
             <div className="w-full max-w-7xl mx-auto grid lg:grid-cols-2 grid-cols-1 bg-white mt-2 overflow-hidden">
-                {/* Left Section (Image Area) */}
+              
 
                 <div className="relative w-[90%]">
                     <img
@@ -195,7 +195,7 @@ const UserRegister = () => {
                 {/* Right Section */}
                 <div className="flex flex-col items-center justify-center ">
                     <h2 className="text-4xl  font-extrabold text-center text-gray-800 ">
-                        Register Your Shop
+                        Register Your Business
                     </h2>
 
                     <form onSubmit={handleSubmit} className="space-y-6 p-5 w-full ">
@@ -207,10 +207,23 @@ const UserRegister = () => {
                                     type="text"
                                     required
                                     value={formData.UserName}
-                                    onChange={(e) => setFormData({ ...formData, UserName: e.target.value })}
+                                    onChange={(e) => {
+                                        if (e.target.value.includes(' ')) {
+                                            alert('Spaces are not allowed in the username.');
+                                            return;
+                                        }
+                                        setFormData({ ...formData, UserName: e.target.value });
+                                    }}
+                                    onKeyDown={(e) => {
+                                        if (e.key === ' ') {
+                                            e.preventDefault();
+                                            alert('Spaces are not allowed in the username.');
+                                        }
+                                    }}
                                     className="w-full px-4 py-3 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500"
                                 />
                             </div>
+
 
                             <div>
                                 <label className="block text-sm font-semibold mb-2 text-gray-700">Shop Name</label>

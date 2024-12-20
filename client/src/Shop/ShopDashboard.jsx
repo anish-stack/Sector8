@@ -21,6 +21,7 @@ const ShopDashboard = () => {
       const response = await axios.get(`${BackendUrl}/My-Shop-Details`, {
         headers: { Authorization: `Bearer ${token}` }
       });
+      console.log(response.data.user);
       setShopDetails(response.data.user);
     } catch (error) {
       console.error('Error fetching shop details:', error);

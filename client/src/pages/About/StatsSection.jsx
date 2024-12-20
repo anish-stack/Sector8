@@ -2,20 +2,20 @@ import React, { useEffect, useState } from 'react';
 
 export function StatsSection() {
   const stats = [
-    { number: 10000, label: "Active Businesses" },
-    { number: 50, label: "Cities Covered" },
-    { number: 100000, label: "Monthly Visitors" },
-    { number: 95, label: "Customer Satisfaction" },
+    { number: 10000, label: "Active Businesses & Partner" },
+    { number: 50, label: "Major Cities Covered" },
+    { number: 100000, label: "Daily Deals & Offer Monthly Visitors" },
+    { number: 95, label: "Fastest Growing Community" },
   ];
 
-  // Function to animate the counter
+ 
   const useCounter = (target, duration = 2) => {
     const [count, setCount] = useState(0);
 
     useEffect(() => {
       let start = 0;
       const end = target;
-      const totalFrames = duration * 60; // 60 frames per second
+      const totalFrames = duration * 60; 
       let frame = 0;
       const increment = end / totalFrames;
 

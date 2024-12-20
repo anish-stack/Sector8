@@ -8,7 +8,8 @@ const { getUnApprovedPosts, MakeAPostApproved, getDashboardData } = require('../
 const { createPackage, getAllPackages, updatePackage, deletePackage } = require('../controllers/Packagecontroller');
 const { createCity, updateCity, deleteCity, getAllCities } = require('../controllers/Citycontroller');
 const { createCategory, updateCategory, getAllCategories, deleteCategory } = require('../controllers/CategoriesController');
-const { CreateBanner, GetAllBanner, UpdateBanner, DeleteBanner, GetAllBannerActive, MakeSetting, GetSetting, UpdateSetting, createMarquee, updateMarquee, deleteMarquee, getAllMarquee } = require('../controllers/Webpage.controller');
+const { CreateBanner, GetAllBanner, UpdateBanner, DeleteBanner, GetAllBannerActive, MakeSetting, GetSetting, UpdateSetting, createMarquee, updateMarquee, deleteMarquee, getAllMarquee, createBanner, getAllBanner, deleteBanner, updateBanner } = require('../controllers/Webpage.controller');
+const { createFBanner, getFAllBanner, getBanneronWhicPage, deleteFBanner, updateFBanner } = require('../controllers/Festival_controller');
 const router = express.Router();
 
 const storage = multer.memoryStorage();
@@ -43,6 +44,18 @@ router.post('/verify-Otp-For-ForgetPassword', verifyOtp)
 router.post('/Upload-Profile-Image',protect,upload.single('image'), UploadProfileImage)
 router.post('/Upload-Profile-Details',protect, UpdateProfileDetails)
 
+router.post('/Create-Banner', upload.single('image'), createBanner)
+router.get('/get-Banner', getAllBanner)
+router.delete('/delete-Banner/:id', deleteBanner)
+router.put('/update-Banner/:id',upload.single('image'), updateBanner)
+
+
+router.post('/Create-festival-Banner', upload.single('image'), createFBanner)
+router.get('/get-festival-Banner', getFAllBanner)
+router.get('/get-festival-Banner-query', getBanneronWhicPage)
+
+router.delete('/delete-festival-Banner/:id', deleteFBanner)
+router.put('/update-festival-Banner/:id',upload.single('image'), updateFBanner)
 
 
 

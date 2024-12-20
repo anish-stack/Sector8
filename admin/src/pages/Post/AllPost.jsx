@@ -43,7 +43,7 @@ const AllPost = () => {
 
     const handleDelete = async () => {
         try {
-            await axios.delete(`https://api.naideal.com/api/v1/delete-post/${selectedPostId}`);
+            await axios.delete(`https://api.naideal.com/api/v1/delete-listing/${selectedPostId}`);
             setPosts(posts.filter((post) => post._id !== selectedPostId));
             setShowModal(false);
         } catch (error) {

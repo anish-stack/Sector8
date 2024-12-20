@@ -11,6 +11,8 @@ const SearchItem = () => {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [safeMsg, setSafeMsg] = useState('');
+
   const [searchParams] = useSearchParams();
   const query = searchParams.get('q');
   const sort = searchParams.get('sort');
@@ -29,11 +31,11 @@ const SearchItem = () => {
         ...(discount && { discount }),
         ...(price && { price }),
       });
-      
+
       const { data: response } = await axios.get(
         `https://api.naideal.com/api/v1/Other/search_min?${params.toString()}`
       );
-      
+      console.log(response.data)
       if (response.data.length > 0) {
         // Apply client-side sorting if needed
         let sortedData = [...response.data];
@@ -43,15 +45,20 @@ const SearchItem = () => {
           sortedData.sort((a, b) => a.Items[0]?.MrpPrice - b.Items[0]?.MrpPrice);
         } else if (sort === 'discount_high') {
           sortedData.sort((a, b) => b.Items[0]?.Discount - a.Items[0]?.Discount);
-        }else if(sort === 'oldest'){
+        } else if (sort === 'oldest') {
           sortedData.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
 
+        }
+        if (response.show === true) {
+
+          setSafeMsg(response.message)
         }
         setData(sortedData);
       } else {
         setError('No results found');
       }
     } catch (err) {
+      console.log(err)
       setError('Error in fetching data');
       // toast.error('Failed to fetch search results');
     } finally {
@@ -86,7 +93,15 @@ const SearchItem = () => {
         ) : error ? (
           <NoResults message={error} />
         ) : (
-          <SearchCard data={data} />
+          <>
+            {safeMsg && (
+              <div className="bg-green-100 border border-green-400 text-green-700 rounded-md p-4 mb-4">
+                <p className="text-sm font-medium">{safeMsg}</p>
+              </div>
+            )}
+
+            <SearchCard data={data} />
+          </>
         )}
       </div>
     </div>

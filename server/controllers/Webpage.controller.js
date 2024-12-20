@@ -2,16 +2,7 @@ const Policy = require('../models/Policy.Model')
 const Banner = require('../models/BannerModel')
 const marquee = require('../models/marquee.model')
 const Settings = require('../models/Settings.model')
-
-const Cloudinary = require('cloudinary').v2;
-const dotenv = require('dotenv')
-const result = dotenv.config();
-
-Cloudinary.config({
-    cloud_name: process.env.CLOUD_NAME,
-    api_key: process.env.CLOUDINARY_API_KEY,
-    api_secret: process.env.CLOUDINARY_SECRET_KEY
-});
+const bannerModel = require('../models/OffersBanner')
 
 
 exports.CreateBanner = async (req, res) => {
@@ -382,6 +373,218 @@ exports.getAllMarquee = async (req, res) => {
             success: false,
             message: 'Failed to retrieve marquees',
             error: error.message
+        });
+    }
+};
+
+
+exports.createBanner = async (req, res) => {
+    try {
+        const { active, RedirectPageUrl } = req.body;
+        const file = req.file;
+
+        if (!file) {
+            return res.status(400).json({
+                success: false,
+                message: 'No file uploaded',
+            });
+        }
+      
+       
+      
+      
+            const uploadFromBuffer = (buffer) => {
+                return new Promise((resolve, reject) => {
+                    let stream = Cloudinary.uploader.upload_stream((error, result) => {
+                        if (result) {
+                            resolve(result);
+                        } else {
+                            reject(error);
+                        }
+                    });
+                    streamifier.createReadStream(buffer).pipe(stream);
+                });
+            };
+
+
+            const uploadResult = await uploadFromBuffer(file.buffer);
+            const imageUrl = uploadResult.url;
+
+            const newBanner = new bannerModel({
+              
+                active,
+             
+                RedirectPageUrl,
+              
+                Banner: {
+                    url: imageUrl
+                }
+            });
+
+          
+            await newBanner.save();
+
+        
+            res.status(201).json({
+                success: true,
+                data: newBanner,
+                message: 'Banner created successfully'
+            });
+
+      
+
+    } catch (error) {
+        console.error('Error creating banner:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal Server Error'
+        });
+    }
+};
+
+
+exports.getAllBanner = async (req, res) => {
+    try {
+        const getAllBanner = await bannerModel.find();
+        if (getAllBanner === 0) {
+            return res.status(400).json({
+                success: false,
+                msg: "Banner Not Avilable Now"
+            })
+        }
+        res.status(201).json({
+            success: true,
+            data: getAllBanner,
+            msg: "All Banner Found"
+        })
+
+    } catch (error) {
+        console.log("Error : ", error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error"
+        });
+    }
+}
+
+exports.deleteBanner = async (req, res) => {
+    try {
+        const id = req.params.id;
+    
+        const checkBanner = await bannerModel.findByIdAndDelete({ _id: id })
+   
+        if (!checkBanner) {
+            return res.status(403).json({
+                success: false,
+                msg: "Banner Not Found"
+            })
+        }
+        const pastImageUrl = checkBanner.Banner.url;
+        const publicId = pastImageUrl.split('/').pop().split('.')[0]; 
+
+  
+        await Cloudinary.uploader.destroy(publicId, (error, result) => {
+            if (error) {
+                console.error("Error in deleting old image:", error);
+            } else {
+                console.log("Old image deleted:", result);
+            }
+        });
+
+        res.status(200).json({
+            success: true,
+            msg: "Banner Deleted Successfully !!"
+        })
+    } catch (error) {
+        console.log("Error : ", error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error"
+        });
+    }
+}
+
+exports.updateBanner = async (req, res) => {
+    try {
+        const BannerId = req.params.id;
+        const updates = { ...req.body }; 
+        const file = req.file;
+        const banner = await bannerModel.findById(BannerId)
+        if (!banner) {
+            return res.status(403).json({
+                success: false,
+                message: "This Banner Details Is Not Available"
+            })
+        }
+
+        if (file) {
+        
+            const uploadFromBuffer = (buffer) => {
+                return new Promise((resolve, reject) => {
+                    let stream = Cloudinary.uploader.upload_stream((error, result) => {
+                        if (result) {
+                            resolve(result);
+                        } else {
+                            reject(error);
+                        }
+                    });
+                    streamifier.createReadStream(buffer).pipe(stream);
+                });
+            };
+
+         
+            const uploadResult = await uploadFromBuffer(file.buffer);
+
+            const imageUrl = uploadResult.secure_url;
+            if (!imageUrl) {
+                return res.status(403).json({
+                    success: false,
+                    message: "Error in Uploading Image At Cloudinary"
+                })
+            }
+            else {
+          
+
+                const pastImageUrl = banner.Banner.url;
+                const publicId = pastImageUrl.split('/').pop().split('.')[0]; // Extract public ID from URL
+
+                // Destroy the old image in Cloudinary
+                await Cloudinary.uploader.destroy(publicId, (error, result) => {
+                    if (error) {
+                        console.error("Error in deleting old image:", error);
+                    } else {
+                        console.log("Old image deleted:", result);
+                    }
+                });
+
+                // Add the new image URL to updates
+                updates.Banner = { url: imageUrl };
+            }
+            // Add the image URL to updates
+            updates.Banner = { url: imageUrl };
+        }
+
+        // Find the banner by ID and update it with new data
+        const updatedBanner = await bannerModel.findByIdAndUpdate(BannerId, updates, { new: true });
+
+        if (!updatedBanner) {
+            return res.status(404).json({
+                success: false,
+                msg: "Banner not found."
+            });
+        }
+
+        res.status(200).json({
+            success: true,
+            msg: "Banner updated successfully.",
+            data: updatedBanner
+        });
+
+    } catch (error) {
+        console.error("Error:", error);
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error"
         });
     }
 };

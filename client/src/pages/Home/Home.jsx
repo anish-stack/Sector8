@@ -14,6 +14,7 @@ import { ServiceCard } from '../About/ServiceCard';
 import { StatsSection } from '../About/StatsSection';
 import AllListing from '../Listings/AllListing';
 import CustomerFaq from '../../components/CFaq/CustomerFaq';
+import OfferBanner from '../../components/OfferBanners/OfferBanner';
 const services = [
   {
     icon: Building,
@@ -127,13 +128,14 @@ const Home = () => {
           Comprehensive solutions designed to help your business thrive in the digital age
         </p>
       </div>
-
+   
       <div className="grid max-w-screen-xl mx-auto grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {services.map((service, index) => (
           <ServiceCard key={index} {...service} />
         ))}
       </div>
       <StatsSection />
+      <OfferBanner/>
 
       <Newsletter />
       <img className='fixed z-50 w-32 bottom-0' src={anm} alt="" />

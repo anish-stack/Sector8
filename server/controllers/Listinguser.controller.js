@@ -645,7 +645,7 @@ exports.MyShopDetails = async (req, res) => {
         // console.log('User ID:', MyShop);
 
         // Finding the shop details based on the user ID
-        const CheckMyShop = await ListingUser.findById(MyShop).select('-Password');
+        const CheckMyShop = await ListingUser.findById(MyShop).populate('ShopCategory', 'CategoriesName').select('-Password');
         // console.log('Shop Details:', CheckMyShop);
 
         if (!CheckMyShop) {
@@ -1082,7 +1082,7 @@ exports.getPostById = async (req, res) => {
             return res.status(404).json({ success: false, message: 'Listing not found' });
         }
 
-        const shopDetails = await ListingUser.findById(listing.ShopId).select('-password');
+        const shopDetails = await ListingUser.findById(listing.ShopId).populate('ShopCategory').select('-password');
 
         if (!shopDetails) {
             return res.status(404).json({ success: false, message: 'Shop details not found' });
@@ -1353,8 +1353,8 @@ exports.allPayments = async (req, res) => {
         // Function to fetch order details with retry logic
         const fetchOrderDetailsWithRetry = async (orderId, retries = 0) => {
             try {
-//                 RAZORPAY_APT_SECRET=seWgj8epMRq7Oeb7bvC3IZCe
-// RAZORPAY_KEY_ID=rzp_test_gQGRDFaoEskOdr
+                //                 RAZORPAY_APT_SECRET=seWgj8epMRq7Oeb7bvC3IZCe
+                // RAZORPAY_KEY_ID=rzp_test_gQGRDFaoEskOdr
                 const response = await axios({
                     method: 'get',
                     url: `https://api.razorpay.com/v1/orders/${orderId}`,

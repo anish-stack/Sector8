@@ -77,7 +77,7 @@ const ShopProfile = ({ shopDetails, onUpgradePackage, onLogout, onProfileUpload,
                     </div>
 
                     <h1 className="text-2xl font-bold text-gray-800">{shopDetails?.ShopName || "My Shop"}</h1>
-                    <p className="text-gray-600 mb-4">{shopDetails?.ShopCategory || "General"}</p>
+                    <p className="text-gray-600 mb-4">{shopDetails?.ShopCategory?.CategoriesName || "General"}</p>
 
                     <div className="w-full space-y-3">
                         <div className="flex items-center text-gray-700">

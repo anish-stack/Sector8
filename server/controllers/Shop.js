@@ -6,7 +6,7 @@ dotenv.config()
 const Partner = require('../models/Partner.model')
 const Package = require('../models/Pacakge')
 const City = require('../models/CityModel')
-const Categorey = require('../models/CategoreiesModel')
+const Category = require('../models/CategoreiesModel')
 
 exports.getUnApprovedPosts = async (req, res) => {
     try {
@@ -44,45 +44,42 @@ exports.MakeAPostApproved = async (req, res) => {
 };
 exports.getDashboardData = async (req, res) => {
     try {
-        const paymentsResponse = await axios.get(`${process.env.BACKEND_URL}/api/v1/admin-all-payments`);
-        const payments = paymentsResponse.data.payments;
+        const [paymentsResponse, partners, packages, posts, totalUsers, totalUnapprovedPosts, totalApprovedPosts, totalFreeListing, totalGoldListing, totalSilverListing, totalCityWeDeal, totalCategoriesWeDeal] = await Promise.all([
+            axios.get(`${process.env.BACKEND_URL}/api/v1/admin-all-payments`), // Fetch payments concurrently
+            Partner.find(), // Fetch partners concurrently
+            Package.find(), // Fetch packages concurrently
+            Post.find(), // Fetch posts concurrently
+            ListingUser.countDocuments(), // Fetch total users concurrently
+            Post.countDocuments({ isApprovedByAdmin: false }), // Count unapproved posts concurrently
+            Post.countDocuments({ isApprovedByAdmin: true }), // Count approved posts concurrently
+            ListingUser.countDocuments({ ListingPlan: 'Free' }), // Count free listings concurrently
+            ListingUser.countDocuments({ ListingPlan: 'Gold' }), // Count gold listings concurrently
+            ListingUser.countDocuments({ ListingPlan: 'Silver' }), // Count silver listings concurrently
+            City.countDocuments(), // Count total cities concurrently
+            Category.countDocuments(), // Count total categories concurrently
+        ]);
 
-        // Calculate total amount of all payments
-        const totalPaymentAmount = payments.reduce((sum, payment) => {
-            return sum + (payment.orderDetails.amount || 0); // Handle case where amount might be missing
-        }, 0);
-        const totalPaymentAmountRupees = totalPaymentAmount / 100;
-        const partners = await Partner.find();
-        const packages = await Package.find();
-        const posts = await Post.find();
-        const totalUsers = await ListingUser.countDocuments();
-        const totalUnapprovedPosts = await Post.countDocuments({ isApprovedByAdmin: false });
-        const totalApprovedPosts = await Post.countDocuments({ isApprovedByAdmin: true });
-        const totalFreeListing = await ListingUser.countDocuments({ ListingPlan: 'Free' });
-        const totalGoldListing = await ListingUser.countDocuments({ ListingPlan: 'Gold' });
-        const totalSilverListing = await ListingUser.countDocuments({ ListingPlan: 'Silver' });
-        const totalCityWeDeal  =  await City.countDocuments()
-        const totalCategoriesWeDeal  =  await Categorey.countDocuments()
-
+ 
+        // Calculate total posts and percentage of unapproved posts
         const totalPosts = totalApprovedPosts + totalUnapprovedPosts;
-        const percentageUnapproved = ((totalUnapprovedPosts / totalPosts) * 100).toFixed(2);
+        const percentageUnapproved = totalPosts ? ((totalUnapprovedPosts / totalPosts) * 100).toFixed(2) : '0';
 
         const response = {
             success: true,
             data: {
-                packageLength: packages.length,
-                partnerLength: partners.length,
-                totalUsers,
-                totalPosts,
-                totalUnapprovedPosts,
-                totalApprovedPosts,
+                packageLength: packages.length || 0,
+                partnerLength: partners.length || 0,
+                totalUsers: totalUsers || 0,
+                totalPosts: totalPosts || 0,
+                totalUnapprovedPosts: totalUnapprovedPosts || 0,
+                totalApprovedPosts: totalApprovedPosts || 0,
                 percentageUnapproved,
-                totalFreeListing,
-                totalGoldListing,
-                totalSilverListing,
-                totalCategoriesWeDeal,
-                totalCityWeDeal,
-                totalPaymentAmountRupees, // Total amount of all payments
+                totalFreeListing: totalFreeListing || 0,
+                totalGoldListing: totalGoldListing || 0,
+                totalSilverListing: totalSilverListing || 0,
+                totalCategoriesWeDeal: totalCategoriesWeDeal || 0,
+                totalCityWeDeal: totalCityWeDeal || 0,
+                totalPaymentAmountRupees:  0,
             }
         };
 
@@ -92,6 +89,21 @@ exports.getDashboardData = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Internal Server Error',
+            data: {
+                packageLength: 0,
+                partnerLength: 0,
+                totalUsers: 0,
+                totalPosts: 0,
+                totalUnapprovedPosts: 0,
+                totalApprovedPosts: 0,
+                percentageUnapproved: '0',
+                totalFreeListing: 0,
+                totalGoldListing: 0,
+                totalSilverListing: 0,
+                totalCategoriesWeDeal: 0,
+                totalCityWeDeal: 0,
+                totalPaymentAmountRupees: 0,
+            }
         });
     }
 };

@@ -90,12 +90,12 @@ const UnApprovedPost = () => {
                                         >
                                             View
                                         </button>
-                                        <button
+                                        {/* <button
                                             onClick={() => handleApprove(post._id)}
                                             className="text-sm bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded mr-2"
                                         >
                                             Approve
-                                        </button>
+                                        </button> */}
                                         <button
                                             onClick={() => handleDelete(post._id)}
                                             className="text-sm bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded"
@@ -126,8 +126,8 @@ const UnApprovedPost = () => {
             {/* Modal */}
             {modalPost && (
                 <div className="fixed z-[999] inset-0 bg-black bg-opacity-50 flex justify-center items-center">
-                    <div className="bg-white rounded-lg p-6 w-3/4">
-                        <h2 className="text-xl font-bold mb-4">{modalPost.Title}</h2>
+                    <div className="bg-white rounded-lg h-[500px]  p-4 overflow-auto w-3/4">
+                        <h2 className="text-lg font-bold mb-4">{modalPost.Title}</h2>
                         <p className="mb-4">{modalPost.Details}</p>
                         <div className="grid grid-cols-2 gap-2 mb-4">
                             {modalPost.Pictures.map((pic, index) => (

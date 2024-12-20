@@ -21,6 +21,8 @@ import EditPost from './pages/Post/EditPost';
 import CryptoJS from 'crypto-js';
 import ProtectedRoute from './ProtectedRoute';
 import AllContact from './pages/Contact/AllContact';
+import AllBanners from './pages/OfferBanner/AllBanner';
+import FestivalPop from './pages/FestivalPop/Festival.pop';
 
 const App = () => {
   // Retrieve and decrypt the session data
@@ -66,6 +68,8 @@ const App = () => {
           <Route path="/edit-post" element={<ProtectedRoute><EditPost /></ProtectedRoute>} />
           <Route path="/All-Contacts" element={<ProtectedRoute><AllContact /></ProtectedRoute>} />
 
+          <Route path="/manage-offer-banners" element={<ProtectedRoute><AllBanners /></ProtectedRoute>} />
+          <Route path="/manage-pop-festivals" element={<ProtectedRoute><FestivalPop /></ProtectedRoute>} />
 
           
         </Route>

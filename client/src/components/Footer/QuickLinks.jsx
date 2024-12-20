@@ -10,10 +10,7 @@ const links = [
       { label: 'Our Services', path: '/services' },
       { label: 'Advertise With Us', path: '/Advertise-With-us' },
       { label: 'Customer-faq', path: '/Customer-faq' },
-      { label: 'Our Plans', path: '/upgrade-package/plans' },
-
-
-      
+      // { label: 'Our Plans', path: '/upgrade-package/plans' },  
     ]
   },
   {
@@ -43,25 +40,25 @@ const links = [
 const QuickLinks = () => {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-    {links.map((category) => (
-      <div key={category.title} className="space-y-4">
-        <h3 className="text-lg font-bold text-white">{category.title}</h3>
-        <ul className="space-y-2">
-          {category.items.map((link) => (
-            <li key={link.path}>
-              <Link
-                to={link.path}
-                className="text-gray-300 hover:text-white transition-colors duration-200 flex items-center gap-2"
-              >
-                <span className="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>
-                {link.label}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
-    ))}
-  </div>
+      {links.map((category) => (
+        <div key={category.title} className="space-y-4">
+          <h3 className="text-lg font-bold text-white">{category.title}</h3>
+          <ul className="space-y-2">
+            {category.items.map((link) => (
+              <li key={link.path}>
+                <Link
+                  to={link.path}
+                  className="text-gray-300 hover:text-white transition-colors duration-200 flex items-center gap-2"
+                >
+                  <span className="w-1.5 h-1.5 bg-purple-500 rounded-full"></span>
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
   )
 }
 

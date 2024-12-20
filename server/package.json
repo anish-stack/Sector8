@@ -29,6 +29,7 @@
     "nodemailer": "^6.9.14",
     "razorpay": "^2.9.4",
     "server": "file:",
+    "streamifier": "^0.1.1",
     "xlsx": "^0.18.5"
   }
 }

@@ -32,7 +32,7 @@ const EditPost = () => {
     const loadPost = async () => {
       try {
         const post = await fetchPost(id);
-        console.log(post)
+        console.log(post.Items)
         if (post) {
           setFormData({
             Title: post.Title,
@@ -246,6 +246,18 @@ const EditPost = () => {
                     </button>
                   </div>
 
+                  <p className="note">Image is not changeable</p>
+                  {formData.Items.map((item, index) => (
+                    item.dishImages &&
+                    item.dishImages.map((image, imgIndex) => (
+                      <img
+                        key={`${index}-${imgIndex}`} 
+                        src={image.ImageUrl || "https://via.placeholder.com/64"} 
+                        className="object-cover w-32 h-32 rounded-sm"
+                        alt={`Dish ${index}-${imgIndex}`}
+                      />
+                    ))
+                  ))}
                   {formData.Items.map((item, index) => (
                     <div key={index} className="bg-white p-4 rounded-sm shadow-sm border border-gray-200 mb-4">
                       <div className="flex items-center justify-between mb-4">

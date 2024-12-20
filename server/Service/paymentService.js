@@ -4,8 +4,8 @@ const Plans = require('../models/Pacakge');
 class PaymentService {
   constructor() {
     this.razorpay = new Razorpay({
-      key_id: process.env.RAZORPAY_KEY_ID || "rzp_test_gQGRDFaoEskOdr",
-      key_secret: process.env.RAZORPAY_KEY_SECRET || "seWgj8epMRq7Oeb7bvC3IZCe",
+      key_id: process.env.RAZORPAY_KEY_ID || "rzp_test_cz0vBQnDwFMthJ",
+      key_secret: process.env.RAZORPAY_KEY_SECRET || "aIM7S3NfvUHlM84tcZRQpNht",
     });
   }
 

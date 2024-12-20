@@ -37,7 +37,7 @@ export const faqData = [
     },
     {
       "question": "How do I contact customer support?",
-      "answer": "If you have any questions, need help, or encounter any issues, our customer support team is here to assist you. You can contact us by:\n- Email: [Provide Contact Email Here]\n- Phone: [Provide Contact Number Here]\n- Live Chat: Available on our website during business hours."
+      "answer": "If you have any questions, need help, or encounter any issues, our customer support team is here to assist you. You can contact us by:\n- Email: care@yahoo.com\n- Phone: 099-5382-5382\n- Live Chat: Available on our website during business hours."
     },
     {
       "question": "How long will it take for my listing or offer to be approved?",

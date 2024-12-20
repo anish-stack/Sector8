@@ -21,6 +21,7 @@ const SingleListing = () => {
     const fetchSingleData = async () => {
         try {
             const response = await axios.get(`${BackendUrl}/get-listing/${encodeURIComponent(id)}`);
+            console.log(response.data.data)
             setListing(response.data.data);
             setLoading(false);
         } catch (error) {
@@ -55,7 +56,7 @@ const SingleListing = () => {
     }
 
     return (
-        <motion.div 
+        <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             className="max-w-7xl mx-auto px-4 py-8"
@@ -75,7 +76,7 @@ const SingleListing = () => {
                 <div className="lg:col-span-2">
                     {/* Image Gallery */}
                     <div className="bg-gray-100 rounded-2xl overflow-hidden mb-8">
-                        <motion.div 
+                        <motion.div
                             className="relative aspect-[16/9]"
                             layoutId={`listing-image-${listing._id}`}
                         >
@@ -97,9 +98,8 @@ const SingleListing = () => {
                                         <button
                                             key={index}
                                             onClick={() => setSelectedImage(index)}
-                                            className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${
-                                                selectedImage === index ? 'border-purple-500 scale-110' : 'border-transparent opacity-70'
-                                            }`}
+                                            className={`flex-shrink-0 w-16 h-16 rounded-lg overflow-hidden border-2 transition-all ${selectedImage === index ? 'border-purple-500 scale-110' : 'border-transparent opacity-70'
+                                                }`}
                                         >
                                             <img
                                                 src={pic.ImageUrl}
@@ -119,9 +119,8 @@ const SingleListing = () => {
                         <div className="flex items-center gap-4">
                             <button
                                 onClick={() => setIsLiked(!isLiked)}
-                                className={`p-2 rounded-full transition-colors ${
-                                    isLiked ? 'bg-red-100 text-red-500' : 'bg-gray-100 text-gray-500'
-                                }`}
+                                className={`p-2 rounded-full transition-colors ${isLiked ? 'bg-red-100 text-red-500' : 'bg-gray-100 text-gray-500'
+                                    }`}
                             >
                                 <Heart className={`w-5 h-5 ${isLiked ? 'fill-current' : ''}`} />
                             </button>
@@ -138,7 +137,7 @@ const SingleListing = () => {
                     <div className="bg-white rounded-2xl shadow-sm border p-6 mb-8">
                         <a href={`/View-More-Offers/Shop-profile/${listing?.shopDetails?._id}/${listing?.shopDetails?.ShopName}`} className="flex items-center gap-4 mb-6">
                             <div className="w-16 h-16 bg-gradient-to-br from-purple-500 to-blue-500 rounded-full flex items-center justify-center text-white text-2xl font-bold">
-                               <a href={`/View-More-Offers/Shop-profile/${listing?.shopDetails?._id}/${listing?.shopDetails?.ShopName}`}> {listing.shopDetails?.ShopName?.[0] || 'N'}</a>
+                                <a href={`/View-More-Offers/Shop-profile/${listing?.shopDetails?._id}/${listing?.shopDetails?.ShopName}`}> {listing.shopDetails?.ShopName?.[0] || 'N'}</a>
                             </div>
                             <div>
                                 <h2 className="text-xl font-semibold text-gray-900">
@@ -147,7 +146,7 @@ const SingleListing = () => {
                                         <CheckCircle className="inline-block w-5 h-5 text-green-500 ml-2" />
                                     )}
                                 </h2>
-                                <p className="text-gray-600">{listing.shopDetails?.ShopCategory}</p>
+                                <p className="text-gray-600">{listing.shopDetails?.ShopCategory?.CategoriesName}</p>
                             </div>
                         </a>
 
@@ -245,7 +244,7 @@ const SingleListing = () => {
                         {/* Business Hours */}
                         <div className="bg-white rounded-2xl shadow-sm border p-6">
                             <div className="flex items-center gap-2 mb-4">
-                              
+
                                 <i className="fa-regular fa-clock text-3xl text-gray-400"></i>
                                 <h3 className="text-lg font-semibold text-gray-900">Business Hours</h3>
                             </div>
