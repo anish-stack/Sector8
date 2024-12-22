@@ -18,7 +18,7 @@ const links = [
     items: [
       { label: 'Partner Login', path: '/partner-login' },
       { label: 'Become A Partner', path: '/Register-Partner' },
-      { label: 'Partner Support', path: '/partner-support' },
+      { label: 'Partner Support', path: '/contact' },
       { label: 'Partner-faq', path: '/partner-faq' },
 
     ]
