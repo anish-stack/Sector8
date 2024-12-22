@@ -23,7 +23,7 @@ const AllBanners = () => {
   const fetchBanners = async () => {
     setIsLoading(true);
     try {
-      const { data } = await axios.get(`${API_BASE_URL}/get-Banner`);
+      const { data } = await axios.get(`${API_BASE_URL}/get-offer-Banner`);
       setBanners(data.data);
     } catch (error) {
       console.error('Error fetching banners:', error);
@@ -65,12 +65,12 @@ const AllBanners = () => {
       
       if (selectedBanner) {
         await axios.put(
-          `${API_BASE_URL}/update-Banner/${selectedBanner._id}`,
+          `${API_BASE_URL}/update-offer-Banner/${selectedBanner._id}`,
           formData,
           config
         );
       } else {
-        await axios.post(`${API_BASE_URL}/Create-Banner`, formData, config);
+        await axios.post(`${API_BASE_URL}/Create-Offer-Banner`, formData, config);
       }
 
       fetchBanners();
@@ -86,7 +86,7 @@ const AllBanners = () => {
 
     setIsLoading(true);
     try {
-      await axios.delete(`${API_BASE_URL}/delete-Banner/${id}`, {
+      await axios.delete(`${API_BASE_URL}/delete-offer-Banner/${id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       fetchBanners();
@@ -129,7 +129,7 @@ const AllBanners = () => {
             <div key={banner._id || index} className="bg-white rounded-xl shadow-md overflow-hidden">
               <div className="relative h-48">
                 <img
-                  src={banner.Banner.url}
+                  src={banner?.Banner?.url}
                   alt={`Banner ${index + 1}`}
                   className="w-full h-full object-cover"
                 />

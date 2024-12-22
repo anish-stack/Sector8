@@ -23,6 +23,7 @@ import ProtectedRoute from './ProtectedRoute';
 import AllContact from './pages/Contact/AllContact';
 import AllBanners from './pages/OfferBanner/AllBanner';
 import FestivalPop from './pages/FestivalPop/Festival.pop';
+import { Toaster } from 'react-hot-toast';
 
 const App = () => {
   // Retrieve and decrypt the session data
@@ -77,6 +78,7 @@ const App = () => {
         {/* Catch-all route for undefined paths */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
+        <Toaster/>
     </Router>
   );
 };

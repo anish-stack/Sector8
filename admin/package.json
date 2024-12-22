@@ -16,6 +16,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "crypto-js": "^4.2.0",
+    "jodit-react": "^4.1.2",
     "lucide-react": "^0.407.0",
     "react": "^18.3.1",
     "react-chartjs-2": "^5.2.0",

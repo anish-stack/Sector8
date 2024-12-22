@@ -1,6 +1,6 @@
 const express = require('express');
 const { createPartner, verifyOtpAndEmail, resendAccountVerifyOtp, resendForgetPasswordOtp, login, logout, verifyForgetPasswordOtp, deletePartnerAccount, forgetPasswordRequest, GetAllShopListByPartner, getAllPartner, GetAllShopListByPartnerAdmin } = require('../controllers/Partnercontroller');
-const { CreateListing, getAllListing, getListingById, deleteListingById, deleteAllListings, UpdateListing, getPostByCategory, UpdateListingAdmin } = require('../controllers/ListingControllers');
+const { CreateListing, getAllListing, getListingById, deleteListingById, deleteAllListings, UpdateListing, getPostByCategory, UpdateListingAdmin, UpdateListingByBolt } = require('../controllers/ListingControllers');
 const { ListUser, LoginListUser, MyShopDetails, CreatePost, getAllPost, getPostById, deletePostById, deleteAllPost, getMyPostOnly, SearchByPinCodeCityAndWhatYouWant, getAllShops, DeleteListUser, updateDetailsOfListUser, paymentVerification, showPaymentDetails, allPayments, CreateForgetPasswordRequest, verifyOtp, getAllPostApprovedPost, UploadProfileImage, UpdateProfileDetails, getMyAllPost } = require('../controllers/Listinguser.controller');
 const { protect } = require('../middlewares/Protect');
 const multer = require('multer');
@@ -8,7 +8,7 @@ const { getUnApprovedPosts, MakeAPostApproved, getDashboardData } = require('../
 const { createPackage, getAllPackages, updatePackage, deletePackage } = require('../controllers/Packagecontroller');
 const { createCity, updateCity, deleteCity, getAllCities } = require('../controllers/Citycontroller');
 const { createCategory, updateCategory, getAllCategories, deleteCategory } = require('../controllers/CategoriesController');
-const { CreateBanner, GetAllBanner, UpdateBanner, DeleteBanner, GetAllBannerActive, MakeSetting, GetSetting, UpdateSetting, createMarquee, updateMarquee, deleteMarquee, getAllMarquee, createBanner, getAllBanner, deleteBanner, updateBanner } = require('../controllers/Webpage.controller');
+const { CreateBanner, GetAllBanner, UpdateBanner, DeleteBanner, GetAllBannerActive, MakeSetting, GetSetting, UpdateSetting, createMarquee, updateMarquee, deleteMarquee, getAllMarquee, createBanner, getAllBanner, deleteBanner, updateBanner, createOfferBanner, getOfferAllBanner, deleteOfferBanner, updateOfferBanner } = require('../controllers/Webpage.controller');
 const { createFBanner, getFAllBanner, getBanneronWhicPage, deleteFBanner, updateFBanner } = require('../controllers/Festival_controller');
 const router = express.Router();
 
@@ -44,10 +44,10 @@ router.post('/verify-Otp-For-ForgetPassword', verifyOtp)
 router.post('/Upload-Profile-Image',protect,upload.single('image'), UploadProfileImage)
 router.post('/Upload-Profile-Details',protect, UpdateProfileDetails)
 
-router.post('/Create-Banner', upload.single('image'), createBanner)
-router.get('/get-Banner', getAllBanner)
-router.delete('/delete-Banner/:id', deleteBanner)
-router.put('/update-Banner/:id',upload.single('image'), updateBanner)
+router.post('/Create-Offer-Banner', upload.single('image'), createOfferBanner)
+router.get('/get-offer-Banner', getOfferAllBanner)
+router.delete('/delete-offer-Banner/:id', deleteOfferBanner)
+router.put('/update-offer-Banner/:id',upload.single('image'), updateOfferBanner)
 
 
 router.post('/Create-festival-Banner', upload.single('image'), createFBanner)
@@ -65,6 +65,7 @@ router.put('/admin-Shop-Edit-post', upload.fields([
     { name: 'MainImage', maxCount: 1 },
     { name: 'dishImage', maxCount: 10 },
 ]), UpdateListingAdmin)
+    router.put('/admin-Shop-Edit-post-bolt', upload.any(), UpdateListingByBolt)
 
 
 // admins
