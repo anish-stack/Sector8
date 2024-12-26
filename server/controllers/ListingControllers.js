@@ -3,6 +3,7 @@ const Partner = require('../models/Partner.model');
 const Cloudinary = require('cloudinary').v2;
 const { validationResult } = require('express-validator');
 const sendEmail = require('../utils/SendEmail');
+const mongoose = require('mongoose')
 const ListingUser = require('../models/User.model')
 const dotenv = require('dotenv');
 const Package = require('../models/Pacakge');
@@ -324,6 +325,169 @@ exports.UpdateListing = async (req, res) => {
     }
 };
 
+exports.UpdateListingByBolt = async (req, res) => {
+    try {
+        const listingId = req.query.ListingId;
+        const ShopId = req.query.id;
+
+        // console.log("Received request to update listing...");
+        // console.log("Listing ID:", listingId);
+        // console.log("Shop ID:", ShopId);
+
+        if (!ShopId) {
+            console.log("No Shop ID provided. Returning error.");
+            return res.status(401).json({
+                success: false,
+                msg: "Please Login",
+            });
+        }
+
+        // Check if listing exists and belongs to the shop
+        const existingListing = await Listing.findOne({ _id: listingId, ShopId });
+        if (!existingListing) {
+            console.log("Listing not found or unauthorized.");
+            return res.status(404).json({
+                success: false,
+                msg: "Listing not found or unauthorized",
+            });
+        }
+
+        const { Title, Details, HtmlContent, ItemsUpdated } = req.body;
+        // console.log("Request body:", req.body);
+
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            console.log("Validation errors:", errors.array());
+            return res.status(400).json({ success: false, errors: errors.array() });
+        }
+
+        // Check if files are provided
+        // console.log("Files received:", req.files);
+
+        // If files are not provided, initialize filesArray as an empty array
+        const filesArray = Array.isArray(req.files) ? req.files : Object.values(req.files).flat();
+        console.log("Files array after handling:", filesArray);
+
+        if (filesArray.length === 0) {
+            console.log("No files to upload.");
+        }
+
+        // Handle dish images
+        const itemsMap = {};
+        filesArray.forEach((file) => {
+            const fieldName = file.fieldname;
+            // console.log("Processing file:", file);
+            if (fieldName.startsWith("dishImages")) {
+                const itemIndex = fieldName.split("[")[1].split("]")[0];
+                // console.log("itemIndex for dish image:", itemIndex);
+                itemsMap[itemIndex] = itemsMap[itemIndex] || { dishImages: [] };
+                itemsMap[itemIndex].dishImages.push(file);
+            }
+        });
+
+        // Helper function to upload to Cloudinary
+        const uploadToCloudinary = async (file) => {
+            return new Promise((resolve, reject) => {
+                console.log("Uploading to Cloudinary:", file);
+                Cloudinary.uploader.upload_stream(
+                    { folder: "your_upload_folder" },
+                    (error, result) => {
+                        if (error) {
+                            console.log("Cloudinary upload error:", error);
+                            reject(error);
+                        } else {
+                            console.log("Cloudinary upload result:", result);
+                            resolve({ public_id: result.public_id, ImageUrl: result.secure_url });
+                        }
+                    }
+                ).end(file.buffer);
+            });
+        };
+
+        // Handle updated items
+        const updatedItems = JSON.parse(ItemsUpdated);
+        const updatedListingItems = [];
+
+        // console.log("Updated items received:", updatedItems);
+
+        for (const [index, item] of Object.entries(updatedItems)) {
+            const existingItem = existingListing.Items[index]; // Get the existing item at this index
+
+            // console.log("Processing item:", item);
+            // console.log("Existing item:", existingItem);
+
+            // Handle dish images (upload new ones if provided, keep existing ones if not)
+            let dishImages = [];
+
+            console.log("Dish images found for item:", req.files);
+            if (item.dishImages && item.dishImages.length > 0) {
+                // Only upload valid dish images
+                dishImages = await uploadToCloudinary(req.files[0]);
+                // dishImages = await Promise.all(item.dishImages.map(async (image) => {
+                //     if (image && image.buffer) {
+                //         return await uploadToCloudinary(image);
+                //     } else {
+                //         console.log("Invalid dish image data:", image);
+                //         return null; // Ignore invalid images
+                //     }
+                // }));
+            } else {
+                // If no new dish images are provided, keep the existing images
+                dishImages = existingItem?.dishImages || []; // Preserve existing images
+            }
+
+            // Update the item with either the new values or the existing ones
+            updatedListingItems.push({
+                itemName: item.itemName || existingItem?.itemName,
+                MrpPrice: item.MrpPrice || existingItem?.MrpPrice,
+                Discount: item.Discount || existingItem?.Discount,
+                dishImages, // Updated dish images (keeps existing ones if none are uploaded)
+            });
+        }
+
+        // Handle general pictures update
+        let updatedPictures = existingListing.Pictures;
+        const pictureFiles = filesArray.filter((file) => file.fieldname === "MainImage");
+
+        if (pictureFiles.length > 0) {
+            console.log("Main image files found, uploading...");
+            updatedPictures = await Promise.all(pictureFiles.map(uploadToCloudinary));
+        } else {
+            console.log("No main image files provided.");
+        }
+
+        // Update the listing
+        const updatedListing = await Listing.findByIdAndUpdate(
+            listingId,
+            {
+                Title: Title || existingListing.Title,
+                Details: Details || existingListing.Details,
+                HtmlContent: HtmlContent || existingListing.HtmlContent,
+                Items: updatedListingItems.length > 0 ? updatedListingItems : existingListing.Items,
+                Pictures: updatedPictures,
+                updatedAt: Date.now(),
+            },
+            { new: true, runValidators: true }
+        );
+
+        console.log("Listing updated successfully.");
+
+        return res.status(200).json({
+            success: true,
+            msg: "Listing updated successfully",
+            listing: updatedListing,
+        });
+    } catch (error) {
+        console.error("Error during update:", error);
+        return res.status(500).json({
+            success: false,
+            msg: "Error updating listing",
+            error: error.message,
+        });
+    }
+};
+
+
 
 exports.updateImage = async (req, res) => {
     try {
@@ -383,115 +547,85 @@ exports.UpdateListingAdmin = async (req, res) => {
         if (!ShopId) {
             return res.status(401).json({
                 success: false,
-                msg: "Please Login"
+                msg: "Please Login",
             });
         }
 
-        const CheckMyShop = await ListingUser.findById(ShopId).select('-Password');
+        const convertInto = new mongoose.Types.ObjectId(ShopId);
+        const convertListing = new mongoose.Types.ObjectId(ListingId);
+
+        // Check if shop exists
+        const CheckMyShop = await ListingUser.findById(convertInto).select("-Password");
         if (!CheckMyShop) {
             return res.status(404).json({
                 success: false,
-                msg: "Shop not found"
+                msg: "Shop not found",
             });
         }
 
-        const { Title, Details } = req.body;
+        const { Title, Details, HtmlContent, tags } = req.body;
 
-        const listing = await Listing.findById(ListingId);
+        // Find listing by ID
+        const listing = await Listing.findById(convertListing);
         if (!listing) {
             return res.status(404).json({
                 success: false,
-                msg: "Listing not found"
+                msg: "Listing not found",
             });
         }
 
+        // Verify the listing belongs to the shop
         if (listing.ShopId.toString() !== ShopId) {
             return res.status(403).json({
                 success: false,
-                msg: "Unauthorized"
+                msg: "Unauthorized",
             });
         }
 
-        const Items = [];
-        for (let i = 0; req.body[`Items[${i}].itemName`] !== undefined; i++) {
-            Items.push({
-                itemName: req.body[`Items[${i}].itemName`],
-                MrpPrice: req.body[`Items[${i}].MrpPrice`],
-                Discount: req.body[`Items[${i}].Discount`],
-                dishImages: []
-            });
-        }
 
-        console.log('Items before adding images:', Items);
 
+
+        // Validate the request body
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({ success: false, errors: errors.array() });
         }
 
-        // console.log("dishImage", req.files['dishImage'] )
-        const images = req.files['MainImage'] || [];
-        const dishImagesUrl = req.files['dishImage'].map(file => file);
+        // Update only the fields that are modified
+        if (Title && Title !== listing.Title) listing.Title = Title;
+        if (Details && Details !== listing.Details) listing.Details = Details;
+        if (HtmlContent && HtmlContent !== listing.HtmlContent) listing.HtmlContent = HtmlContent;
 
-        // console.log('dishImagesUrl:', dishImagesUrl);
-
-        const uploadedDishImages = await Promise.all(dishImagesUrl.map(file => uploadImage(file)));
-
-        // console.log('uploadedDishImages:', images);
-
-        uploadedDishImages.forEach((upload, index) => {
-            if (Items[index]) {
-                Items[index].dishImages.push({
-                    public_id: upload.public_id,
-                    ImageUrl: upload.ImageUrl
-                });
-            }
-        });
-
-        const uploadedImages = await Promise.all(images.map(file => uploadImage(file)));
-
-        // console.log('uploadedImages:', uploadedImages);
-
-        if (Title) listing.Title = Title;
-        if (Details) listing.Details = Details;
-        if (Items.length) listing.Items = Items;
-
-        if (uploadedImages.length) {
-            const updatedPictures = [...listing.Pictures];
-
-            uploadedImages.forEach(upload => {
-                const existingImageIndex = updatedPictures.findIndex(picture => picture.public_id === upload.public_id);
-                if (existingImageIndex !== -1) {
-                    updatedPictures[existingImageIndex] = upload;
-                } else {
-                    updatedPictures.push({
-                        public_id: upload.public_id,
-                        ImageUrl: upload.ImageUrl
-                    });
-                }
-            });
-
-            listing.Pictures = updatedPictures;
-
-            console.log('Updated Pictures:', updatedPictures);
+        if (tags) {
+            const splitTags = tags.split(",").map((tag) => tag.trim());
+            listing.tags = splitTags;
         }
 
+        // Update items if any changes were made
+        if (updatedItems.length) listing.Items = updatedItems;
+
+        // Mark the listing as unapproved
+        listing.isApprovedByAdmin = false;
+
+        // Save the updated listing
         await listing.save();
 
+        // Send success response
         res.status(200).json({
             success: true,
             msg: "Listing updated successfully",
-            listing
+            listing,
         });
     } catch (error) {
-        console.log(error);
+        console.error(error);
         res.status(500).json({
             success: false,
             msg: "Error updating listing",
-            error: error.message
+            error: error.message,
         });
     }
 };
+
 
 exports.getPostByCategory = async (req, res) => {
     try {

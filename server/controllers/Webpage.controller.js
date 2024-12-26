@@ -3,7 +3,16 @@ const Banner = require('../models/BannerModel')
 const marquee = require('../models/marquee.model')
 const Settings = require('../models/Settings.model')
 const bannerModel = require('../models/OffersBanner')
-
+const mongoose = require('mongoose');
+const streamifier = require('streamifier')
+const Cloudinary = require('cloudinary').v2;
+const dotenv = require('dotenv');
+dotenv.config()
+Cloudinary.config({
+    cloud_name: process.env.CLOUD_NAME,
+    api_key: process.envCLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_SECRET_KEY
+});
 
 exports.CreateBanner = async (req, res) => {
     try {
@@ -124,14 +133,13 @@ exports.UpdateBanner = async (req, res) => {
     try {
         const { id } = req.params;
         const updates = req.body;
-
+        const mongooseId = new mongoose.Types.ObjectId(id);
         const updateFields = {};
-
+        console.log(mongooseId)
         // Handle file upload if `req.file` exists
         if (req.file) {
             const file = req.file;
-            console.log(file)
-            // Upload the file to Cloudinary
+
             const uploadedImage = await new Promise((resolve, reject) => {
                 Cloudinary.uploader.upload_stream(
                     { folder: "banners" }, // Optional: specify a folder in Cloudinary
@@ -155,13 +163,14 @@ exports.UpdateBanner = async (req, res) => {
         // Update other fields
         if (typeof updates.active !== "undefined") {
             updateFields.active = updates.active; // Toggle active status
+            console.log("Active status updated to:", updates.active);
         }
         if (updates.title) {
             updateFields.title = updates.title; // Update title, if provided
         }
 
         // Perform the update
-        const updatedBanner = await Banner.findByIdAndUpdate(id, updateFields, {
+        const updatedBanner = await Banner.findByIdAndUpdate(mongooseId, updateFields, {
             new: true, // Return the updated document
             runValidators: true, // Ensure the updates follow the schema
         });
@@ -172,7 +181,6 @@ exports.UpdateBanner = async (req, res) => {
                 message: "Banner not found",
             });
         }
-        console.log(updatedBanner)
 
         res.status(200).json({
             success: true,
@@ -180,6 +188,7 @@ exports.UpdateBanner = async (req, res) => {
             data: updatedBanner,
         });
     } catch (error) {
+        console.log(error.message)
         res.status(500).json({
             success: false,
             message: "Failed to update banner",
@@ -192,7 +201,9 @@ exports.UpdateBanner = async (req, res) => {
 
 exports.MakeSetting = async (req, res) => {
     try {
+
         const { logo, footerLogo, BioFooter, isFestiveTopPopUpShow, isFestiveBottomPopUpShow, AboveTopGif, BottomGifLink, GstNo, contactNumber, adminId, officeAddress, links, FooterEmail } = req.body;
+
 
         const newSetting = new Settings({
             logo,
@@ -380,7 +391,7 @@ exports.getAllMarquee = async (req, res) => {
 };
 
 
-exports.createBanner = async (req, res) => {
+exports.createOfferBanner = async (req, res) => {
     try {
         const { active, RedirectPageUrl } = req.body;
         const file = req.file;
@@ -445,7 +456,7 @@ exports.createBanner = async (req, res) => {
 };
 
 
-exports.getAllBanner = async (req, res) => {
+exports.getOfferAllBanner = async (req, res) => {
     try {
         const getAllBanner = await bannerModel.find();
         if (getAllBanner === 0) {
@@ -469,7 +480,7 @@ exports.getAllBanner = async (req, res) => {
     }
 }
 
-exports.deleteBanner = async (req, res) => {
+exports.deleteOfferBanner = async (req, res) => {
     try {
         const id = req.params.id;
 
@@ -506,7 +517,7 @@ exports.deleteBanner = async (req, res) => {
     }
 }
 
-exports.updateBanner = async (req, res) => {
+exports.updateOfferBanner = async (req, res) => {
     try {
         const BannerId = req.params.id;
         const updates = { ...req.body };

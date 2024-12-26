@@ -16,7 +16,7 @@ const OfferBanner = () => {
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const response = await axios.get('https://api.naideal.com/api/v1/get-festival-Banner');
+                const response = await axios.get('https://api.naideal.com/api/v1/get-offer-Banner');
                 if (response.data.success) {
                     setData(response.data.data);
                 }

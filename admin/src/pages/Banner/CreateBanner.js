@@ -42,6 +42,7 @@ const CreateBanner = () => {
       toast.success(response.data.message || 'Banner uploaded successfully!');
       setImage(null); // Clear the image after successful upload
     } catch (error) {
+      console.log(error)
       toast.error(
         error.response?.data?.message || 'Failed to upload the banner.'
       );
@@ -53,7 +54,7 @@ const CreateBanner = () => {
   return (
     <div className="max-w-lg mx-auto mt-10 bg-white shadow-md rounded-lg p-6">
       <h2 className="text-2xl font-bold text-center mb-6 text-gray-800">
-        Create Banner
+        Create Banner Home
       </h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>

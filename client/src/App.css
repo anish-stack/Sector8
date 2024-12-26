@@ -50,6 +50,15 @@ body {
   border: 1px solid;
 }
 
+circle {
+  /* fill: none; */
+  stroke: hsl(205, 97%, 59%)!important;
+  stroke-width: 2!important;
+  stroke-dasharray: 200!important;
+  stroke-dashoffset: 0!important;
+  stroke-linecap: round!important;
+  animation: none !important;
+}
 .tags-2 {
   width: 250px;
   overflow: hidden;

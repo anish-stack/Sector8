@@ -8,7 +8,7 @@ const AllBanner = () => {
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedBanner, setSelectedBanner] = useState(null);
   const [updatedImage, setUpdatedImage] = useState(null);
-  const [updatedStatus, setUpdatedStatus] = useState(null);
+  const [updatedStatus, setUpdatedStatus] = useState(false);
 
   // Fetch all banners
   const fetchBanners = async () => {
@@ -56,7 +56,7 @@ const AllBanner = () => {
     }
 
     // Attach active status
-    formData.append("active", updatedStatus);
+    formData.append("active", Boolean(updatedStatus));
 
     try {
       await axios.post(
@@ -70,6 +70,7 @@ const AllBanner = () => {
 
       fetchBanners(); // Refresh banners
     } catch (error) {
+      console.log(error)
         setLoading(false)
 
       toast.error("Failed to update banner");

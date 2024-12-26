@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Award, Building, MapPin, Star, Users } from 'lucide-react';
-import anm from './Animation - 1733596519295.gif'
-import gnm from './gnm.gif'
+import {  Building, MapPin, Star, Users } from 'lucide-react';
+
 
 
 import Categorey from '../../components/Category/Categorey';
@@ -15,30 +14,34 @@ import { StatsSection } from '../About/StatsSection';
 import AllListing from '../Listings/AllListing';
 import CustomerFaq from '../../components/CFaq/CustomerFaq';
 import OfferBanner from '../../components/OfferBanners/OfferBanner';
+
 import Free_Page from '../Free_Page/Free_Page';
+
+import CityAll from '../../components/City/CityAll';
+
 const services = [
   {
     icon: Building,
-    title: "Business Listing Services",
-    description: "Create detailed business profiles with comprehensive information, photos, and customer reviews.",
+    title: "Join Now",
+    description: "Sign up today and unlock new opportunities to promote your business, connect with customers, and grow your brand",
     iconColor: "bg-blue-600",
   },
   {
     icon: Star,
-    title: "Promotions and Deals",
+    title: "List Your Business",
     description: "Post exclusive offers and promotions to attract new customers and grow your business.",
     iconColor: "bg-yellow-500",
   },
   {
     icon: Users,
-    title: "Event Management",
-    description: "Participate in networking events, workshops, and promotional campaigns to expand your reach.",
+    title: "Post Offer",
+    description: "Attract more customers by posting special offers and deals. Create irresistible promotions that boost your sales and visibility",
     iconColor: "bg-green-600",
   },
   {
     icon: MapPin,
-    title: "Premium Membership",
-    description: "Get premium features including top placement in search results and targeted marketing campaigns.",
+    title: "Connect with Customers",
+    description: "Engage with your audience directly. Build lasting relationships and turn leads into loyal customers through easy communication. ",
     iconColor: "bg-red-500",
   },
 ];
@@ -142,6 +145,7 @@ const Home = () => {
         <MCategorey />
       </div>
       <AllListing />
+        <CityAll/>
       {/* <AllListings /> */}
       <div className="text-center mb-12">
         <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Services</h2>
@@ -156,7 +160,9 @@ const Home = () => {
         ))}
       </div>
       <StatsSection />
-      <OfferBanner />
+
+
+      <OfferBanner/>
 
       <Newsletter />
       <Free_Page />
