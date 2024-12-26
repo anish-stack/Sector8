@@ -406,61 +406,109 @@ exports.CreateForgetPasswordRequest = async (req, res) => {
             });
         }
 
-        // Generate OTP function
         const generateOtp = () => {
             const otpLength = 6;
             const otp = Math.random().toString().substr(2, otpLength); // Generate random OTP
             return otp;
         };
 
-        // Generate OTP
         const otp = generateOtp();
 
-        // Set OTP expiration time (e.g., 10 minutes from now)
-        const otpExpiryTime = new Date();
-        otpExpiryTime.setMinutes(otpExpiryTime.getMinutes() + 10); // Adjust as per your requirements
 
-        // Update user document with OTP and expiration time
+        const otpExpiryTime = new Date();
+        otpExpiryTime.setMinutes(otpExpiryTime.getMinutes() + 10); 
+
+      
         user.PasswordChangeOtp = otp;
         user.newPassword = newPassword
         user.OtpExipredTme = otpExpiryTime;
         await user.save();
 
-        // Send OTP via email using NodeMailer
+     
         const transporter = nodemailer.createTransport({
-            service: "Gmail",
-            host: process.env.SMTP_HOST,
-            port: process.env.SMTP_PORT,
+            host: "smtp.hostinger.com",
+            port: 465,
             secure: true,
             auth: {
-                user: process.env.SMTP_EMAIL,
-                pass: process.env.SMTP_PASSWORD
+                user: "noreply@naideal.com",
+                pass: "Naideal@2024"
+            },
+            tls: {
+                rejectUnauthorized: false 
             }
         });
 
-        // HTML message for password change request
         const mailOptions = {
-            from: 'happycoding41@gmail.com',
+            from: '"Naideal Support" <noreply@naideal.com>',
             to: Email,
             subject: 'Password Change Request',
-            html: `
-    <div style="font-family: Arial, sans-serif; padding: 20px;">
-        <h2 style="color: #333;">Password Change Request</h2>
-        <p>Hello ${user.ShopName},</p>
-        <p>You have requested a password change. Please use the following OTP to proceed:</p>
-        <div style="background-color: #f0f0f0; padding: 10px; border-radius: 5px; margin-bottom: 15px;">
-            <h3 style="margin: 0; color: #333; font-size: 24px;">${otp}</h3>
-        </div>
-        <p style="margin-bottom: 15px;">This OTP is valid for 10 minutes. Please use it within this time frame.</p>
-        <p>If you did not request this change, please ignore this email.</p>
-        <div style="text-align: center;">
-            <a href="${process.env.FRONTEND_URL}/VerifyOtp?Email=${Email}" style="background-color: #4CAF50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px; display: inline-block;">Reset Password</a>
-        </div>
-        <div style="margin-top: 20px; font-size: 14px; color: #666;">
-            <p>Thank you,</p>
-            <p>Nai Deal</p>
-        </div>
-    </div>
+            html: `<body style="margin: 0; padding: 0; font-family: Arial, sans-serif; background-color: #f5f5f5;">
+    <table cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 12px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+
+        <tr>
+            <td style="text-align: center;">
+                <svg viewBox="0 0 600 40" style="width: 100%; height: 40px;">
+                    <path d="M0,0 C150,40 450,40 600,0" fill="#3B82F6" opacity="0.1"></path>
+                </svg>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 30px 20px; text-align: center; background-color: #ffffff;">
+                <div style="box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); padding: 15px; border-radius: 10px; display: inline-block;">
+                    <img src="https://res.cloudinary.com/dglihfwse/image/upload/c_thumb,w_200,g_face/v1733212496/naideal-logo_fajvxe.png" alt="Naideal Logo" style="max-width: 200px; height: auto;">
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td style="padding: 20px 30px;">
+                <div style="position: relative;">
+                    <!-- Decorative Corner SVG -->
+                    <svg width="40" height="40" style="position: absolute; top: -10px; left: -20px; opacity: 0.1;">
+                        <circle cx="20" cy="20" r="20" fill="#22C55E"/>
+                    </svg>
+                    <h2 style="color: #3B82F6; margin-bottom: 20px; position: relative;">Password Change Request</h2>
+                </div>
+                <p style="color: #333333; font-size: 16px; line-height: 1.5; margin-bottom: 15px;">Hello ${user.ShopName},</p>
+                <p style="color: #333333; font-size: 16px; line-height: 1.5; margin-bottom: 15px;">You have requested a password change. Please use the following OTP to proceed:</p>
+                
+                <div style="background: linear-gradient(145deg, #f8f9fa, #ffffff); border-radius: 12px; padding: 25px; margin: 25px 0; text-align: center; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.1); border: 1px solid rgba(59, 130, 246, 0.1);">
+                    <h3 style="color: #3B82F6; font-size: 32px; margin: 0; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);">${otp}</h3>
+                </div>
+                
+                <p style="color: #333333; font-size: 16px; line-height: 1.5; margin-bottom: 20px;">This OTP is valid for 10 minutes. Please use it within this time frame.</p>
+                <p style="color: #666666; font-size: 14px; line-height: 1.5; margin-bottom: 25px;">If you did not request this change, please ignore this email.</p>
+                
+                <div style="text-align: center; margin: 30px 0;">
+                    <a href="https://naideal.com/VerifyOtp?Email=${Email}" style="background: linear-gradient(135deg, #22C55E, #1ea550); color: #ffffff; padding: 14px 35px; text-decoration: none; border-radius: 8px; font-weight: bold; display: inline-block; box-shadow: 0 4px 6px rgba(34, 197, 94, 0.2); transition: transform 0.2s ease;">Reset Password</a>
+                </div>
+                
+                <div style="margin-top: 30px; border-top: 1px solid #e5e7eb; padding-top: 20px; position: relative;">
+                   
+                    <svg width="30" height="100" style="position: absolute; right: -15px; top: 50%; transform: translateY(-50%); opacity: 0.1;">
+                        <path d="M0,0 C30,25 30,75 0,100" stroke="#3B82F6" fill="none" stroke-width="2"/>
+                    </svg>
+                    <p style="color: #333333; font-size: 16px; margin: 0;">Thank you,</p>
+                    <p style="color: #3B82F6; font-size: 18px; font-weight: bold; margin: 5px 0;">Nai Deal</p>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td style="background: linear-gradient(135deg, #3B82F6, #2563eb); padding: 30px 20px; text-align: center; border-bottom-left-radius: 12px; border-bottom-right-radius: 12px;">
+                <div style="position: relative;">
+                 
+                    <svg width="100%" height="30" style="position: absolute; top: -29px; left: 0; opacity: 0.1;">
+                        <path d="M0,30 C150,0 450,0 600,30" fill="#3B82F6"></path>
+                    </svg>
+                    <p style="color: #ffffff; font-size: 14px; margin: 0 0 10px 0; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);">© 2024 Naideal. All Rights Reserved.</p>
+                    <p style="color: #ffffff; font-size: 14px; margin: 0;">
+                        Designed with <span style="color: #ff0000; text-shadow: 0 0 3px rgba(255, 0, 0, 0.3);">❤️</span> by
+                        <span style="color: #ffffff; font-weight: bold; text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);">Digital4Now</span>
+                    </p>
+                </div>
+            </td>
+        </tr>
+    </table>
+</body>
 `
 
         };

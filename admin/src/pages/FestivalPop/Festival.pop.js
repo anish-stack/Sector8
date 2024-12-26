@@ -145,7 +145,7 @@ const FestivalPop = () => {
 
         setIsLoading(true);
         try {
-            await axios.delete(`${API_BASE_URL}/delete-Banner/${id}`, {
+            await axios.delete(`${API_BASE_URL}/delete-festival-Banner/${id}`, {
                 headers: { Authorization: `Bearer ${token}` },
             });
             toast.success('Banner deleted successfully');

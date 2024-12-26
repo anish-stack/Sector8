@@ -23,6 +23,7 @@ import ProtectedRoute from './ProtectedRoute';
 import AllContact from './pages/Contact/AllContact';
 import AllBanners from './pages/OfferBanner/AllBanner';
 import FestivalPop from './pages/FestivalPop/Festival.pop';
+import AdminPage from './pages/Free_Space/Free_Space';
 
 const App = () => {
   // Retrieve and decrypt the session data
@@ -70,6 +71,8 @@ const App = () => {
 
           <Route path="/manage-offer-banners" element={<ProtectedRoute><AllBanners /></ProtectedRoute>} />
           <Route path="/manage-pop-festivals" element={<ProtectedRoute><FestivalPop /></ProtectedRoute>} />
+          <Route path="/manage-admin_page" element={<ProtectedRoute><AdminPage /></ProtectedRoute>} />
+
 
           
         </Route>

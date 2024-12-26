@@ -192,7 +192,7 @@ exports.UpdateBanner = async (req, res) => {
 
 exports.MakeSetting = async (req, res) => {
     try {
-        const { logo,footerLogo,BioFooter, contactNumber, adminId, officeAddress, links, FooterEmail } = req.body;
+        const { logo, footerLogo, BioFooter, isFestiveTopPopUpShow, isFestiveBottomPopUpShow, AboveTopGif, BottomGifLink, GstNo, contactNumber, adminId, officeAddress, links, FooterEmail } = req.body;
 
         const newSetting = new Settings({
             logo,
@@ -202,7 +202,12 @@ exports.MakeSetting = async (req, res) => {
             links,
             FooterEmail,
             footerLogo,
-            BioFooter
+            BioFooter,
+            isFestiveTopPopUpShow,
+            isFestiveBottomPopUpShow,
+            AboveTopGif,
+            BottomGifLink,
+            GstNo,
         });
 
         const savedSetting = await newSetting.save();
@@ -221,11 +226,9 @@ exports.MakeSetting = async (req, res) => {
     }
 };
 
-// GetSetting: Fetch settings document
 exports.GetSetting = async (req, res) => {
     try {
         const setting = await Settings.findOne();
-
         if (!setting) {
             return res.status(404).json({
                 success: false,
@@ -247,16 +250,15 @@ exports.GetSetting = async (req, res) => {
     }
 };
 
-// UpdateSetting: Update only the fields that are sent in the request body
 exports.UpdateSetting = async (req, res) => {
     try {
         const updates = req.body;
 
-        // Update only the fields that are provided in the request body
+
         const updatedSetting = await Settings.findOneAndUpdate(
-            {}, // Match the first document (assuming there's only one settings document)
-            { $set: updates }, // Update only the provided fields
-            { new: true, upsert: true } // Return the updated document and create if not exists
+            {},
+            { $set: updates },
+            { new: true, upsert: true }
         );
 
         res.status(200).json({
@@ -389,49 +391,49 @@ exports.createBanner = async (req, res) => {
                 message: 'No file uploaded',
             });
         }
-      
-       
-      
-      
-            const uploadFromBuffer = (buffer) => {
-                return new Promise((resolve, reject) => {
-                    let stream = Cloudinary.uploader.upload_stream((error, result) => {
-                        if (result) {
-                            resolve(result);
-                        } else {
-                            reject(error);
-                        }
-                    });
-                    streamifier.createReadStream(buffer).pipe(stream);
+
+
+
+
+        const uploadFromBuffer = (buffer) => {
+            return new Promise((resolve, reject) => {
+                let stream = Cloudinary.uploader.upload_stream((error, result) => {
+                    if (result) {
+                        resolve(result);
+                    } else {
+                        reject(error);
+                    }
                 });
-            };
-
-
-            const uploadResult = await uploadFromBuffer(file.buffer);
-            const imageUrl = uploadResult.url;
-
-            const newBanner = new bannerModel({
-              
-                active,
-             
-                RedirectPageUrl,
-              
-                Banner: {
-                    url: imageUrl
-                }
+                streamifier.createReadStream(buffer).pipe(stream);
             });
+        };
 
-          
-            await newBanner.save();
 
-        
-            res.status(201).json({
-                success: true,
-                data: newBanner,
-                message: 'Banner created successfully'
-            });
+        const uploadResult = await uploadFromBuffer(file.buffer);
+        const imageUrl = uploadResult.url;
 
-      
+        const newBanner = new bannerModel({
+
+            active,
+
+            RedirectPageUrl,
+
+            Banner: {
+                url: imageUrl
+            }
+        });
+
+
+        await newBanner.save();
+
+
+        res.status(201).json({
+            success: true,
+            data: newBanner,
+            message: 'Banner created successfully'
+        });
+
+
 
     } catch (error) {
         console.error('Error creating banner:', error);
@@ -470,9 +472,9 @@ exports.getAllBanner = async (req, res) => {
 exports.deleteBanner = async (req, res) => {
     try {
         const id = req.params.id;
-    
+
         const checkBanner = await bannerModel.findByIdAndDelete({ _id: id })
-   
+
         if (!checkBanner) {
             return res.status(403).json({
                 success: false,
@@ -480,9 +482,9 @@ exports.deleteBanner = async (req, res) => {
             })
         }
         const pastImageUrl = checkBanner.Banner.url;
-        const publicId = pastImageUrl.split('/').pop().split('.')[0]; 
+        const publicId = pastImageUrl.split('/').pop().split('.')[0];
 
-  
+
         await Cloudinary.uploader.destroy(publicId, (error, result) => {
             if (error) {
                 console.error("Error in deleting old image:", error);
@@ -507,7 +509,7 @@ exports.deleteBanner = async (req, res) => {
 exports.updateBanner = async (req, res) => {
     try {
         const BannerId = req.params.id;
-        const updates = { ...req.body }; 
+        const updates = { ...req.body };
         const file = req.file;
         const banner = await bannerModel.findById(BannerId)
         if (!banner) {
@@ -518,7 +520,7 @@ exports.updateBanner = async (req, res) => {
         }
 
         if (file) {
-        
+
             const uploadFromBuffer = (buffer) => {
                 return new Promise((resolve, reject) => {
                     let stream = Cloudinary.uploader.upload_stream((error, result) => {
@@ -532,7 +534,7 @@ exports.updateBanner = async (req, res) => {
                 });
             };
 
-         
+
             const uploadResult = await uploadFromBuffer(file.buffer);
 
             const imageUrl = uploadResult.secure_url;
@@ -543,7 +545,7 @@ exports.updateBanner = async (req, res) => {
                 })
             }
             else {
-          
+
 
                 const pastImageUrl = banner.Banner.url;
                 const publicId = pastImageUrl.split('/').pop().split('.')[0]; // Extract public ID from URL

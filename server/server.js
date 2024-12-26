@@ -18,10 +18,13 @@ const corsOption = {
     origin: [
         "http://localhost:3000",
         "http://localhost:5173",
-        "https://naidealhai.vercel.app",
+        "https://naideal.com",
         "https://www.naidealhai.vercel.app",
         "https://naiadmindeal.vercel.app",
-        
+        'https://author.naideal.com',
+        "https://www.author.naideal.com",
+        "https://naideal.com",
+        "https://www.naideal.com",
         "https://www.naiadmindeal.vercel.app"
     ],
     credentials: true,

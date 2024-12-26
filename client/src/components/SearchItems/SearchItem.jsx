@@ -37,7 +37,7 @@ const SearchItem = () => {
       );
       console.log(response.data)
       if (response.data.length > 0) {
-        // Apply client-side sorting if needed
+
         let sortedData = [...response.data];
         if (sort === 'price_high') {
           sortedData.sort((a, b) => b.Items[0]?.MrpPrice - a.Items[0]?.MrpPrice);
@@ -47,13 +47,14 @@ const SearchItem = () => {
           sortedData.sort((a, b) => b.Items[0]?.Discount - a.Items[0]?.Discount);
         } else if (sort === 'oldest') {
           sortedData.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt));
-
         }
         if (response.show === true) {
-
           setSafeMsg(response.message)
+        } else {
+          setSafeMsg('')
         }
         setData(sortedData);
+
       } else {
         setError('No results found');
       }

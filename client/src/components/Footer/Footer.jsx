@@ -63,12 +63,12 @@ const Footer = () => {
         <div className="container mx-auto px-4 py-6">
           <div className="flex flex-col md:flex-row justify-center items-center gap-4">
             <p className="text-gray-400  text-center text-sm">
-              &copy; {new Date().getFullYear()} Naideal. All Rights Reserved.
+              © {new Date().getFullYear()} Inde Global. All Rights Reserved.
             </p>
             <p className="text-gray-400 text-sm flex items-center gap-1">
               Designed with <span className="text-red-500">❤️</span> by{' '}
               <a
-                href="#"
+                href="https://digital4now.in/"
                 className="text-purple-400 hover:text-purple-300 transition-colors duration-200"
               >
                 Digital4Now

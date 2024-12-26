@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MapPin, Phone, Mail, Star, ChevronRight, CheckCircle, Share2, Heart, Clock, Tag } from 'lucide-react';
+import { MapPin, Phone, Mail, Star, ChevronRight, CheckCircle, Share2, Heart, Tag } from 'lucide-react';
 import Skeleton from 'react-loading-skeleton';
 
 const SingleListing = () => {
@@ -181,6 +181,13 @@ const SingleListing = () => {
                             </div>
                         </div>
                     </div>
+                    <div className="bg-gray-100 p-4 rounded-md shadow-md">
+                        <p
+                            className="text-gray-700 text-base leading-relaxed"
+                            dangerouslySetInnerHTML={{ __html: listing?.HtmlContent }}
+                        ></p>
+                    </div>
+
 
                     {/* Items/Offers Section */}
                     <div className="bg-white rounded-2xl shadow-sm border p-6">

@@ -41,7 +41,7 @@ export const faqData = [
   },
   {
     "question": "How do I get support if I have any issues as a partner?",
-    "answer": "If you have any questions or face any issues, our partner support team is always available to assist you. You can reach out to us via:\n• Email: [Provide Contact Email Here]\n• Phone: [Provide Contact Number Here]\nWe’re committed to helping you succeed as a partner!"
+    "answer": "If you have any questions or face any issues, our partner support team is always available to assist you. You can reach out to us via:\n• Email: care@naideal.com\n• Phone: 099-5382-5382 \nWe’re committed to helping you succeed as a partner!"
   },
   {
     "question": "Do I need to follow any guidelines when posting on behalf of businesses?",

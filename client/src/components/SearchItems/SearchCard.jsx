@@ -10,30 +10,28 @@ const SearchCard = ({ data }) => {
   return (
     <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
       {data.map((item) => (
-        <div
+        <a
+          href={`/Single-Listing/${item?._id}/${item.Title.replace(/\s+/g, '-')}}`}
           key={item._id}
           className="group cursor-pointer overflow-hidden rounded-lg border bg-white shadow-sm transition-all hover:shadow-md"
         >
-          {/* Main Image */}
+
           <div className="relative h-48 overflow-hidden">
             <img
               src={item.Pictures[0]?.ImageUrl || item.Items[0]?.dishImages[0]?.ImageUrl}
               alt={item.Title}
               className="h-full w-full object-cover transition-transform duration-300 group-hover:scale-105"
             />
-            {/* <div className="absolute right-2 top-2 rounded-full bg-blue-500 px-3 py-1 text-sm font-semibold text-white">
-              {item.ShopId.ListingPlan}
-            </div> */}
+
           </div>
 
-          {/* Content */}
+
           <div className="p-4">
             <div className="mb-3">
               <h3 className="mb-1 text-xl font-semibold text-gray-800">{item.Title}</h3>
               <p className="text-sm text-gray-600 line-clamp-2">{item.Details}</p>
             </div>
 
-            {/* Shop Info */}
             <div className="mb-3 flex items-center gap-2">
               <img
                 src={item.ShopId.ProfilePic}
@@ -46,7 +44,6 @@ const SearchCard = ({ data }) => {
               </div>
             </div>
 
-            {/* Item Details */}
             {item.Items && item.Items.length > 0 && (
               <div className="mb-3 rounded-lg bg-gray-50 p-3">
                 <div className="flex items-center justify-between">
@@ -73,7 +70,7 @@ const SearchCard = ({ data }) => {
               </div>
             </div>
           </div>
-        </div>
+        </a>
       ))}
     </div>
   );

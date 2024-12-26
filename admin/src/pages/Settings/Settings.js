@@ -4,16 +4,21 @@ import axios from 'axios';
 const Settings = () => {
   const [settings, setSettings] = useState({
     logo: '',
-    favicon:'',
-    Metatitle:'',
-    MetaDescript:'',
+    favicon: '',
+    Metatitle: '',
+    MetaDescript: '',
     contactNumber: '',
     adminId: '',
+    isFestiveTopPopUpShow: false,
+    isFestiveBottomPopUpShow: false,
+    AboveTopGif: '',
+    BottomGifLink: '',
+    GstNo: '',
     officeAddress: '',
     links: [{ appName: '', appLink: '' }],
     FooterEmail: '',
-    footerLogo:'',
-    BioFooter:'',
+    footerLogo: '',
+    BioFooter: '',
   });
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
@@ -73,7 +78,6 @@ const Settings = () => {
     }));
   };
 
-  // Handle form submission for updating settings
   const handleSubmit = async (e) => {
     e.preventDefault();
     setUpdating(true);
@@ -161,13 +165,60 @@ const Settings = () => {
         <div>
           <label className="block font-medium text-gray-700">Footer Bio</label>
           <textarea
-           rows={4}
+            rows={4}
             name="BioFooter"
             value={settings.BioFooter}
             onChange={handleChange}
             className="w-full p-2 border border-gray-300 rounded"
           />
         </div>
+
+        <div>
+          <label className="block font-medium text-gray-700">Header Animation Show</label>
+          <select onChange={handleChange} name="isFestiveTopPopUpShow" value={settings.isFestiveTopPopUpShow} className="w-full p-2 border border-gray-300 rounded">
+            <option value="true">True</option>
+            <option value="false">False</option>
+          </select>
+        </div>
+        <div>
+          <label className="block font-medium text-gray-700">Bootom Animation Show</label>
+          <select onChange={handleChange} name="isFestiveBottomPopUpShow" value={settings.isFestiveBottomPopUpShow} className="w-full p-2 border border-gray-300 rounded">
+            <option value="true">True</option>
+            <option value="false">False</option>
+          </select>
+        </div>
+        <div>
+          <label className="block font-medium text-gray-700">Bottom Gif Link</label>
+          <textarea
+            rows={4}
+            name="BottomGifLink"
+            value={settings.BottomGifLink}
+            onChange={handleChange}
+            className="w-full p-2 border border-gray-300 rounded"
+          />
+        </div>
+        <div>
+          <label className="block font-medium text-gray-700">Top Gif Link</label>
+          <textarea
+            rows={4}
+            name="AboveTopGif"
+            value={settings.AboveTopGif}
+            onChange={handleChange}
+            className="w-full p-2 border border-gray-300 rounded"
+          />
+        </div>
+
+        <div>
+          <label className="block font-medium text-gray-700">Footer Bio</label>
+          <textarea
+            rows={4}
+            name="BioFooter"
+            value={settings.BioFooter}
+            onChange={handleChange}
+            className="w-full p-2 border border-gray-300 rounded"
+          />
+        </div>
+
         <div>
           <label className="block font-medium text-gray-700">Links</label>
           {settings.links.map((link, index) => (

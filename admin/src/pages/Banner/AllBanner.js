@@ -117,7 +117,7 @@ const AllBanner = () => {
               <tr key={banner._id} className="text-center">
                 <td className="border border-gray-200 p-2">
                   <img
-                    src={banner.image.url}
+                    src={banner.Banner.url}
                     alt="Banner"
                     className="h-20 w-auto mx-auto"
                   />

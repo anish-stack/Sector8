@@ -25,6 +25,7 @@ const ForgetPassword = () => {
 
         try {
             const res = await axios.post(`${BackendUrl}/Create-Forget-Password`, formData);
+            console.log(res.data)
             setLoading(false);
             setSuccessMessage('Password change request successful. Check your email for further instructions.');
         } catch (error) {

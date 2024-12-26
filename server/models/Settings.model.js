@@ -5,11 +5,11 @@ const SettingsSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
-    footerLogo:{
+    footerLogo: {
         type: String,
         trim: true,
     },
-    BioFooter:{
+    BioFooter: {
         type: String,
         trim: true,
     },
@@ -19,7 +19,6 @@ const SettingsSchema = new mongoose.Schema({
     },
     adminId: {
         type: String,
-
         trim: true
     },
     officeAddress: {
@@ -39,6 +38,26 @@ const SettingsSchema = new mongoose.Schema({
 
         }
     }],
+    isFestiveBottomPopUpShow: {
+        type: Boolean,
+        default: false
+    },
+    isFestiveTopPopUpShow: {
+        type: Boolean,
+        default: false
+    },
+    AboveTopGif: {
+        type: String,
+        trim: true
+    },
+    BottomGifLink: {
+        type: String,
+        trim: true
+    },
+    GstNo: {
+        type: String,
+        trim: true,
+    },
     FooterEmail: {
         type: String,
         trim: true,

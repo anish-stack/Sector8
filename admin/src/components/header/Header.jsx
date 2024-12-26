@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Menu, X, LayoutDashboard, Users, Store,PartyPopper, DiamondPercent,Phone, Tag, MapPin, Image, CheckSquare, MessageSquare, CreditCard, Package, Settings, LogOut } from 'lucide-react';
+import { Menu, X, LayoutDashboard, Users, Store, PartyPopper, DiamondPercent, Phone, Tag, MapPin, Image, CheckSquare, MessageSquare, CreditCard, Package, Settings, LogOut } from 'lucide-react';
 
 const menuItems = [
   { path: '/', label: 'Dashboard', icon: LayoutDashboard },
@@ -14,6 +14,7 @@ const menuItems = [
   { path: '/manage-offer-banners', label: 'Offer Banners', icon: Image },
   { path: '/manage-pop-festivals', label: 'Festival-Pops', icon: PartyPopper },
 
+  { path: '/Free-SPace', label: 'Approve Post', icon: CheckSquare },
 
   { path: '/approve-post', label: 'Approve Post', icon: CheckSquare },
   { path: '/Marquees', label: 'Marquees', icon: MessageSquare },
@@ -26,8 +27,8 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   const handleLogout = () => {
-    localStorage.removeItem('newDealToken');
-    window.location.reload();
+    sessionStorage.removeItem('loginData');
+    window.location.href = "/login";
   };
 
   const toggleMobileMenu = () => {
