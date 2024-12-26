@@ -14,7 +14,7 @@ const menuItems = [
   { path: '/manage-offer-banners', label: 'Offer Banners', icon: Image },
   { path: '/manage-pop-festivals', label: 'Festival-Pops', icon: PartyPopper },
 
-  { path: '/Free-SPace', label: 'Approve Post', icon: CheckSquare },
+  { path: '/manage-admin_page', label: 'Admin_page', icon: Tag },
 
   { path: '/approve-post', label: 'Approve Post', icon: CheckSquare },
   { path: '/Marquees', label: 'Marquees', icon: MessageSquare },
