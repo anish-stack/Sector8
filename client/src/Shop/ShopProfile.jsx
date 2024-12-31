@@ -1,21 +1,73 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Package, Mail, Phone, MapPin, LogOut, Crown, EllipsisVertical, Trash } from 'lucide-react';
 import EditProfile from './EditProfile';
-
+import toast from 'react-hot-toast';
+import axios from 'axios'
 const ShopProfile = ({ shopDetails, onUpgradePackage, onLogout, onProfileUpload, setProfile, onDeleteAccount }) => {
     const [loading, setLoading] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
     const [edit, setEdit] = useState(false);
+    const [bussinessHours, setBussinessHours] = useState(false);
+    const [formData, sedFormData] = useState({
+        BussinessHours: {
+            openTime: '',
+            closeTime: '',
+            offDay: ''
+        }
+    });
     const [showDeleteModal, setShowDeleteModal] = useState(false); // State to manage the delete modal visibility
     const [deleteReason, setDeleteReason] = useState(''); // State to manage the delete reason
 
     const handleProfileChange = (event) => {
         setProfile(event.target.files[0]);
     };
+    useEffect(() => {
+        if (shopDetails?.BussinessHours) {
+
+            sedFormData({
+                BussinessHours: {
+                    openTime: shopDetails.BussinessHours.openTime || '',
+                    closeTime: shopDetails.BussinessHours.closeTime || '',
+                    offDay: shopDetails.BussinessHours.offDay || ''
+                }
+            })
+        }
+    }, [shopDetails?.BussinessHours])
 
     const OnClose = () => {
         setEdit(false);
     };
+    const offDays = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+
+    const handleBussinessHours = async (e) => {
+        e.preventDefault();
+
+        try {
+            const { data } = await axios.post('http://localhost:7485/api/v1/Other/add-bussiness-hours', formData, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('ShopToken')}`,
+                },
+            })
+            console.log(data)
+            toast.success('Bussiness Hours Updated Successfully')
+            setBussinessHours(false);
+        } catch (error) {
+            console.log(error)
+        }
+
+    }
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        sedFormData((prev) => ({
+            ...prev,
+            BussinessHours: {
+                ...prev.BussinessHours,
+                [name]: value,
+            },
+        }));
+    };
+
 
     const handleUploadClick = () => {
         setLoading(true);
@@ -39,7 +91,7 @@ const ShopProfile = ({ shopDetails, onUpgradePackage, onLogout, onProfileUpload,
                         className="flex items-center justify-center gap-2 bg-gray-200 hover:bg-gray-300 text-gray-700 py-2 px-4 rounded-lg transition-all duration-300"
                     >
                         <i className="fa-solid w-5 h-5 fa-ellipsis-vertical"></i>
-                        
+
                     </button>
                     {menuOpen && (
                         <div className="absolute z-[999] left-0 mt-2 w-48 bg-white shadow-lg rounded-lg text-sm text-gray-700">
@@ -48,6 +100,12 @@ const ShopProfile = ({ shopDetails, onUpgradePackage, onLogout, onProfileUpload,
                                 className="w-full text-left px-4 py-2 hover:bg-gray-200"
                             >
                                 Edit Profile
+                            </button>
+                            <button
+                                onClick={() => setBussinessHours(!bussinessHours)}
+                                className="w-full text-left px-4 py-2 hover:bg-gray-200"
+                            >
+                                Bussiness Hours
                             </button>
                             <button
                                 onClick={() => setShowDeleteModal(true)} // Show delete confirmation modal
@@ -163,6 +221,105 @@ const ShopProfile = ({ shopDetails, onUpgradePackage, onLogout, onProfileUpload,
                                 </button>
                             </div>
                         </div>
+                    </div>
+                </div>
+            )}
+
+            {bussinessHours && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                    <div className="bg-white rounded-lg shadow-lg w-96 p-6">
+                        {/* Header */}
+                        <div className="flex items-center justify-between mb-4">
+                            <h2 className="text-xl font-bold text-gray-800">Business Hours</h2>
+                            <button
+                                className="text-gray-500 hover:text-gray-800"
+                                onClick={() => setBussinessHours(false)}
+                            >
+                                <i className="fas fa-times"></i>
+                            </button>
+                        </div>
+
+                        {/* Form */}
+                        <form onSubmit={handleBussinessHours}>
+                            {/* Open Time */}
+                            <div className="mb-4">
+                                <label
+                                    htmlFor="openTime"
+                                    className="block text-sm font-medium text-gray-700 mb-1"
+                                >
+                                    Open Time
+                                </label>
+                                <input
+                                    type="time"
+                                    id="openTime"
+                                    name="openTime"
+                                    value={formData.BussinessHours.openTime}
+                                    onChange={handleChange}
+                                    className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-300"
+                                />
+                            </div>
+
+                            {/* Close Time */}
+                            <div className="mb-4">
+                                <label
+                                    htmlFor="closeTime"
+                                    className="block text-sm font-medium text-gray-700 mb-1"
+                                >
+                                    Close Time
+                                </label>
+                                <input
+                                    type="time"
+                                    id="closeTime"
+                                    name="closeTime"
+                                    value={formData.BussinessHours.closeTime}
+                                    onChange={handleChange}
+                                    className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-300"
+                                />
+                            </div>
+
+                            {/* Off Day */}
+                            <div className="mb-4">
+                                <label
+                                    htmlFor="offDay"
+                                    className="block text-sm font-medium text-gray-700 mb-1"
+                                >
+                                    Off Day
+                                </label>
+                                <select
+                                    id="offDay"
+                                    name="offDay"
+                                    value={formData.BussinessHours.offDay}
+                                    onChange={handleChange}
+                                    className="w-full border rounded px-3 py-2 text-sm focus:outline-none focus:ring focus:ring-blue-300"
+                                >
+                                    <option value="" disabled>
+                                        Select a day
+                                    </option>
+                                    {offDays.map((day) => (
+                                        <option key={day} value={day}>
+                                            {day}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
+                            {/* Submit Button */}
+                            <div className="flex justify-end">
+                                <button
+                                    type="submit"
+                                    className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 focus:outline-none focus:ring focus:ring-blue-300"
+                                >
+                                    <i className="fas fa-save mr-2"></i> Save
+                                </button>
+                                <button
+                                    type="button"
+                                    onClick={() => setBussinessHours(false)}
+                                    className="bg-gray-500 text-white px-4 py-2 rounded ml-2 hover:bg-gray-600 focus:outline-none focus:ring focus:ring-gray-300"
+                                >
+                                    <i className="fas fa-times-circle mr-2"></i> Cancel
+                                </button>
+                            </div>
+                        </form>
                     </div>
                 </div>
             )}

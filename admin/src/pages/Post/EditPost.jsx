@@ -2,16 +2,16 @@ import React, { useState, useEffect, useRef, useMemo } from 'react';
 import JoditEditor from 'jodit-react';
 import axios from 'axios';
 import toast from 'react-hot-toast';
-import { 
-  Plus, Trash2, Image, Save, Loader2, 
+import {
+  Plus, Trash2, Image, Save, Loader2,
   DollarSign, Percent, Package
 } from 'lucide-react';
 
 const EditPost = () => {
-    const location = new URLSearchParams(window.location.search);
-    const id = location.get('id');
-    const shopId = location.get('shopId');
-    
+  const location = new URLSearchParams(window.location.search);
+  const id = location.get('id');
+  const shopId = location.get('shopId');
+
   const editor = useRef(null);
   const config = useMemo(() => ({
     readonly: false,
@@ -30,7 +30,7 @@ const EditPost = () => {
     const fetchListing = async () => {
       try {
         const response = await axios.get(
-          `https://api.naideal.com/api/v1/admin-get-post?id=${shopId}`
+          `http://localhost:7485/api/v1/admin-get-post?id=${shopId}`
         );
         setListing(response.data.data[0]);
         setLoading(false);
@@ -40,6 +40,7 @@ const EditPost = () => {
         setLoading(false);
       }
     };
+    console.log(listing)
 
     fetchListing();
   }, []);
@@ -111,10 +112,10 @@ const EditPost = () => {
       const formData = new FormData();
       formData.append('Title', listing.Title);
       formData.append('Details', listing.Details);
-    //   formData.append('HtmlContent', listing.HtmlContent);
-    formData.append('ItemsUpdated', JSON.stringify(listing.Items));
+      //   formData.append('HtmlContent', listing.HtmlContent);
+      formData.append('ItemsUpdated', JSON.stringify(listing.Items));
       listing.Items.forEach((item, index) => {
- 
+
 
         if (item.dishImages) {
           Array.from(item.dishImages).forEach((file, imageIndex) => {
@@ -128,7 +129,7 @@ const EditPost = () => {
       }
 
       await axios.put(
-        `https://api.naideal.com/api/v1/admin-Shop-Edit-post-bolt?id=${shopId}&ListingId=${id}`,
+        `http://localhost:7485/api/v1/admin-Shop-Edit-post-bolt?id=${shopId}&ListingId=${id}`,
         formData,
         {
           headers: { 'Content-Type': 'multipart/form-data' }
@@ -185,8 +186,8 @@ const EditPost = () => {
 
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">Content Editor</label>
-               
-              <JoditEditor
+
+                <JoditEditor
                   ref={editor}
                   value={listing.HtmlContent}
                   config={config}
@@ -277,9 +278,10 @@ const EditPost = () => {
                         className="mt-1 block py-2 px-2 w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"
                         accept="image/*"
                       />
-                      
-                      {/* {item.dishImages?.length > 0 && (
+
+                      {item.dishImages?.length > 0 && (
                         <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+                          <p>Old Image</p>
                           {item.dishImages.map((image, imgIndex) => (
                             <div key={imgIndex} className="relative aspect-square rounded-lg overflow-hidden bg-gray-100">
                               <img
@@ -290,7 +292,7 @@ const EditPost = () => {
                             </div>
                           ))}
                         </div>
-                      )} */}
+                      )}
                     </div>
                   </div>
                 ))}
@@ -302,9 +304,8 @@ const EditPost = () => {
               <button
                 type="submit"
                 disabled={saving}
-                className={`inline-flex items-center px-6 py-3 rounded-lg text-white ${
-                  saving ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
-                }`}
+                className={`inline-flex items-center px-6 py-3 rounded-lg text-white ${saving ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+                  }`}
               >
                 {saving ? (
                   <>

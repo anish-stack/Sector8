@@ -21,11 +21,11 @@ const AllPost = () => {
 
               if(id){
                 res = await axios.get(
-                    `https://api.naideal.com/api/v1/admin-get-post?id=${id || ''}`
+                    `http://localhost:7485/api/v1/admin-get-post?id=${id || ''}`
                 );
               }else{
                 res = await axios.get(
-                    `https://api.naideal.com/api/v1/admin-get-post?All=true`
+                    `http://localhost:7485/api/v1/admin-get-post?All=true`
                 );
               }
                 if (res.data.success) {
@@ -43,7 +43,7 @@ const AllPost = () => {
 
     const handleDelete = async () => {
         try {
-            await axios.delete(`https://api.naideal.com/api/v1/delete-listing/${selectedPostId}`);
+            await axios.delete(`http://localhost:7485/api/v1/delete-listing/${selectedPostId}`);
             setPosts(posts.filter((post) => post._id !== selectedPostId));
             setShowModal(false);
         } catch (error) {

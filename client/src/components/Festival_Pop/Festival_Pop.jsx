@@ -12,7 +12,7 @@ const Festival_Pop = ({ pathName }) => {
     const fetchData = async () => {
         try {
             const response = await axios.get(
-                `https://api.naideal.com/api/v1/get-festival-Banner-query?onWhicPage=${pathName}`
+                `http://localhost:7485/api/v1/get-festival-Banner-query?onWhicPage=${pathName}`
             );
             if (response.data.success && response.data.data.length > 0) {
                 setData(response.data.data[0]);

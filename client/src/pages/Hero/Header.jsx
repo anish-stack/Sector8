@@ -14,7 +14,7 @@ export function Header() {
     useEffect(() => {
       const fetchSettings = async () => {
         try {
-          const response = await axios.get('https://api.naideal.com/api/v1/get-setting');
+          const response = await axios.get('http://localhost:7485/api/v1/get-setting');
           if (response.data.success) {
             setSettings(response.data.data);
             console.log(response.data.data)
@@ -60,7 +60,7 @@ export function Header() {
                     href="/Shop-Dashboard"
                     className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-700 transition-colors font-medium"
                   >
-                    Shop Dashboard
+             Dashboard
                   </a>
                 )}
                 {PartnerToken && (

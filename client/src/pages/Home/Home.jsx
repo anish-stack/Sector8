@@ -55,7 +55,7 @@ const Home = () => {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const response = await axios.get('https://api.naideal.com/api/v1/get-setting');
+        const response = await axios.get('http://localhost:7485/api/v1/get-setting');
         if (response.data.success) {
           setSettings(response.data.data);
           console.log(response.data.data)
@@ -144,7 +144,7 @@ const Home = () => {
       <div className='block lg:hidden'>
         <MCategorey />
       </div>
-      <AllListing />
+      <AllListing limit={16} />
         <CityAll/>
       {/* <AllListings /> */}
       <div className="text-center mb-12">

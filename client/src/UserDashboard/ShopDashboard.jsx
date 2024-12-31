@@ -18,9 +18,9 @@ const ShopDashboard = () => {
                     Authorization: `Bearer ${token}`
                 }
             })
-            console.log(response)
+            // console.log(response)
             const data = response.data.user
-            console.log("User",data)
+            // console.log("User",data)
             setShopDetails(data)
 
         } catch (error) {

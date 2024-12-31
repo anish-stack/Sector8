@@ -1,5 +1,5 @@
 import React from "react";
-import { Facebook, Twitter, Instagram, Linkedin } from "lucide-react";
+import { Facebook, Twitter, Instagram, Linkedin, Youtube } from "lucide-react";
 
 // Default social media links
 const socialLinks = [
@@ -7,6 +7,8 @@ const socialLinks = [
   { icon: Twitter, href: "https://twitter.com", label: "Twitter" },
   { icon: Instagram, href: "https://instagram.com", label: "Instagram" },
   { icon: Linkedin, href: "https://linkedin.com", label: "LinkedIn" },
+  { icon: Youtube, href: "https://linkedin.com", label: "Youtube" },
+
 ];
 
 // SocialLinks component
@@ -36,6 +38,8 @@ const SocialLinks = ({ data = [] }) => {
               {appName === 'Twitter' && <Twitter className="w-5 h-5 text-white" />}
               {appName === 'Instagram' && <Instagram className="w-5 h-5 text-white" />}
               {appName === 'LinkedIn' && <Linkedin className="w-5 h-5 text-white" />}
+              {appName === 'Youtube' && <Youtube className="w-5 h-5 text-white" />}
+
             </a>
           ))}
         </div>

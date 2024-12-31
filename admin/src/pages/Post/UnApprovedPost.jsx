@@ -29,10 +29,11 @@ const UnApprovedPost = () => {
     const paginate = (pageNumber) => setCurrentPage(pageNumber);
 
     const handleApprove = async (postId) => {
-        try {
+        try { 
             await axios.put(`${process.env.REACT_APP_BACKEND_URL}/admin-approve-post/${postId}`);
             toast.success('Post approved successfully!');
             setUnApprovedPosts(unApprovedPosts.filter((post) => post._id !== postId));
+            setModalPost(null);
         } catch (error) {
             console.error('Error approving post:', error);
         }
@@ -54,6 +55,7 @@ const UnApprovedPost = () => {
     };
 
     const openModal = (post) => {
+        console.log(post)
         setModalPost(post);
     };
 
@@ -126,55 +128,85 @@ const UnApprovedPost = () => {
             {/* Modal */}
             {modalPost && (
                 <div className="fixed z-[999] inset-0 bg-black bg-opacity-50 flex justify-center items-center">
+
                     <div className="bg-white rounded-lg h-[500px]  p-4 overflow-auto w-3/4">
-                        <h2 className="text-lg font-bold mb-4">{modalPost.Title}</h2>
-                        <p className="mb-4">{modalPost.Details}</p>
-                        <div className="grid grid-cols-2 gap-2 mb-4">
-                            {modalPost.Pictures.map((pic, index) => (
-                                <img
-                                    key={index}
-                                    src={pic.ImageUrl}
-                                    alt={`Post Image ${index + 1}`}
-                                    className="w-full h-32 object-cover rounded"
-                                />
-                            ))}
-                        </div>
-                        <ul>
-                            {modalPost.Items.map((item) => (
-                                <li key={item._id} className="mb-2">
-                                    <strong>{item.itemName}</strong> - MRP: {item.MrpPrice}, Discount: {item.Discount}%
-                                </li>
-                            ))}
-                        </ul>
-                        <h1 className="text-2xl font-bold mb-4 text-gray-800">HTML Content</h1>
-                        <div
-                            className="modal-content text-sm text-gray-700 leading-relaxed"
-                            dangerouslySetInnerHTML={{ __html: modalPost?.HtmlContent }}
-                        />
-
-
-
-
-                        <div className="flex justify-end mt-4">
-                            <button
-                                onClick={() => handleApprove(modalPost._id)}
-                                className="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded mr-2"
-                            >
-                                Approve
-                            </button>
-                            <button
-                                onClick={() => handleDelete(modalPost._id)}
-                                className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded"
-                            >
-                                Delete
-                            </button>
+                        <div className="p-6 bg-white relative rounded-lg shadow-md">
                             <button
                                 onClick={closeModal}
-                                className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded ml-2"
+                                className="bg-gray-500 absolute top-0 right-0 hover:bg-gray-600 text-white px-5 py-2 rounded-lg shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-gray-400"
                             >
                                 Close
                             </button>
+                            <h2 className="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">
+                                {modalPost.Title}
+                            </h2>
+                            <p className="text-gray-600 mb-6">{modalPost.Details}</p>
+                            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                {modalPost.Pictures.map((pic, index) => (
+                                    <div key={index} className="relative group">
+                                        <img
+                                            src={pic.ImageUrl}
+                                            alt={`Post Image ${index + 1}`}
+                                            className="w-full h-40 object-cover rounded-lg border border-gray-200 group-hover:opacity-90 transition-opacity"
+                                        />
+                                        <div className="absolute inset-0 bg-gray-900 bg-opacity-0 group-hover:bg-opacity-40 rounded-lg transition-all flex items-center justify-center">
+                                            <p className="text-white text-sm opacity-0 group-hover:opacity-100 transition-opacity">
+                                                Image {index + 1}
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
                         </div>
+
+                        <ul className="space-y-4">
+                            {modalPost.Items.map((item) => (
+                                <li
+                                    key={item._id}
+                                    className="flex items-center p-4 border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
+                                >
+                                    <img
+                                        src={item?.dishImages[0]?.ImageUrl}
+                                        alt={item.itemName}
+                                        className="w-16 h-16 object-cover rounded-lg mr-4"
+                                    />
+                                    <div className="flex flex-col">
+                                        <strong className="text-lg font-semibold text-gray-800">{item.itemName}</strong>
+                                        <span className="text-sm text-gray-600">
+                                            MRP: <span className="text-gray-800 font-medium">₹{item.MrpPrice}</span>, Discount:
+                                            <span className="text-red-500 font-medium"> {item.Discount}%</span>
+                                        </span>
+                                    </div>
+                                </li>
+                            ))}
+                        </ul>
+
+                        <div className="p-6 bg-white rounded-lg shadow-lg">
+                            <h1 className="text-2xl font-bold mb-6 text-gray-900 border-b pb-3">
+                                HTML Content
+                            </h1>
+                            <div
+                                className="modal-content text-base text-gray-700 leading-relaxed bg-gray-100 p-4 rounded-lg border border-gray-200"
+                                dangerouslySetInnerHTML={{ __html: modalPost?.HtmlContent }}
+                            />
+
+                            <div className="flex justify-end mt-6 space-x-3">
+                                <button
+                                    onClick={() => handleApprove(modalPost._id)}
+                                    className="bg-green-600 hover:bg-green-700 text-white px-5 py-2 rounded-lg shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-green-400"
+                                >
+                                    Approve
+                                </button>
+                                <button
+                                    onClick={() => handleDelete(modalPost._id)}
+                                    className="bg-red-600 hover:bg-red-700 text-white px-5 py-2 rounded-lg shadow-sm transition-all focus:outline-none focus:ring-2 focus:ring-red-400"
+                                >
+                                    Delete
+                                </button>
+
+                            </div>
+                        </div>
+
                     </div>
                 </div>
             )}

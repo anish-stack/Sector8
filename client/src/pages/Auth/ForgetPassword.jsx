@@ -28,6 +28,9 @@ const ForgetPassword = () => {
             console.log(res.data)
             setLoading(false);
             setSuccessMessage('Password change request successful. Check your email for further instructions.');
+            setTimeout(() => {
+                window.location.href = "/login"
+            }, 3000)
         } catch (error) {
             setLoading(false);
             if (error.response?.data?.msg) {
@@ -70,6 +73,7 @@ const ForgetPassword = () => {
                 initial="hidden"
                 animate="visible"
             >
+
                 <div className="p-8">
                     <motion.div
                         className="text-center mb-8"
@@ -85,6 +89,19 @@ const ForgetPassword = () => {
                         <h2 className="text-2xl font-bold text-gray-900">Reset Password</h2>
                         <p className="text-gray-600 mt-2">Enter your email and new password below</p>
                     </motion.div>
+                    <AnimatePresence mode="wait">
+                        {(error || successMessage) && (
+                            <motion.div
+                                initial={{ opacity: 0, y: -10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -10 }}
+                                className={`text-sm text-center p-3 rounded-lg ${error ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'
+                                    }`}
+                            >
+                                {error || successMessage}
+                            </motion.div>
+                        )}
+                    </AnimatePresence>
 
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <motion.div variants={itemVariants}>
@@ -147,19 +164,7 @@ const ForgetPassword = () => {
                             )}
                         </motion.button>
 
-                        <AnimatePresence mode="wait">
-                            {(error || successMessage) && (
-                                <motion.div
-                                    initial={{ opacity: 0, y: -10 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -10 }}
-                                    className={`text-sm text-center p-3 rounded-lg ${error ? 'bg-red-50 text-red-600' : 'bg-green-50 text-green-600'
-                                        }`}
-                                >
-                                    {error || successMessage}
-                                </motion.div>
-                            )}
-                        </AnimatePresence>
+
 
                         <motion.div
                             variants={itemVariants}

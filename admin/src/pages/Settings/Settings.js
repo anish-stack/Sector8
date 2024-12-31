@@ -27,7 +27,7 @@ const Settings = () => {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const response = await axios.get('https://api.naideal.com/api/v1/get-setting');
+        const response = await axios.get('http://localhost:7485/api/v1/get-setting');
         if (response.data.success) {
           setSettings(response.data.data);
         } else {
@@ -82,7 +82,7 @@ const Settings = () => {
     e.preventDefault();
     setUpdating(true);
     try {
-      const response = await axios.post('https://api.naideal.com/api/v1/UpdateSetting', settings);
+      const response = await axios.post('http://localhost:7485/api/v1/UpdateSetting', settings);
       if (response.data.success) {
         alert('Settings updated successfully!');
       } else {

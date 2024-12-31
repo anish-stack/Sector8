@@ -73,7 +73,7 @@ const UserRegister = () => {
         if (!coords) return;
 
         try {
-            const response = await axios.post(`https://api.naideal.com/Fetch-Current-Location`, {
+            const response = await axios.post(`http://localhost:7485/Fetch-Current-Location`, {
                 lat: coords.latitude,
                 lng: coords.longitude
             });
@@ -100,7 +100,7 @@ const UserRegister = () => {
             return
         }
         try {
-            const response = await axios.get(`https://api.naideal.com/geocode?address=${landmark}`)
+            const response = await axios.get(`http://localhost:7485/geocode?address=${landmark}`)
             const locationData = response.data;
             console.log(locationData)
             setFormData((prev) => ({

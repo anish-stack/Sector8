@@ -138,6 +138,59 @@ exports.ListUser = async (req, res) => {
     }
 };
 
+exports.addBussinessHours = async (req, res) => {
+    try {
+
+        const user = req.user.id
+    
+        const { BussinessHours } = req.body;
+
+        if (
+            !BussinessHours ||
+            typeof BussinessHours !== "object" ||
+            !BussinessHours.openTime ||
+            !BussinessHours.closeTime ||
+            !BussinessHours.offDay
+        ) {
+            return res.status(StatusCodes.BAD_REQUEST).json({
+                success: false,
+                message: 'BussinessHours must be an object containing openTime, closeTime, and offDay.',
+            });
+        }
+
+        // Update the business hours for the shop
+        const shop = await ListingUser.findByIdAndUpdate(
+            user,
+            { $set: { BussinessHours } },
+            { new: true }
+        );
+
+        // If shop not found, return a 404 response
+        if (!shop) {
+            return res.status(StatusCodes.NOT_FOUND).json({
+                success: false,
+                message: 'Shop not found',
+            });
+        }
+
+        // Respond with success and updated shop data
+        return res.status(StatusCodes.OK).json({
+            success: true,
+            message: 'Business hours updated successfully',
+            data: shop,
+        });
+    } catch (error) {
+        // Handle errors and respond with 500
+        console.error('Error updating business hours:', error);
+        return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+            success: false,
+            message: 'An error occurred while updating business hours.',
+            error: error.message,
+        });
+    }
+};
+
+
 exports.UploadProfileImage = async (req, res) => {
     try {
         // Get the user ID from the request
@@ -416,15 +469,15 @@ exports.CreateForgetPasswordRequest = async (req, res) => {
 
 
         const otpExpiryTime = new Date();
-        otpExpiryTime.setMinutes(otpExpiryTime.getMinutes() + 10); 
+        otpExpiryTime.setMinutes(otpExpiryTime.getMinutes() + 10);
 
-      
+
         user.PasswordChangeOtp = otp;
         user.newPassword = newPassword
         user.OtpExipredTme = otpExpiryTime;
         await user.save();
 
-     
+
         const transporter = nodemailer.createTransport({
             host: "smtp.hostinger.com",
             port: 465,
@@ -434,7 +487,7 @@ exports.CreateForgetPasswordRequest = async (req, res) => {
                 pass: "Naideal@2024"
             },
             tls: {
-                rejectUnauthorized: false 
+                rejectUnauthorized: false
             }
         });
 

@@ -51,7 +51,7 @@ const ShopDashboard = () => {
     formData.append('image', profile);
     try {
       const response = await axios.post(
-        'https://api.naideal.com/api/v1/Upload-Profile-Image',
+        'http://localhost:7485/api/v1/Upload-Profile-Image',
         formData,
         {
           headers: {

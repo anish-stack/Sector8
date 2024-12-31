@@ -67,6 +67,21 @@ const ListingUserSchema = new mongoose.Schema({
         }
     },
 
+    BussinessHours:{
+        openTime:{
+            type: String,
+         
+        },
+        closeTime:{
+            type: String,
+        },
+        offDay:{
+            type: String,
+        },
+    },
+
+    
+
     HowMuchOfferPost: {
         type: Number,
     },

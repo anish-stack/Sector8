@@ -83,7 +83,7 @@ const Header = ({ locationDetails }) => {
                         <li><Link className='text-slate-900 font-bold text-lg' to={'/Free-Listing'}>Free Listing</Link></li>
                         <li><a className='text-green-400 font-bold text-lg' href="tel:+919953825382">+91 99-5382-5382</a></li>
                         {ShopToken ? (
-                            <li className='space-x-2'><a className='text-slate-900 font-bold text-lg' href="/Shop-Dashboard">Shop Dashboard</a></li>
+                            <li className='space-x-2'><a className='text-slate-900 font-bold text-lg' href="/Shop-Dashboard">Dashboard</a></li>
                         ) : null}
                         {PartnerToken ? (
                             <li className='space-x-2'><a className='text-slate-900 font-bold text-lg' href="/Partner-Dashboard">Partner Dashboard</a></li>
