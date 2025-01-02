@@ -157,7 +157,16 @@ const EditPost = () => {
     <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
       <div className="max-w-5xl mx-auto">
         <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-8">Edit Listing</h1>
+          <div className="flex items-center justify-between">
+            <h1 className="text-3xl font-bold text-gray-900 mb-8">Edit Listing</h1>
+            <a
+              href="/All-Post?All=true"
+              className="px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-75"
+            >
+              Back
+            </a>
+          </div>
+
 
           <form onSubmit={handleSubmit} className="space-y-8">
             {/* Basic Information */}
@@ -240,7 +249,7 @@ const EditPost = () => {
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label className="block text-sm font-medium text-gray-700">
-                            <DollarSign className="w-4 h-4 inline mr-2" />
+                            {/* <DollarSign className="w-4 h-4 inline mr-2" /> */}
                             Price
                           </label>
                           <input

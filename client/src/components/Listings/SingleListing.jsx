@@ -257,17 +257,39 @@ const SingleListing = () => {
                             </div>
                             <div className="space-y-2 text-sm">
                                 <div className="flex justify-between">
-                                    <span className="text-gray-600">Monday - Friday</span>
-                                    <span className="text-gray-900 font-medium">9:00 AM - 6:00 PM</span>
+                                    <span className="text-gray-600">Working Time</span>
+                                    <span className="text-gray-900 font-medium">{`${listing?.shopDetails?.BussinessHours?.openTime} - ${listing?.shopDetails?.BussinessHours?.closeTime}`}</span>
+                                    {/* <span className="text-gray-900 font-medium">9:00 AM - 6:00 PM</span> */}
                                 </div>
-                                <div className="flex justify-between">
+                                {/* <div className="flex justify-between">
                                     <span className="text-gray-600">Saturday</span>
                                     <span className="text-gray-900 font-medium">10:00 AM - 4:00 PM</span>
-                                </div>
+                                </div> */}
                                 <div className="flex justify-between">
-                                    <span className="text-gray-600">Sunday</span>
+                                    <span className="text-gray-600">{listing?.shopDetails?.BussinessHours?.offDay || 'Sunday'}</span>
                                     <span className="text-red-600 font-medium">Closed</span>
                                 </div>
+                            </div>
+                        </div>
+
+                        <div className="bg-white rounded-xl shadow-md border p-6">
+                            {/* <!-- Header --> */}
+                            <div className="flex items-center gap-3 mb-4">
+                                <i className="fa-solid fa-shield-halved text-3xl text-blue-500"></i>
+                                <h3 className="text-lg font-semibold text-gray-900">Safety Tips</h3>
+                            </div>
+
+                            {/* <!-- Content --> */}
+                            <div className="space-y-4 text-sm">
+                                <p className="text-gray-700 leading-relaxed">
+                                    <span className="font-medium text-gray-900">Stay Safe:</span> Always meet in person, bring a friend when dealing with expensive items, thoroughly inspect products and services before making any payments, and only pay once you’re completely satisfied with what you’re getting.
+                                </p>
+                                <p className="text-gray-700 leading-relaxed">
+                                    <span className="font-medium text-gray-900">Be Prepared:</span> Communicate with the seller beforehand to confirm all details, including the price.
+                                </p>
+                                <p className="text-gray-700 leading-relaxed">
+                                    <span className="font-medium text-gray-900">Stay Informed:</span> Do your research on the market value of the product or service to ensure you're getting a fair deal.
+                                </p>
                             </div>
                         </div>
 

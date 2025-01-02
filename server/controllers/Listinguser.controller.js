@@ -2,8 +2,9 @@ const ListingUser = require('../models/User.model'); // Adjust the path as per y
 const sendEmail = require('../utils/SendEmail');
 const sendToken = require('../utils/SendToken');
 const Listing = require('../models/listing.model');
-const dotenv = require('dotenv')
-dotenv.config()
+// const dotenv = require('dotenv')
+// dotenv.config()
+require('dotenv').config()
 const Cloudinary = require('cloudinary').v2;
 const jwt = require('jsonwebtoken');
 const Razorpay = require('razorpay');
@@ -12,10 +13,10 @@ const axios = require('axios')
 const Plans = require('../models/Pacakge')
 const nodemailer = require('nodemailer');
 const Payment = require('../models/PaymentDetails')
-const instance = new Razorpay({
-    key_id: process.env.RAZORPAY_APT_KEY,
-    key_secret: process.env.RAZORPAY_APT_SECRET,
-});
+// const instance = new Razorpay({
+//     key_id: process.env.RAZORPAY_APT_KEY,
+//     key_secret: process.env.RAZORPAY_APT_SECRET,
+// });
 const { StatusCodes } = require('http-status-codes');
 const Settings = require('../models/Settings.model')
 const Partner = require('../models/Partner.model')

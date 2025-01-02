@@ -7,7 +7,13 @@ const PartnerDashboard = () => {
     const [partnersPerPage] = useState(9);
     const [showModal, setShowModal] = useState(false);
     const [selectedPartner, setSelectedPartner] = useState(null);
-    const [filters, setFilters] = useState({ date: '', package: '', shopName: '' });
+    const [filters, setFilters] = useState({
+        // date: '',
+        package: '',
+        shopName: '',
+        startDate: '',
+        endDate: ''
+    });
 
     const token = localStorage.getItem('B2bToken');
     const BackendUrl = import.meta.env.VITE_REACT_APP_BACKEND_URL;
@@ -39,10 +45,12 @@ const PartnerDashboard = () => {
     };
 
     const filteredPartners = partners.filter(partner => {
-        const dateMatch = filters.date ? partner.createdAt.includes(filters.date) : true;
+        // const dateMatch = filters.date ? partner.createdAt.includes(filters.date) : true;
         const packageMatch = filters.package ? partner.ListingPlan.toLowerCase() === filters.package.toLowerCase() : true;
         const shopNameMatch = filters.shopName ? partner.ShopName.toLowerCase().includes(filters.shopName.toLowerCase()) : true;
-        return dateMatch && packageMatch && shopNameMatch;
+        const startDateMatch = filters.startDate ? new Date(partner.createdAt) >= new Date(filters.startDate) : true;
+        const endDateMatch = filters.endDate ? new Date(partner.createdAt) <= new Date(filters.endDate) : true;
+        return packageMatch && shopNameMatch && startDateMatch && endDateMatch;
     });
 
     const indexOfLastPartner = currentPage * partnersPerPage;
@@ -82,11 +90,9 @@ const PartnerDashboard = () => {
                         </span>
                     </h1>
 
-
-
                     <form className="mb-8 p-6 bg-white rounded-lg shadow-md">
                         <div className="grid md:grid-cols-3 grid-cols-1 gap-3 -mx-4 mb-6">
-                            <div className="w-full  rounded-xl py-2  border-2  px-4 mb-6">
+                            {/* <div className="w-full rounded-xl py-2 border-2 px-4 mb-6">
                                 <label htmlFor="dateFilter" className="block text-sm font-medium text-gray-700 mb-2">
                                     Date
                                 </label>
@@ -96,10 +102,10 @@ const PartnerDashboard = () => {
                                     name="date"
                                     value={filters.date}
                                     onChange={handleFilterChange}
-                                    className="block w-full outline-none  border-2 border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm px-3 py-2"
+                                    className="block w-full outline-none border-2 border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm px-3 py-2"
                                 />
-                            </div>
-                            <div className="w-full rounded-xl py-2  border-2 px-4 mb-6">
+                            </div> */}
+                            <div className="w-full rounded-xl py-2 border-2 px-4 mb-6">
                                 <label htmlFor="packageFilter" className="block text-sm font-medium text-gray-700 mb-2">
                                     Package
                                 </label>
@@ -108,7 +114,7 @@ const PartnerDashboard = () => {
                                     name="package"
                                     value={filters.package}
                                     onChange={handleFilterChange}
-                                    className="block w-full outline-none  border-2 border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm px-3 py-2"
+                                    className="block w-full outline-none border-2 border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm px-3 py-2"
                                 >
                                     <option value="">Select Package</option>
                                     <option value="free">Free</option>
@@ -116,7 +122,7 @@ const PartnerDashboard = () => {
                                     <option value="gold">Gold</option>
                                 </select>
                             </div>
-                            <div className="w-full  rounded-xl py-2  border-2 px-4 mb-6">
+                            <div className="w-full rounded-xl py-2 border-2 px-4 mb-6">
                                 <label htmlFor="shopNameFilter" className="block text-sm font-medium text-gray-700 mb-2">
                                     Shop Name
                                 </label>
@@ -125,6 +131,32 @@ const PartnerDashboard = () => {
                                     id="shopNameFilter"
                                     name="shopName"
                                     value={filters.shopName}
+                                    onChange={handleFilterChange}
+                                    className="block w-full border-2 outline-none border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm px-3 py-2"
+                                />
+                            </div>
+                            <div className="w-full rounded-xl py-2 border-2 px-4 mb-6">
+                                <label htmlFor="startDateFilter" className="block text-sm font-medium text-gray-700 mb-2">
+                                    Start Date
+                                </label>
+                                <input
+                                    type="date"
+                                    id="startDateFilter"
+                                    name="startDate"
+                                    value={filters.startDate}
+                                    onChange={handleFilterChange}
+                                    className="block w-full border-2 outline-none border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm px-3 py-2"
+                                />
+                            </div>
+                            <div className="w-full rounded-xl py-2 border-2 px-4 mb-6">
+                                <label htmlFor="endDateFilter" className="block text-sm font-medium text-gray-700 mb-2">
+                                    End Date
+                                </label>
+                                <input
+                                    type="date"
+                                    id="endDateFilter"
+                                    name="endDate"
+                                    value={filters.endDate}
                                     onChange={handleFilterChange}
                                     className="block w-full border-2 outline-none border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm px-3 py-2"
                                 />

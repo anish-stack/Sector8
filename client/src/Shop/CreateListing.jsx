@@ -140,7 +140,7 @@ const CreateListing = ({ isOpen, onClose }) => {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 overflow-y-auto z-50">
-      <Toaster position="top-right" />
+      {/* <Toaster position="top-right" /> */}
       <div className="relative bg-white rounded-xl shadow-2xl w-full max-w-4xl m-4 max-h-[90vh] overflow-y-auto">
         {btnLoading && (
           <div className="absolute inset-0 bg-white bg-opacity-75 flex items-center justify-center z-50">
@@ -274,7 +274,7 @@ const CreateListing = ({ isOpen, onClose }) => {
                 Creating Post...
               </span>
             ) : (
-              'Create Post'
+              'Post Offer'
             )}
           </button>
         </form>

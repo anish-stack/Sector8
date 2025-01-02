@@ -52,7 +52,7 @@ body {
 
 circle {
   /* fill: none; */
-  stroke: hsl(205, 97%, 59%)!important;
+  stroke: white!important;
   stroke-width: 2!important;
   stroke-dasharray: 200!important;
   stroke-dashoffset: 0!important;

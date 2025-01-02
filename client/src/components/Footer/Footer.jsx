@@ -8,6 +8,9 @@ import { useEffect } from 'react';
 import axios from 'axios'
 const Footer = () => {
   const [settings, setSettings] = useState({})
+  const token = localStorage.getItem('ShopToken');
+  const token2 = localStorage.getItem('B2bToken');
+  // console.log("token",token)
 
   useEffect(() => {
     const fetchSettings = async () => {
@@ -15,7 +18,7 @@ const Footer = () => {
         const response = await axios.get('http://localhost:7485/api/v1/get-setting');
         if (response.data.success) {
           setSettings(response.data.data);
-          console.log(response.data.data)
+          // console.log(response.data.data)
         } else {
           console.error(response.data.message);
         }

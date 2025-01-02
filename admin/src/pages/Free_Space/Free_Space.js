@@ -113,7 +113,7 @@ const AdminPage = () => {
                         onChange={handleChange}
                         placeholder="Title"
                         className="p-2 border rounded"
-                        required
+                        // required
                     />
                     <textarea
                         name="description"
@@ -121,7 +121,7 @@ const AdminPage = () => {
                         onChange={handleChange}
                         placeholder="Description"
                         className="p-2 border rounded"
-                        required
+                        // required
                     />
                     <input
                         type="text"

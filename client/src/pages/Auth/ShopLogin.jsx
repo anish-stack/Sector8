@@ -3,6 +3,7 @@ import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-hot-toast';
 import { Eye, EyeOff, Store, AlertCircle, Loader2 } from 'lucide-react';
+import leftImage from './register.png'
 
 const ShopLogin = () => {
   const [formData, setFormData] = useState({
@@ -72,7 +73,7 @@ const ShopLogin = () => {
       <div className="flex items-center justify-center">
         <div className=" hidden md:flex relative w-1/2">
           <img
-            src="https://img.freepik.com/free-photo/sign-up-form-button-graphic-concept_53876-123684.jpg?t=st=1733212070~exp=1733215670~hmac=21a57814be47023867b3796844d342f4dc2c574100bdcfdfb88d4128e25c38b2&w=740"
+            src={leftImage}
             alt="Sign Up"
             className="w-full h-full object-cover rounded-lg"
           />
@@ -143,7 +144,7 @@ const ShopLogin = () => {
                 <form onSubmit={handleSubmit} className="space-y-6">
                   <div>
                     <label htmlFor="Email" className="block text-sm font-medium text-gray-700">
-                    Username, Phone Number, or Email Address
+                      Username, Phone Number, or Email Address
                     </label>
                     <div className="mt-1">
                       <input
