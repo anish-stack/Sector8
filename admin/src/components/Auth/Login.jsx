@@ -14,7 +14,7 @@ const Login = () => {
   useEffect(() => {
     const fetchSettings = async () => {
       try {
-        const response = await axios.get('http://localhost:7485/api/v1/get-setting');
+        const response = await axios.get('https://api.naideal.com/api/v1/get-setting');
         if (response.data.success) {
           setSettings(response.data.data);
         } else {
@@ -39,7 +39,7 @@ const Login = () => {
     e.preventDefault();
     try {
       // Send login request to backend
-      const response = await axios.post('http://localhost:7485/admin-login', formData);
+      const response = await axios.post('https://api.naideal.com/admin-login', formData);
 
       // Check if login is successful
       if (response.data.login) {

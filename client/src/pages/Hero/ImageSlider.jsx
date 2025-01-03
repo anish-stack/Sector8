@@ -7,7 +7,7 @@ export function ImageSlider() {
 
     const fetchSlides = async () => {
         try {
-            const response = await axios.get("http://localhost:7485/api/v1/get-banner-active");
+            const response = await axios.get("https://api.naideal.com/api/v1/get-banner-active");
             if (response.data.success) {
                 setSlides(response.data.data); // Update state with fetched banners
             } else {

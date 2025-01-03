@@ -25,7 +25,7 @@ const AdminPage = () => {
     // Fetch all pages
     const fetchPages = async () => {
         try {
-            const response = await axios.get('http://localhost:7485/api/v1/Other/get-free-page');
+            const response = await axios.get('https://api.naideal.com/api/v1/Other/get-free-page');
             setPages([response.data]); // Assuming response contains multiple pages
         } catch (error) {
             toast.error('Failed to fetch pages');
@@ -52,10 +52,10 @@ const AdminPage = () => {
         e.preventDefault();
         try {
             if (isEdit) {
-                await axios.put(`http://localhost:7485/api/v1/Other/update_page/${editId}`, form);
+                await axios.put(`https://api.naideal.com/api/v1/Other/update_page/${editId}`, form);
                 toast.success('Page updated successfully');
             } else {
-                await axios.post('http://localhost:7485/api/v1/Other/create-page', form);
+                await axios.post('https://api.naideal.com/api/v1/Other/create-page', form);
                 toast.success('Page created successfully');
             }
             fetchPages();
@@ -68,7 +68,7 @@ const AdminPage = () => {
     // Delete a page
     const handleDelete = async (id) => {
         try {
-            await axios.delete(`http://localhost:7485/api/v1/Other/delete_page/${id}`);
+            await axios.delete(`https://api.naideal.com/api/v1/Other/delete_page/${id}`);
             toast.success('Page deleted successfully');
             fetchPages();
         } catch (error) {

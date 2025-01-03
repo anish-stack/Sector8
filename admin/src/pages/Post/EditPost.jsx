@@ -30,7 +30,7 @@ const EditPost = () => {
     const fetchListing = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:7485/api/v1/admin-get-post?id=${shopId}`
+          `https://api.naideal.com/api/v1/admin-get-post?id=${shopId}`
         );
         setListing(response.data.data[0]);
         setLoading(false);
@@ -129,7 +129,7 @@ const EditPost = () => {
       }
 
       await axios.put(
-        `http://localhost:7485/api/v1/admin-Shop-Edit-post-bolt?id=${shopId}&ListingId=${id}`,
+        `https://api.naideal.com/api/v1/admin-Shop-Edit-post-bolt?id=${shopId}&ListingId=${id}`,
         formData,
         {
           headers: { 'Content-Type': 'multipart/form-data' }

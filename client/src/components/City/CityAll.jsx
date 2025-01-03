@@ -10,7 +10,7 @@ const CityAll = () => {
   useEffect(() => {
     const fetchCities = async () => {
       try {
-        const response = await axios.get('http://localhost:7485/api/v1/admin-get-city');
+        const response = await axios.get('https://api.naideal.com/api/v1/admin-get-city');
         setCities(response.data);
         setLoading(false);
       } catch (error) {

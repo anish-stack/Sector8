@@ -55,7 +55,7 @@ const ChangeImages = ({ data, onClose }) => {
 
     try {
       await axios.post(
-        `http://localhost:7485/api/v1/Other/update_img?publicId=${publicId}`,
+        `https://api.naideal.com/api/v1/Other/update_img?publicId=${publicId}`,
         formData,
         {
           headers: { 'Content-Type': 'multipart/form-data' },
