@@ -43,7 +43,7 @@ const ShopProfile = ({ shopDetails, onUpgradePackage, onLogout, onProfileUpload,
         e.preventDefault();
 
         try {
-            const { data } = await axios.post('http://localhost:7485/api/v1/Other/add-bussiness-hours', formData, {
+            const { data } = await axios.post('https://api.naideal.com/api/v1/Other/add-bussiness-hours', formData, {
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${localStorage.getItem('ShopToken')}`,

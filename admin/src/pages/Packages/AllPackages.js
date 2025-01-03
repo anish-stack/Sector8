@@ -59,7 +59,7 @@ const AllPackages = () => {
     const handleUpdateSubmit = async e => {
         e.preventDefault();
         try {
-            const response = await axios.put(`http://localhost:7485/api/v1/admin-update-packages/${selectedPackage._id}`, selectedPackage);
+            const response = await axios.put(`https://api.naideal.com/api/v1/admin-update-packages/${selectedPackage._id}`, selectedPackage);
             console.log('Package updated:', response.data);
             toast.success("'Package updated")
             // Optionally, update state or show success message
