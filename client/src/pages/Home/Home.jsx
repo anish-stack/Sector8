@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {  Building, MapPin, Star, Users } from 'lucide-react';
+import { Building, MapPin, Star, Users } from 'lucide-react';
 
 
 
@@ -18,6 +18,7 @@ import OfferBanner from '../../components/OfferBanners/OfferBanner';
 import Free_Page from '../Free_Page/Free_Page';
 
 import CityAll from '../../components/City/CityAll';
+import Free_Page2 from '../Free_Page/Free_Page2';
 
 const services = [
   {
@@ -144,8 +145,9 @@ const Home = () => {
       <div className='block lg:hidden'>
         <MCategorey />
       </div>
+      <Free_Page2 />
       <AllListing limit={16} />
-        <CityAll/>
+      <CityAll />
       {/* <AllListings /> */}
       <div className="text-center mb-12">
         <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Services</h2>
@@ -162,7 +164,7 @@ const Home = () => {
       <StatsSection />
 
 
-      <OfferBanner/>
+      <OfferBanner />
 
       <Newsletter />
       <Free_Page />
