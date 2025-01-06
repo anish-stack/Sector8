@@ -167,7 +167,7 @@ const UserRegister = () => {
         <>
 
             <div className="w-full max-w-7xl mx-auto grid lg:grid-cols-2 grid-cols-1 bg-white mt-2 overflow-hidden">
-              
+
 
                 <div className="relative w-[90%]">
                     <img

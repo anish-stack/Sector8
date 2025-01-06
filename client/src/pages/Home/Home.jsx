@@ -19,6 +19,8 @@ import Free_Page from '../Free_Page/Free_Page';
 
 import CityAll from '../../components/City/CityAll';
 import Free_Page2 from '../Free_Page/Free_Page2';
+import Free_Page3 from '../Free_Page/Free_Page3';
+import Free_Page4 from '../Free_Page/Free_Page4';
 
 const services = [
   {
@@ -156,6 +158,8 @@ const Home = () => {
         </p>
       </div>
 
+      <Free_Page3 />
+
       <div className="grid max-w-screen-xl mx-auto grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {services.map((service, index) => (
           <ServiceCard key={index} {...service} />
@@ -165,7 +169,7 @@ const Home = () => {
 
 
       <OfferBanner />
-
+        <Free_Page4 />
       <Newsletter />
       <Free_Page />
       {settings?.isFestiveBottomPopUpShow && (

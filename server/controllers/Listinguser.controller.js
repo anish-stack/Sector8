@@ -139,11 +139,104 @@ exports.ListUser = async (req, res) => {
     }
 };
 
+exports.getSingleListingUser = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const user = await ListingUser.findById(id).populate('PartnerId').populate('OrderId').
+            populate('PackagePlanIssued').populate('HowMuchOfferPost').populate('ShopCategory');
+        if (!user) {
+            return res.status(StatusCodes.NOT_FOUND).json({ success: false, message: 'User not found' });
+        }
+        return res.status(StatusCodes.OK).json({
+            success: true,
+            data: user
+        });
+
+    } catch (error) {
+        console.log("Internal server error", error)
+        res.status(500).json({
+            success: false,
+            message: 'Internal Server Error',
+            error: process.env.NODE_ENV === 'development' ? error.message : undefined
+        })
+    }
+}
+
+exports.updateShopAddress = async (req, res) => {
+    const { userId } = req.params; // Assuming you pass the user ID as a URL parameter
+    const { ShopAddress, LandMarkCoordinates } = req.body; // Expecting ShopAddress in the request body
+
+    if (!ShopAddress) {
+        return res.status(400).json({
+            success: false,
+            message: "ShopAddress is required.",
+        });
+    }
+    if (!LandMarkCoordinates) {
+        return res.status(400).json({
+            success: false,
+            message: "LandMarkCoordinates is required.",
+        });
+    }
+
+    // Validate required fields in ShopAddress
+    const { City, PinCode, ShopAddressStreet, ShopNo, NearByLandMark, ShopLongitude, ShopLatitude } = ShopAddress;
+
+    if (!PinCode || !ShopAddressStreet || !ShopNo || !NearByLandMark || !ShopLongitude || !ShopLatitude) {
+        return res.status(400).json({
+            success: false,
+            message: "All required fields in ShopAddress must be provided.",
+        });
+    }
+
+    // Format ShopAddress
+    const formattedShopAddress = {
+        City: City || null,
+        PinCode,
+        ShopAddressStreet,
+        ShopNo,
+        NearByLandMark,
+        Location: {
+            type: 'Point',
+            coordinates: [ShopLongitude, ShopLatitude],
+        },
+    };
+
+    try {
+        // Find the user by ID
+        const user = await ListingUser.findById(userId);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found.",
+            });
+        }
+
+        // Update ShopAddress
+        user.ShopAddress = formattedShopAddress;
+        user.LandMarkCoordinates = LandMarkCoordinates;
+
+        await user.save();
+
+        return res.status(200).json({
+            success: true,
+            message: "ShopAddress updated successfully.",
+            data: user.ShopAddress,
+        });
+    } catch (error) {
+        console.error("Error updating ShopAddress:", error);
+        return res.status(500).json({
+            success: false,
+            message: "An error occurred while updating ShopAddress.",
+        });
+    }
+};
+
 exports.addBussinessHours = async (req, res) => {
     try {
 
         const user = req.user.id
-    
+
         const { BussinessHours } = req.body;
 
         if (

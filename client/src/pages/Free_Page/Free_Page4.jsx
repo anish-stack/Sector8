@@ -33,7 +33,7 @@ const ContentRenderer = ({ htmlContent }) => (
     />
 );
 
-function Free_Page2() {
+function Free_Page4() {
     const [pages, setPages] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -66,7 +66,7 @@ function Free_Page2() {
     }
 
     
-    const page = pages[1];
+    const page = pages[3];
     // console.log("page",page)
     
     return (
@@ -106,4 +106,4 @@ function Free_Page2() {
     );
 };
 
-export default Free_Page2
+export default Free_Page4
