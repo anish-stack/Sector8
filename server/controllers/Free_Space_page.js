@@ -15,6 +15,7 @@ exports.createFreePage = async (req, res) => {
 exports.getAllFreePages = async (req, res) => {
     try {
         const freePages = await Free_Page.find();
+        // console.log("object",freePages)
         res.status(200).send(freePages);
     } catch (error) {
         res.status(500).send({ message: 'Error retrieving free pages.', error });

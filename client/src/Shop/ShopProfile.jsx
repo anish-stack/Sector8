@@ -3,11 +3,16 @@ import { Package, Mail, Phone, MapPin, LogOut, Crown, EllipsisVertical, Trash } 
 import EditProfile from './EditProfile';
 import toast from 'react-hot-toast';
 import axios from 'axios'
+import useAddress from './useAddress';
+import { fetchShopDetails, updateShopAddress } from '../api/AddressApi';
+import { useGeolocated } from 'react-geolocated';
+import AddressForm from './AddressForm';
 const ShopProfile = ({ shopDetails, onUpgradePackage, onLogout, onProfileUpload, setProfile, onDeleteAccount }) => {
     const [loading, setLoading] = useState(false);
     const [menuOpen, setMenuOpen] = useState(false);
     const [edit, setEdit] = useState(false);
     const [bussinessHours, setBussinessHours] = useState(false);
+    const [address, setAddress] = useState(false);
     const [formData, sedFormData] = useState({
         BussinessHours: {
             openTime: '',
@@ -15,8 +20,52 @@ const ShopProfile = ({ shopDetails, onUpgradePackage, onLogout, onProfileUpload,
             offDay: ''
         }
     });
+    const [shopData, setShopData] = useState(null);
     const [showDeleteModal, setShowDeleteModal] = useState(false); // State to manage the delete modal visibility
     const [deleteReason, setDeleteReason] = useState(''); // State to manage the delete reason
+
+    const { coords, isGeolocationAvailable, isGeolocationEnabled } = useGeolocated({
+        positionOptions: { enableHighAccuracy: false },
+        userDecisionTimeout: 5000,
+    });
+
+    const {
+        addressData,
+        handleAddressChange,
+        handleGeoCode,
+        fetchCurrentLocation
+    } = useAddress(shopDetails, coords);
+
+    const handleAddressSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!addressData.LandMarkCoordinates) {
+            toast.error('Please get landmark location first');
+            return;
+        }
+
+        try {
+            const response = await updateShopAddress(
+                shopDetails._id,
+                addressData,
+                coords,
+                localStorage.getItem('ShopToken')
+            );
+
+            if (response.success) {
+                toast.success('Address updated successfully');
+                setAddress(false);
+
+                const updatedShop = await fetchShopDetails(shopDetails._id);
+                if (updatedShop.success) {
+                    setShopData(updatedShop.data);
+                }
+            }
+        } catch (error) {
+            console.log("Internal server error",error)
+            // toast.error(error.response?.data?.message || 'Error updating address');
+        }
+    };
 
     const handleProfileChange = (event) => {
         setProfile(event.target.files[0]);
@@ -68,6 +117,12 @@ const ShopProfile = ({ shopDetails, onUpgradePackage, onLogout, onProfileUpload,
         }));
     };
 
+    useEffect(() => {
+        if (coords) {
+            fetchCurrentLocation();
+        }
+    }, [coords]);
+
 
     const handleUploadClick = () => {
         setLoading(true);
@@ -100,6 +155,12 @@ const ShopProfile = ({ shopDetails, onUpgradePackage, onLogout, onProfileUpload,
                                 className="w-full text-left px-4 py-2 hover:bg-gray-200"
                             >
                                 Edit Profile
+                            </button>
+                            <button
+                                onClick={() => setAddress(!address)}
+                                className="w-full text-left px-4 py-2 hover:bg-gray-200"
+                            >
+                                Update Address
                             </button>
                             <button
                                 onClick={() => setBussinessHours(!bussinessHours)}
@@ -323,6 +384,18 @@ const ShopProfile = ({ shopDetails, onUpgradePackage, onLogout, onProfileUpload,
                     </div>
                 </div>
             )}
+
+            {address && (
+                <AddressForm
+                    addressData={addressData}
+                    handleAddressChange={handleAddressChange}
+                    handleGeoCode={handleGeoCode}
+                    fetchCurrentLocation={fetchCurrentLocation}
+                    onSubmit={handleAddressSubmit}
+                    onClose={() => setAddress(false)}
+                />
+            )}
+
         </>
     );
 };
